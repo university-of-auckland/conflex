@@ -4,7 +4,7 @@ This application is designed to replace the current Wiki-to-Capsule Integration 
 Java/Groovy and run through Scriptella.
 
 For more information about the Application, please see the following 
-[wiki page] (https://wiki.auckland.ac.nz/display/APPLCTN/Capsule+Future+State+Application+Design)
+[wiki page](https://wiki.auckland.ac.nz/display/APPLCTN/Capsule+Future+State+Application+Design)
 
 ## Running The Application
 This application is written using python v3.6. It is advisable but not necessary to run the application 
