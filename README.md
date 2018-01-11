@@ -12,3 +12,7 @@ using virtualenv. Please install the required libraries through pip using: `pip 
 
 To run the application simply pass the containing folder to the python interpreter and the `__main__.py` will be 
 invoked. i.e. `python /path/to/capsule`.
+
+## Making Documentation
+The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the
+only way to do this is through the `Makefile`, the `make.bat` script has not been correctly configured.
