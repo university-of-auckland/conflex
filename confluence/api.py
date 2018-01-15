@@ -8,9 +8,10 @@ class ConfluenceAPI(object):
     """
 
     # Private attributes of the API class.
-    url = confluence_api_url
-    __username = confluence_api_user
-    __password = confluence_api_pass
+    url = config['confluence']['host']
+    port = config['confluence']['port']
+    __username = config['confluence']['username']
+    __password = config['confluence']['password']
 
     def get_info(self):
         """Summary line.
