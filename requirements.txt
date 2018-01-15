@@ -1,3 +1,4 @@
 peewee>=2.10
 sphinx>=1.6
 pyyaml>=3.12
+flatdict>=1.2

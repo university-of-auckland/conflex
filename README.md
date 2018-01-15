@@ -15,9 +15,12 @@ invoked. i.e. `python /path/to/capsule`.
 
 ## Making Documentation
 The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the
-only way to do this is through the `Makefile`, the `make.bat` script has not been correctly configured.
+only way to do this is through the `Makefile`.
 
 ## Configuration
+
+The configuration file is written in YAML. Currently the capsule application only supports a file in the application
+directory named `config.yaml`.
 
 ### Example Configuration
 
@@ -37,69 +40,85 @@ mysql:
 
 wiki:
   spaces:
-    - APPLCTN:
-        pages:
-          labels:
-            - application:
-                panels:
-                  - Overview
-                  - Roadmap
-                  - Infrastructure
-                page_properties:
-                  - inv_item_info
-                  - itil_stakeholders
-                  - nfr
-                pages:
-                  labels:
-                    - support_model:
+    APPLCTN:
+      pages:
+        labels:
+          application:
+            panels:
+              - Overview
+              - Roadmap
+              - Infrastructure
+            page_properties:
+              - inv_item_info
+              - itil_stakeholders
+              - nfr
+            pages:
+              labels:
+                support_model:
+                  page_properties:
+                    - support_model
+                    - support_tiers
+                inv_architecture_overview:
+                  page_properties:
+                    - inv_architecture_info
+    REFARCH:
+      pages:
+        titles:
+          Information Architecture:
+            pages:
+              titles:
+                Information Entities:
+                  pages:
+                    labels:
+                      info_entity:
                         page_properties:
-                          - support_model
-                          - support_tiers
-                    - inv_architecture_overview:
-                        page_properties:
-                          - inv_architecture_info
-    - REFARCH:
-        pages:
-          titles:
-            - Information Architecture:
-                pages:
-                  titles:
-                    - Information Entities
-            - Technology Architecture:
-                pages:
-                  labels:
-                    - service-area-metadata:
+                          - entity_description
+                          - entity_caudit
+          Technology Architecture:
+            pages:
+              labels:
+                service-area-metadata:
+                  headings:
+                    $ref: '#/schemas/REFARCH/service-area/headings'
+                  pages:
+                    labels:
+                      domain-metadata:
                         headings:
-                          - Definition
-                          - Principles
-                          - Standards
-                          - Guidelines
-                          - Security
-                          - Monitoring
-                          - Resilience
-                          - Recovery
-                          - Future
+                          $ref: '#/schemas/REFARCH/domain-brick-element/headings'
                         pages:
                           labels:
-                            - domain-metadata:
-                                headings:
-                                  - Overview
-                                  # Repeated #
-                                  - Principles
-                                  - Standards
-                                  - Guidelines
-                                  - Security
-                                  - Monitoring
-                                  - Resilience
-                                  - Recovery
-                                  - Future
-                                  # Repeated #
-                                pages:
-                                  labels:
-                                    - brick-metadata:
-                                        pages:
-                                          labels:
-                                            - element-metadata
+                            brick-metadata:
+                              headings:
+                                $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+                              pages:
+                                labels:
+                                  element-metadata:
+                                    headings:
+                                      $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+schemas:
+  REFARCH:
+    service-area:
+      headings:
+        - Definition
+        - Principles
+        - Standards
+        - Guidelines
+        - Security
+        - Monitoring
+        - Resilience
+        - Recovery
+        - Future
+    domain-brick-element:
+      headings:
+        - Overview
+        - Principles
+        - Standards
+        - Guidelines
+        - Security
+        - Monitoring
+        - Resilience
+        - Recovery
+        - Future
 ```
 ### Wiki Configuration
 
@@ -110,11 +129,12 @@ following design guideline.
 ```
 wiki:
   spaces:
-    - [LIST OF SPACE NAMES]:
-        pages:
-          [PAGE NAVIGATION]:
-            [PAGE INFORMATION RETRIEVAL TYPE]
-              - [LIST OF INFORMATION TO RETRIEVE]
+    [LIST OF SPACE NAMES]:
+      pages:
+        [PAGE NAVIGATION TYPES]:
+          [Page NAVIGATION VALUE]:
+            [PAGE INFORMATION RETRIEVAL TYPE]:
+              - [PAGE INFORMATION RETRIEVAL VALUE]
 ```
 
 #### Wiki Descriptors
@@ -124,14 +144,14 @@ wiki:
 | pages   | Wiki pages. When using the pages descriptor, only the specified pages will be crawled for information. To get information from a child page, a child `pages` definition is required (This will also ensure that in the database, the `parent`/`app` of the child page will be set to the id of the parent page. The `pages` descriptor should only have navigation types as its immediate values. |
 | spaces  | Wiki spaces. There should only ever be one `spaces` definition in the wiki configuration. |
 
-##### Page Navigation
+##### Page Navigation Types
 
 | Keyword | Description |
 | ------- | ----------- |
 | labels  | Find a wiki page which is labelled with the following label. |
 | titles  | Find a wiki page with the following title. |
 
-##### Page Information Retrieval
+##### Page Information Retrieval Type
 
 | Keyword         | Description |
 | --------------- | ----------- |
@@ -139,3 +159,15 @@ wiki:
 | page            | Gets information from the entire page. |
 | page_properties | Gets key-value pairs from the page properties macro. |
 | panels          | Gets information from within a panel element in a wiki page. (For the APPLCTN space, the Overview panel will read up to the following words before stopping: `The application is accessible from these locations:`. | 
+
+### Using $ref
+
+The configuration file supports the use of the `$ref` keyword for reusable configuration elements.
+
+To reference a definition, use the $ref keyword:
+
+`$ref: 'reference to definition'`
+
+This works in a similar way to how Swagger implements the `$ref` tag. Please see their 
+[documentation](https://swagger.io/docs/specification/using-ref/) for more details. Currently capsule is only able to
+reference definitions within the current configuration document.
