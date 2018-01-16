@@ -1,4 +1,11 @@
+import json
+
+from bs4 import BeautifulSoup
+
 from settings import *
+from urllib import request, parse
+
+logger = logging.getLogger(__name__)
 
 
 class ConfluenceAPI(object):
@@ -8,12 +15,151 @@ class ConfluenceAPI(object):
     """
 
     # Private attributes of the API class.
-    url = config['confluence']['host']
-    port = config['confluence']['port']
+    host = config['confluence']['host']
     __username = config['confluence']['username']
     __password = config['confluence']['password']
 
-    def get_info(self):
+    @classmethod
+    def make_rest_request(cls, api_endpoint, content_id, url_params):
+        """Low level request abstraction method.
+
+        This method will make a request to the Confluence API and return the response directly to the caller.
+
+        Args:
+            api_endpoint (str): The endpoint on the rest api to call.
+            content_id (str): The id of the content to retrieve.
+            url_params (dict): A dictionary of url params.
+
+        Returns:
+            dict: Returns the response from the server.
+
+        """
+        params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
+        url = cls.host + '/rest/api/' + api_endpoint + '/' + content_id + '?%s' % params
+        logger.debug('make_rest_request: URL requested : %s' % url)
+        return json.loads(request.urlopen(url).read().decode('utf-8'))
+
+    @classmethod
+    def make_master_detail_request(cls, url_params):
+        """Low level request abstraction method.
+
+        This method will make a request to the Confluence API master details page and return the response directly to
+        the caller.
+
+        Args:
+            url_params (dict): A dictionary of url params.
+
+        Returns:
+            dict: Returns the response from the server.
+
+        """
+        params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
+        url = cls.host + '/rest/masterdetail/1.0/detailssummary/lines' + '?%s' % params
+        logger.debug('make_master_detail_request: URL requested: %s' % url)
+        return json.loads(request.urlopen(url).read().decode('utf-8'))
+
+    @classmethod
+    def extract_heading_information(cls, content, heading):
+        """Extracts all information beneath a heading.
+
+        This method extracts all information beneath a heading.
+
+        Args:
+            content (str): The content to extract the text from.
+            heading (str): The heading to extract the information below.
+
+        Returns:
+            dict: The extracted text in the heading.
+
+        """
+        logger.debug('extract_heading_information: Heading to extract information from: %s' % heading)
+        content = BeautifulSoup(content, 'html.parser')
+        heading = content.find(string=heading).parent
+        children = []
+        for child in heading.parent.children:
+            if child != heading and child != '\n':
+                if child.find('ul'):
+                    # We are dealing with a linked list.
+                    test = child.find('ul')
+                    l = []
+                    for item in child.find('ul').find_all('li'):
+                        l.append(item.getText())
+                    children.append(l)
+                elif child.find('table'):
+                    children.append(child)
+                else:
+                    children.append(child.getText())
+        # value.replace(str(heading), '')
+        return value
+
+    @classmethod
+    def extract_page_information(cls, content):
+        """Extracts all information from a page.
+
+        This method extracts all the text information from a page.
+
+        Args:
+            content (str): The content to extract the text from.
+
+        Returns:
+            dict: The extracted text.
+
+        """
+        # TODO: THIS SHOULD OUTPUT THE TEXT IN A SIMILAR FASHION TO extract_heading_information
+        return {BeautifulSoup(content).getText()}
+
+    @classmethod
+    def extract_page_properties_from_page(cls, content, label):
+        """Extracts the page properties macro.
+
+        This method will extract the page properties macro from the confluence 'body.storage' content. Unfortunately due
+        to complexity, this method is yet to be written and should not be used.
+
+        Args:
+            content (str): The content to abstract the k-v pairs from.
+            label (str): The label given to the page_properties.
+
+        Returns:
+            dict: The page properties as key value pairs.
+
+        """
+
+        # TODO: WRITE METHOD
+        # content = BeautifulSoup(content, 'html.parser')
+        # lab = content.find('ac:parameter', string=label).parent.find('table')
+        #
+        # results = {}
+        # for row in lab.findAll('tr'):
+        #     aux = row.findAll('td')
+        #     results[aux[0].string] = aux[1].string
+        # logger.debug(lab)
+        return content
+
+    @classmethod
+    def extract_page_properties(cls, content):
+        """Extracts the page properties macro.
+
+        This method will extract the page properties macro. This method assumes that the content is in the format
+        returned by the make_master_details_request method.
+
+        Args:
+            content (dict): The content to abstract the k-v pairs from.
+
+        Returns:
+            dict: The page properties as key value pairs.
+
+        """
+        keys = []
+        for k in content['renderedHeadings']:
+            keys.append(BeautifulSoup(k, 'html.parser').getText())
+
+        values = []
+        for v in content['detailLines'][0]['details']:
+            values.append(BeautifulSoup(v, 'html.parser').getText())
+        return dict(zip(keys, values))
+
+    @classmethod
+    def extract_panel_information(cls):
         """Summary line.
 
         Extended description of function.
@@ -26,4 +172,4 @@ class ConfluenceAPI(object):
             bool: Description of return value
 
         """
-        return self.url
+        return cls

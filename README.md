@@ -13,7 +13,7 @@ using virtualenv. Please install the required libraries through pip using: `pip 
 To run the application simply pass the containing folder to the python interpreter and the `__main__.py` will be 
 invoked. i.e. `python /path/to/capsule`.
 
-## Making Documentation
+## Generating Documentation
 The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the
 only way to do this is through the `Makefile`.
 
@@ -38,6 +38,9 @@ mysql:
   username: 
   password: 
 
+logging:
+  level: DEBUG
+  
 wiki:
   spaces:
     APPLCTN:
@@ -120,6 +123,16 @@ schemas:
         - Recovery
         - Future
 ```
+### Logging Configuration
+
+The application supports the following levels of logging:
+ - CRITICAL
+ - ERROR
+ - WARNING
+ - INFO
+ - DEBUG
+ - NOTSET
+
 ### Wiki Configuration
 
 The example configuration above contains a configuration definition for `wiki`. This configures the capsule application

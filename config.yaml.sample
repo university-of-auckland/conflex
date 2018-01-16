@@ -11,11 +11,12 @@ mysql:
   username:
   password:
 
+logging:
+  level: INFO
+
 wiki:
   spaces:
     APPLCTN:
-      # Finds pages based on the label. Due to Application Inventory tables unable to change, some extra configuration
-      # is required.
       pages:
         labels:
           application:
@@ -27,17 +28,28 @@ wiki:
               - inv_item_info
               - itil_stakeholders
               - nfr
-            # Child pages of the current application page. Labels are used to find the pages but in the database
-            # hierarchy these pages are children of the parent pages.
+            database_overwrite:
+              table:
+                Overview: app_description
+                Roadmap: app_description
+                inv_item_info: info
+                itil_stakeholders: stakeholder
             pages:
               labels:
                 support_model:
                   page_properties:
                     - support_model
                     - support_tiers
+                  database_overwrite:
+                    table:
+                      support_model: support
+                      support_tiers: support
                 inv_architecture_overview:
                   page_properties:
                     - inv_architecture_info
+                  database_overwrite:
+                    table:
+                      inv_architecture_info: arch
     REFARCH:
       pages:
         titles:

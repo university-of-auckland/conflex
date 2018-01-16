@@ -1,5 +1,6 @@
 import yaml
 from flatdict import FlatDict
+import logging
 
 stream = open('config.yaml', 'r')
 config = yaml.load(stream)
@@ -13,4 +14,10 @@ for key in config:
         config[key.replace(':$ref', '')] = config[config[key].replace('#/', '').replace('/', ':')]
 
 config = config.as_dict()
+# print(config)
 stream.close()
+
+# Setup logging,
+level = logging.getLevelName(config['logging']['level'])
+
+logging.basicConfig(level=level)

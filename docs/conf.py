@@ -19,7 +19,7 @@
 #
 import os
 import sys
-sys.path.append(os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- General configuration ------------------------------------------------
 
@@ -68,7 +68,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['docs/build', 'Thumbs.db', '.DS_Store', 'venv', 'docs/conf.py', 'settings.py']
+exclude_patterns = ['docs/build', 'Thumbs.db', '.DS_Store', 'venv', 'config.yaml', 'settings']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
