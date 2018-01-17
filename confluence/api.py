@@ -173,10 +173,7 @@ class ConfluenceAPI(object):
         Returns:
             dict: A usable dictionary that contains the content only (no HTML).
         """
-
-        # Strip '\n' and '\r' characters from the content string.
-        info = {content_name: ConfluenceAPI.recursive_html_handler(content)}
-        return info
+        return {content_name: ConfluenceAPI.recursive_html_handler(content)}
 
     @classmethod
     def recursive_html_handler(cls, content):
@@ -193,24 +190,29 @@ class ConfluenceAPI(object):
         # First search through the content to see if it contains a table or a list.
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
-        l = html.find('ul')
-        t = html.find('table')
+
+        # We don't need recursive searching as embedded lists/tables will find these.
+        l = html.find_all('ul', recursive=False)
+        t = html.find_all('table', recursive=False)
         if l and t:
             # Content contains a list and a table!
             content_list.append(html.getText())
         elif l and t is None:
             # Content only contains a list.
-            for child in l.children:
-                if child != '\n':
-                    embed_l = child.find('ul')
-                    if embed_l:
-                        content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
-                        # Remove the list from the html as we have parsed that list now?
-                    else:
-                        content_list.append(child.getText().replace('\n', ''))
+            for lst in l:
+                for child in lst.children:
+                    if child != '\n':
+                        embed_l = child.find('ul')
+                        if embed_l:
+                            content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
+                            # Remove the list from the html as we have parsed that list now?
+                        else:
+                            content_list.append(child.getText().replace('\n', ''))
         elif l is None and t:
             # Content only contains a table.
-            content_list.append(html.getText())
+            for table in t:
+                # Figure out table type. i.e. horizontal headings, vertical headings or both.
+                content_list.append(html.getText())
         else:
             # Content does not contain any lists or tables so just return the information.
             content_list.append(html.getText())
