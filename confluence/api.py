@@ -1,5 +1,6 @@
 import json
 
+import unicodedata
 from bs4 import BeautifulSoup
 
 from settings import *
@@ -37,7 +38,7 @@ class ConfluenceAPI(object):
         params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
         url = cls.host + '/rest/api/' + api_endpoint + '/' + content_id + '?%s' % params
         logger.debug('make_rest_request: URL requested : %s' % url)
-        return json.loads(request.urlopen(url).read().decode('utf-8'))
+        return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
     def make_master_detail_request(cls, url_params):
@@ -56,7 +57,7 @@ class ConfluenceAPI(object):
         params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
         url = cls.host + '/rest/masterdetail/1.0/detailssummary/lines' + '?%s' % params
         logger.debug('make_master_detail_request: URL requested: %s' % url)
-        return json.loads(request.urlopen(url).read().decode('utf-8'))
+        return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
     def extract_heading_information(cls, content, heading):
@@ -75,38 +76,23 @@ class ConfluenceAPI(object):
         logger.debug('extract_heading_information: Heading to extract information from: %s' % heading)
         content = BeautifulSoup(content, 'html.parser')
         heading = content.find(string=heading).parent
-        children = []
-        for child in heading.parent.children:
-            if child != heading and child != '\n':
-                if child.find('ul'):
-                    # We are dealing with a linked list.
-                    test = child.find('ul')
-                    l = []
-                    for item in child.find('ul').find_all('li'):
-                        l.append(item.getText())
-                    children.append(l)
-                elif child.find('table'):
-                    children.append(child)
-                else:
-                    children.append(child.getText())
-        # value.replace(str(heading), '')
-        return value
+        return heading
 
     @classmethod
-    def extract_page_information(cls, content):
+    def extract_page_information(cls, content, page):
         """Extracts all information from a page.
 
         This method extracts all the text information from a page.
 
         Args:
             content (str): The content to extract the text from.
-
+            page (str): The title of the page that the information was taken from.
         Returns:
             dict: The extracted text.
 
         """
         # TODO: THIS SHOULD OUTPUT THE TEXT IN A SIMILAR FASHION TO extract_heading_information
-        return {BeautifulSoup(content).getText()}
+        return {page: BeautifulSoup(content).getText()}
 
     @classmethod
     def extract_page_properties_from_page(cls, content, label):
@@ -173,3 +159,60 @@ class ConfluenceAPI(object):
 
         """
         return cls
+
+    @classmethod
+    def handle_html_information(cls, content, content_name):
+        """Handles html information
+
+        This method will handle the HTML input, returning it as a dictionary.
+
+        Args:
+            content (str): The content to turn into a usable dictionary.
+            content_name (str): The name/heading/label associated with the content.
+
+        Returns:
+            dict: A usable dictionary that contains the content only (no HTML).
+        """
+
+        # Strip '\n' and '\r' characters from the content string.
+        info = {content_name: ConfluenceAPI.recursive_html_handler(content)}
+        return info
+
+    @classmethod
+    def recursive_html_handler(cls, content):
+        """Handles html information
+
+        This method will handle the HTML input, returning it as a dictionary.
+
+        Args:
+            content (str): The content to turn into a usable dictionary.
+
+        Returns:
+            list: A list dictionary that contains the content only (no HTML).
+        """
+        # First search through the content to see if it contains a table or a list.
+        content_list = []
+        html = BeautifulSoup(content, 'html.parser')
+        l = html.find('ul')
+        t = html.find('table')
+        if l and t:
+            # Content contains a list and a table!
+            content_list.append(html.getText())
+        elif l and t is None:
+            # Content only contains a list.
+            for child in l.children:
+                if child != '\n':
+                    embed_l = child.find('ul')
+                    if embed_l:
+                        content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
+                        # Remove the list from the html as we have parsed that list now?
+                    else:
+                        content_list.append(child.getText().replace('\n', ''))
+        elif l is None and t:
+            # Content only contains a table.
+            content_list.append(html.getText())
+        else:
+            # Content does not contain any lists or tables so just return the information.
+            content_list.append(html.getText())
+
+        return content_list

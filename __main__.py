@@ -19,20 +19,35 @@ if __name__ == '__main__':
     # message = ConfluenceAPI.make_request('content', '65013279', {'expand': 'page'})
 
     # Tests for detail requests.
-    details = ConfluenceAPI.make_master_detail_request({'cql': 'label = inv_item_info AND id = 112771136',
-                                                        'spaceKey': 'APPLCTN'})
-    props = ConfluenceAPI.extract_page_properties(details)
+    # details = ConfluenceAPI.make_master_detail_request({'cql': 'label = inv_item_info AND id = 112771136',
+    #                                                     'spaceKey': 'APPLCTN'})
+    # props = ConfluenceAPI.extract_page_properties(details)
     # print(props)
 
     # Tests for heading.
-    info = ConfluenceAPI.make_rest_request('content', '130561436', {'expand': 'body.view'})['body']['view']['value']
-    content = ConfluenceAPI.extract_heading_information(info, 'Design Considerations')
-    print(content)
+    # info = ConfluenceAPI.make_rest_request('content', '130561436', {'expand': 'body.view'})['body']['view']['value']
+    # content = ConfluenceAPI.extract_heading_information(info, 'Design Considerations')
+    # print(content)
 
     # Tests for panel?
-    message = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
-    content = ConfluenceAPI.extract_heading_information(message, 'Overview')
+    # message = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']
+    # ['value']
+    # content = ConfluenceAPI.extract_heading_information(message, 'Overview')
     # print(message)
     # print(message.find('ac:parameter', string='inv_item_info'))
     # ConfluenceAPI.extract_page_properties(message, 'inv_item_info')
     # message = ConfluenceAPI.make_request('search', '', {'cql': 'label=application'})
+
+    # Tests for handling html.
+    html_doc = open('tests/paragraph.html', 'r').read()
+    para = ConfluenceAPI.handle_html_information(html_doc, 'paragraph')
+
+    html_doc = open('tests/list.html', 'r').read()
+    lst = ConfluenceAPI.handle_html_information(html_doc, 'list')
+
+    html_doc = open('tests/table.html', 'r').read()
+    table = ConfluenceAPI.handle_html_information(html_doc, 'table')
+
+    html_doc = open('tests/table_list.html', 'r').read()
+    table_list = ConfluenceAPI.handle_html_information(html_doc, 'table_list')
+    print('Done.')
