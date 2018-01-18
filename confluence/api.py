@@ -187,88 +187,82 @@ class ConfluenceAPI(object):
         Returns:
             list: A list dictionary that contains the content only (no HTML).
         """
-        # First search through the content to see if it contains a table or a list.
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
 
-        # We don't need recursive searching as embedded lists/tables will find these.
-        l = html.find_all('ul', recursive=False)
-        t = html.find_all('table', recursive=False)
-        if len(l) > 0 and len(t) > 0:
-            # Content contains a list and a table!
-            content_list.append(html.getText())
-        elif len(l) > 0 and len(t) == 0:
-            # Content only contains a list.
-            for lst in l:
-                for child in lst.children:
-                    if child != '\n':
-                        embed_l = child.find('ul')
-                        if embed_l:
-                            content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
-                            # Remove the list from the html as we have parsed that list now?
-                            # Might not need to as have turned recursive off.
-                        else:
-                            content_list.append(child.getText().replace('\n', ''))
-        elif len(l) == 0 and len(t) > 0:
-            # Content only contains a table.
-            # Figure out table type. i.e. horizontal headings, vertical headings or both.
-            for table in t:
-                for tbody in table.children:
-                    if tbody != '\n':
-                        horizontal_headings = []
-                        vertical_heading = None
-                        table_dict = {}
-                        for row in tbody.children:
-                            try:
-                                if row != '\n':
-                                    current_column = 0
-                                    test = row
-                                    headings_only_row = not row.find('td')
-                                    for data in row.children:
-                                        if data != '\n':
-                                            if headings_only_row:
-                                                horizontal_headings.append(data.getText().replace('\n', ''))
-                                            else:
-                                                # Data could be a heading or actual data depending on layout of table.
-                                                if data.name == 'th':
-                                                    vertical_heading = data.getText().replace('\n', '')
+        # Look at each of the provided html's children tags and handle data for different cases.
+        for tag in html.children:
+            if tag != '\n':
+                if tag.name == 'ul':
+                    # List handling
+                    for child in tag.children:
+                        if child != '\n':
+                            embed_l = child.find('ul')
+                            if embed_l:
+                                content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
+                            else:
+                                content_list.append(child.getText().replace('\n', ''))
+                elif tag.name == 'table':
+                    # Table handling.
+                    for tbody in tag.children:
+                        if tbody != '\n':
+                            horizontal_headings = []
+                            vertical_heading = None
+                            table_dict = {}
+                            for row in tbody.children:
+                                try:
+                                    if row != '\n':
+                                        current_column = 0
+                                        headings_only_row = not row.find('td')
+                                        for data in row.children:
+                                            if data != '\n':
+                                                if headings_only_row:
+                                                    horizontal_headings.append(data.getText().replace('\n', ''))
                                                 else:
-                                                    embedded_table = data.find('table')
-                                                    if embedded_table:
-                                                        content_list.append(
-                                                            ConfluenceAPI.recursive_html_handler(str(embedded_table)))
+                                                    # Data could be a heading or actual data depending on layout of
+                                                    # table.
+                                                    if data.name == 'th':
+                                                        vertical_heading = data.getText().replace('\n', '')
                                                     else:
-                                                        if len(horizontal_headings) == 0:
-                                                            if vertical_heading in table_dict:
-                                                                table_dict[vertical_heading].append(
-                                                                    data.getText().replace('\n', ''))
-                                                            else:
-                                                                table_dict[vertical_heading] = [
-                                                                    data.getText().replace('\n', '')]
-                                                        elif vertical_heading is None:
-                                                            if horizontal_headings[current_column] in table_dict:
-                                                                table_dict[horizontal_headings[current_column]].append(
-                                                                    data.getText().replace('\n', ''))
-                                                            else:
-                                                                table_dict[horizontal_headings[current_column]] = [
-                                                                    data.getText().replace('\n', '')]
+                                                        embedded_table = data.find('table')
+                                                        # TODO: Handle embedded list in a table.
+
+                                                        if embedded_table:
+                                                            content_list.append(
+                                                                ConfluenceAPI.recursive_html_handler(
+                                                                    str(embedded_table)))
                                                         else:
-                                                            if horizontal_headings[current_column] in table_dict:
-                                                                table_dict[horizontal_headings[current_column]][
-                                                                    vertical_heading].append(
-                                                                    data.getText().replace('\n', ''))
+                                                            if len(horizontal_headings) == 0:
+                                                                if vertical_heading in table_dict:
+                                                                    table_dict[vertical_heading].append(
+                                                                        data.getText().replace('\n', ''))
+                                                                else:
+                                                                    table_dict[vertical_heading] = [
+                                                                        data.getText().replace('\n', '')]
+                                                            elif vertical_heading is None:
+                                                                if horizontal_headings[current_column] in table_dict:
+                                                                    table_dict[
+                                                                        horizontal_headings[current_column]].append(
+                                                                        data.getText().replace('\n', ''))
+                                                                else:
+                                                                    table_dict[horizontal_headings[current_column]] = [
+                                                                        data.getText().replace('\n', '')]
                                                             else:
-                                                                table_dict[horizontal_headings[current_column]] = {
-                                                                    vertical_heading: [
-                                                                        data.getText().replace('\n', '')]}
-                                            current_column += 1
-                            except:
-                                logger.error('recursive_html_handler: Unable to parse table: %s',
-                                             table.getText().replace('\n', ''))
-                        content_list.append(table_dict)
-        else:
-            # Content does not contain any lists or tables so just return the information.
-            # This should also append any remaining information to the list.
-            content_list.append(html.getText())
+                                                                if horizontal_headings[current_column] in table_dict:
+                                                                    table_dict[horizontal_headings[current_column]][
+                                                                        vertical_heading].append(
+                                                                        data.getText().replace('\n', ''))
+                                                                else:
+                                                                    table_dict[horizontal_headings[current_column]] = {
+                                                                        vertical_heading: [
+                                                                            data.getText().replace('\n', '')]}
+                                                current_column += 1
+                                except:
+                                    logger.error('recursive_html_handler: Unable to parse table: %s',
+                                                 tag.getText().replace('\n', ''))
+                            content_list.append(table_dict)
+                else:
+                    # Content does not contain any lists or tables so just return the information.
+                    content_list.append(tag.getText().replace('\n', ''))
 
         return content_list
