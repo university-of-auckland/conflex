@@ -3,4 +3,4 @@ sphinx>=1.6
 pyyaml>=3.12
 flatdict>=1.2
 beautifulsoup4>=4.6
-lxml>=4.1
+# lxml>=4.1

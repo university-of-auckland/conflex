@@ -9,7 +9,6 @@ SPHINXPROJ    = Capsule
 SOURCEDIR     = .
 BUILDDIR      = docs/build
 DOCSOUTDIR    = docs/source
-CONFIG        = config.yaml
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -30,14 +29,12 @@ clean:
 
 .PHONY: test
 test:
-	venv/bin/python -m unittest discover tests/test*.py
+	venv/bin/python -m unittest discover -s tests/
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-#	cp "$(CONFIG)" ./docs
 	@$(SPHINXAPIDOC) -f -o "$(DOCSOUTDIR)" "$(SOURCEDIR)" docs/conf.py
 	@$(SPHINXBUILD) -c ./docs -b $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-#	rm -f "./docs/$(CONFIG)"
 
 #	cp "$(BUILDDIR)/

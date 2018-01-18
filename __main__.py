@@ -42,9 +42,6 @@ if __name__ == '__main__':
     html_doc = open('tests/paragraph.html', 'r').read()
     para = ConfluenceAPI.handle_html_information(html_doc, 'paragraph')
 
-    html_doc = open('tests/list.html', 'r').read()
-    lst = ConfluenceAPI.handle_html_information(html_doc, 'list')
-
     html_doc = open('tests/table.html', 'r').read()
     table = ConfluenceAPI.handle_html_information(html_doc, 'table')
 
