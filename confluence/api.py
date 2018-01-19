@@ -229,13 +229,25 @@ class ConfluenceAPI(object):
 
         # Look at each of the provided html's children tags and handle data for different cases.
         for tag in contents.children:
-            if tag.name == 'table':
+            if tag.name == 'ul':
+                # List handling
+                for child in tag.children:
+                    child_to_insert = child.getText()
+                    if child.find('table', recursive=False):
+                        child_to_insert = ConfluenceAPI.recursive_html_handler(
+                            str(child.find('table', recursive=False)))
+                    if child.find('ul', recursive=False):
+                        child_to_insert = ConfluenceAPI.recursive_html_handler(str(child.find('ul', recursive=False)))
+                    content_list.append(child_to_insert)
+
+            elif tag.name == 'table':
                 # Table handling.
                 table = tag.find('tbody')
                 horizontal_headings = []
                 vertical_heading = None
                 table_dict = {}
                 for row in table.children:
+                    # noinspection PyBroadException
                     try:
                         current_column = 0
                         headings_only_row = not row.find('td')
@@ -248,41 +260,36 @@ class ConfluenceAPI(object):
                                 if data.name == 'th':
                                     vertical_heading = data.getText()
                                 else:
+                                    data_to_insert = data.getText()
                                     if data.find('table', recursive=False):
-                                        content_list.append(ConfluenceAPI.recursive_html_handler(
-                                            str(data.find('table', recursive=False))))
-                                    else:
-                                        if len(horizontal_headings) == 0:
-                                            if vertical_heading in table_dict:
-                                                table_dict[vertical_heading].append(data.getText())
-                                            else:
-                                                table_dict[vertical_heading] = [data.getText()]
-                                        elif vertical_heading is None:
-                                            if horizontal_headings[current_column] in table_dict:
-                                                table_dict[horizontal_headings[current_column]].append(data.getText())
-                                            else:
-                                                table_dict[horizontal_headings[current_column]] = [data.getText()]
+                                        data_to_insert = ConfluenceAPI.recursive_html_handler(
+                                            str(data.find('table', recursive=False)))
+                                    if data.find('ul', recursive=False):
+                                        data_to_insert = ConfluenceAPI.recursive_html_handler(
+                                            str(data.find('ul', recursive=False)))
+
+                                    if len(horizontal_headings) == 0:
+                                        if vertical_heading in table_dict:
+                                            table_dict[vertical_heading].append(data_to_insert)
                                         else:
-                                            if horizontal_headings[current_column] in table_dict:
-                                                table_dict[horizontal_headings[current_column]][
-                                                    vertical_heading].append(data.getText())
-                                            else:
-                                                table_dict[horizontal_headings[current_column]] = {
-                                                    vertical_heading: [data.getText()]}
+                                            table_dict[vertical_heading] = [data_to_insert]
+                                    elif vertical_heading is None:
+                                        if horizontal_headings[current_column] in table_dict:
+                                            table_dict[horizontal_headings[current_column]].append(data_to_insert)
+                                        else:
+                                            table_dict[horizontal_headings[current_column]] = [data_to_insert]
+                                    else:
+                                        if horizontal_headings[current_column] in table_dict:
+                                            table_dict[horizontal_headings[current_column]][
+                                                vertical_heading].append(data_to_insert)
+                                        else:
+                                            table_dict[horizontal_headings[current_column]] = {
+                                                vertical_heading: [data_to_insert]}
                             current_column += 1
                     except:
                         logger.error('recursive_html_handler: Unable to parse table: %s',
                                      tag.getText())
                 content_list.append(table_dict)
-            elif tag.name == 'ul':
-                # List handling
-                for child in tag.children:
-                    if child.find('table', recursive=False):
-                        content_list.append(ConfluenceAPI.recursive_html_handler(str(child.find('table', recursive=False))))
-                    elif child.find('ul', recursive=False):
-                        content_list.append(ConfluenceAPI.recursive_html_handler(str(child.find('ul', recursive=False))))
-                    else:
-                        content_list.append(child.getText())
             elif tag.name in supported_tags:
                 # Content does not contain any lists or tables so just return the information.
                 content_list.append(tag.getText())

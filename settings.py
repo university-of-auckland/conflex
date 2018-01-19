@@ -1,6 +1,7 @@
+import logging
+
 import yaml
 from flatdict import FlatDict
-import logging
 
 stream = open('config.yaml', 'r')
 config = yaml.load(stream)

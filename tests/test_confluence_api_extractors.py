@@ -9,7 +9,32 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
         page = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
         content = ConfluenceAPI.extract_heading_information(page, 'Key Locations')
 
-        self.assertEqual(content, {'basic_list': ['One', 'Two', 'Three']})
+        self.assertEqual(content, {'Key Locations': [{'Configuring Shibboleth SPs': [['SSO Enablement Procedures',
+                                                                                      'Apache integration with '
+                                                                                      'Shibboleth for Single '
+                                                                                      'Sign On',
+                                                                                      'Windows Based Migration '
+                                                                                      'Procedures',
+                                                                                      'Shibboleth SP Installer '
+                                                                                      'for IIS',
+                                                                                      'Windows Server with '
+                                                                                      'Virtual Hosts to EPR '
+                                                                                      'Shibboleth']],
+                                                      'Knowledge': [
+                                                          'https://wiki.shibboleth.net/confluence/display/IDP30'],
+                                                      'Product homepage': ['https://shibboleth.net/'],
+                                                      'Product management': [
+                                                          'https://jira.auckland.ac.nz/browse/IDENTITYShibboleth '
+                                                          'IDP3 Upgrade Development '
+                                                          'Notes(Applications Engineering) '
+                                                          'Attribute list - Attribute '
+                                                          'Resolver Migration'],
+                                                      'Reference Architecture': ['Element_Shibboleth'],
+                                                      'Source repository': [
+                                                          'https://stash.auckland.ac.nz/projects/ITSSHI'],
+                                                      'Support Site': ['http://shibboleth.net/community/'],
+                                                      'Test plan': ['Shibboleth Upgrade - EPR v4.26.x (Release '
+                                                                    'Date dd/mm/2016)']}]})
 
     def test_panel_extraction(self):
         page = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
