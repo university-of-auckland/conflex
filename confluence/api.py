@@ -1,4 +1,5 @@
 import json
+import re
 
 import unicodedata
 from bs4 import BeautifulSoup
@@ -74,9 +75,9 @@ class ConfluenceAPI(object):
 
         """
         logger.debug('extract_heading_information: Heading to extract information from: %s' % heading)
-        content = BeautifulSoup(content, 'html.parser')
-        heading = content.find(string=heading).parent
-        return heading
+        html = BeautifulSoup(content, 'html.parser')
+        heading_container = str(html.find(string=heading).parent.next_sibling)
+        return ConfluenceAPI.handle_html_information(heading_container, heading)
 
     @classmethod
     def extract_page_information(cls, content, page):
@@ -91,7 +92,6 @@ class ConfluenceAPI(object):
             dict: The extracted text.
 
         """
-        # TODO: THIS SHOULD OUTPUT THE TEXT IN A SIMILAR FASHION TO extract_heading_information
         return ConfluenceAPI.handle_html_information(content, page)
 
     @classmethod
@@ -145,7 +145,7 @@ class ConfluenceAPI(object):
         return dict(zip(keys, values))
 
     @classmethod
-    def extract_panel_information(cls):
+    def extract_panel_information(cls, content, panel):
         """Summary line.
 
         Extended description of function.
@@ -158,7 +158,36 @@ class ConfluenceAPI(object):
             bool: Description of return value
 
         """
-        return cls
+        logger.debug('extract_panel_information: Panel to extract information from: %s' % panel)
+        html = BeautifulSoup(content, 'html.parser')
+        panel_container = str(html.find('b', string=panel).parent.next_sibling)
+        return ConfluenceAPI.handle_html_information(panel_container, panel)
+
+    @classmethod
+    def get_child_page_ids(cls, parent_id):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            parent_id (int): Id of the parent page to get the children of.
+            # child_filter (str): cql filter to apply to retrieve only child pages that match the filter.
+
+        Returns:
+            list: A list of all the child ids of the parent page.
+        """
+        page = 0
+        size = 25
+        children_id = []
+        while size == 25:
+            response = ConfluenceAPI.make_rest_request('content', str(parent_id) + '/child/page',
+                                                       {'start': page, 'limit': 25, 'size': size})
+            results = response['results']
+            size = response['size']
+            page += response['size']
+            for result in results:
+                children_id.append(int(result['id']))
+        return children_id
 
     @classmethod
     def handle_html_information(cls, content, content_name):
@@ -173,6 +202,8 @@ class ConfluenceAPI(object):
         Returns:
             dict: A usable dictionary that contains the content only (no HTML).
         """
+        # Remove all newline characters and remove all spaces between two tags.
+        content = re.sub('>+\s+<', '><', content.replace('\n', ''))
         return {content_name: ConfluenceAPI.recursive_html_handler(content)}
 
     @classmethod
@@ -187,82 +218,73 @@ class ConfluenceAPI(object):
         Returns:
             list: A list dictionary that contains the content only (no HTML).
         """
+        supported_tags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'a', 'ul', 'table']
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
 
-        # Look at each of the provided html's children tags and handle data for different cases.
-        for tag in html.children:
-            if tag != '\n':
-                if tag.name == 'ul':
-                    # List handling
-                    for child in tag.children:
-                        if child != '\n':
-                            embed_l = child.find('ul')
-                            if embed_l:
-                                content_list.append(ConfluenceAPI.recursive_html_handler(str(embed_l)))
-                            else:
-                                content_list.append(child.getText().replace('\n', ''))
-                elif tag.name == 'table':
-                    # Table handling.
-                    for tbody in tag.children:
-                        if tbody != '\n':
-                            horizontal_headings = []
-                            vertical_heading = None
-                            table_dict = {}
-                            for row in tbody.children:
-                                try:
-                                    if row != '\n':
-                                        current_column = 0
-                                        headings_only_row = not row.find('td')
-                                        for data in row.children:
-                                            if data != '\n':
-                                                if headings_only_row:
-                                                    horizontal_headings.append(data.getText().replace('\n', ''))
-                                                else:
-                                                    # Data could be a heading or actual data depending on layout of
-                                                    # table.
-                                                    if data.name == 'th':
-                                                        vertical_heading = data.getText().replace('\n', '')
-                                                    else:
-                                                        embedded_table = data.find('table')
-                                                        # TODO: Handle embedded list in a table.
+        # Go down the hierarchy until we are at a non-div element.
+        contents = html
+        while contents.contents[0].name == 'div':
+            contents = contents.contents[0]
 
-                                                        if embedded_table:
-                                                            content_list.append(
-                                                                ConfluenceAPI.recursive_html_handler(
-                                                                    str(embedded_table)))
-                                                        else:
-                                                            if len(horizontal_headings) == 0:
-                                                                if vertical_heading in table_dict:
-                                                                    table_dict[vertical_heading].append(
-                                                                        data.getText().replace('\n', ''))
-                                                                else:
-                                                                    table_dict[vertical_heading] = [
-                                                                        data.getText().replace('\n', '')]
-                                                            elif vertical_heading is None:
-                                                                if horizontal_headings[current_column] in table_dict:
-                                                                    table_dict[
-                                                                        horizontal_headings[current_column]].append(
-                                                                        data.getText().replace('\n', ''))
-                                                                else:
-                                                                    table_dict[horizontal_headings[current_column]] = [
-                                                                        data.getText().replace('\n', '')]
-                                                            else:
-                                                                if horizontal_headings[current_column] in table_dict:
-                                                                    table_dict[horizontal_headings[current_column]][
-                                                                        vertical_heading].append(
-                                                                        data.getText().replace('\n', ''))
-                                                                else:
-                                                                    table_dict[horizontal_headings[current_column]] = {
-                                                                        vertical_heading: [
-                                                                            data.getText().replace('\n', '')]}
-                                                current_column += 1
-                                except:
-                                    logger.error('recursive_html_handler: Unable to parse table: %s',
-                                                 tag.getText().replace('\n', ''))
-                            content_list.append(table_dict)
-                else:
-                    # Content does not contain any lists or tables so just return the information.
-                    content_list.append(tag.getText().replace('\n', ''))
+        # Look at each of the provided html's children tags and handle data for different cases.
+        for tag in contents.children:
+            if tag.name == 'table':
+                # Table handling.
+                table = tag.find('tbody')
+                horizontal_headings = []
+                vertical_heading = None
+                table_dict = {}
+                for row in table.children:
+                    try:
+                        current_column = 0
+                        headings_only_row = not row.find('td')
+                        for data in row.children:
+                            if headings_only_row:
+                                horizontal_headings.append(data.getText())
+                            else:
+                                # Data could be a heading or actual data depending on layout of
+                                # table.
+                                if data.name == 'th':
+                                    vertical_heading = data.getText()
+                                else:
+                                    if data.find('table', recursive=False):
+                                        content_list.append(ConfluenceAPI.recursive_html_handler(
+                                            str(data.find('table', recursive=False))))
+                                    else:
+                                        if len(horizontal_headings) == 0:
+                                            if vertical_heading in table_dict:
+                                                table_dict[vertical_heading].append(data.getText())
+                                            else:
+                                                table_dict[vertical_heading] = [data.getText()]
+                                        elif vertical_heading is None:
+                                            if horizontal_headings[current_column] in table_dict:
+                                                table_dict[horizontal_headings[current_column]].append(data.getText())
+                                            else:
+                                                table_dict[horizontal_headings[current_column]] = [data.getText()]
+                                        else:
+                                            if horizontal_headings[current_column] in table_dict:
+                                                table_dict[horizontal_headings[current_column]][
+                                                    vertical_heading].append(data.getText())
+                                            else:
+                                                table_dict[horizontal_headings[current_column]] = {
+                                                    vertical_heading: [data.getText()]}
+                            current_column += 1
+                    except:
+                        logger.error('recursive_html_handler: Unable to parse table: %s',
+                                     tag.getText())
+                content_list.append(table_dict)
+            elif tag.name == 'ul':
+                # List handling
+                for child in tag.children:
+                    if child.find('table', recursive=False):
+                        content_list.append(ConfluenceAPI.recursive_html_handler(str(child.find('table', recursive=False))))
+                    elif child.find('ul', recursive=False):
+                        content_list.append(ConfluenceAPI.recursive_html_handler(str(child.find('ul', recursive=False))))
+                    else:
+                        content_list.append(child.getText())
+            elif tag.name in supported_tags:
+                # Content does not contain any lists or tables so just return the information.
+                content_list.append(tag.getText())
 
         return content_list

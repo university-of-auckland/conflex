@@ -75,7 +75,7 @@ class TestConfluenceAPIWebPageCrawlingTables(unittest.TestCase):
         lst = ConfluenceAPI.handle_html_information(html_doc.read(), 'wiki_example')
         html_doc.close()
 
-        self.assertEqual(lst, {'wiki_example': [{' ': ['End user', 'Administrator'],
+        self.assertEqual(lst, {'wiki_example': [{'': ['End user', 'Administrator'],
                                                  'Development': ['https://idp3.dev.auckland.ac.nz', 'NA'],
                                                  'Production': ['https://idp3.auckland.ac.nz', 'NA'],
                                                  'Test': ['https://idp3.test.auckland.ac.nz', 'NA']}]})
