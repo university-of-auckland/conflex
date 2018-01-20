@@ -22,7 +22,7 @@ class ConfluenceAPI(object):
     __password = config['confluence']['password']
 
     @classmethod
-    def make_rest_request(cls, api_endpoint, content_id, url_params):
+    def __make_rest_request(cls, api_endpoint, content_id, url_params):
         """Low level request abstraction method.
 
         This method will make a request to the Confluence API and return the response directly to the caller.
@@ -42,7 +42,7 @@ class ConfluenceAPI(object):
         return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
-    def make_master_detail_request(cls, url_params):
+    def __make_master_detail_request(cls, url_params):
         """Low level request abstraction method.
 
         This method will make a request to the Confluence API master details page and return the response directly to
@@ -77,7 +77,7 @@ class ConfluenceAPI(object):
         logger.debug('extract_heading_information: Heading to extract information from: %s' % heading)
         html = BeautifulSoup(content, 'html.parser')
         heading_container = str(html.find(string=heading).parent.next_sibling)
-        return ConfluenceAPI.handle_html_information(heading_container, heading)
+        return ConfluenceAPI.__handle_html_information(heading_container, heading)
 
     @classmethod
     def extract_page_information(cls, content, page):
@@ -92,7 +92,7 @@ class ConfluenceAPI(object):
             dict: The extracted text.
 
         """
-        return ConfluenceAPI.handle_html_information(content, page)
+        return ConfluenceAPI.__handle_html_information(content, page)
 
     @classmethod
     def extract_page_properties_from_page(cls, content, label):
@@ -161,7 +161,7 @@ class ConfluenceAPI(object):
         logger.debug('extract_panel_information: Panel to extract information from: %s' % panel)
         html = BeautifulSoup(content, 'html.parser')
         panel_container = str(html.find('b', string=panel).parent.next_sibling)
-        return ConfluenceAPI.handle_html_information(panel_container, panel)
+        return ConfluenceAPI.__handle_html_information(panel_container, panel)
 
     @classmethod
     def get_child_page_ids(cls, parent_id):
@@ -180,7 +180,7 @@ class ConfluenceAPI(object):
         size = 25
         children_id = []
         while size == 25:
-            response = ConfluenceAPI.make_rest_request('content', str(parent_id) + '/child/page',
+            response = ConfluenceAPI.__make_rest_request('content', str(parent_id) + '/child/page',
                                                        {'start': page, 'limit': 25, 'size': size})
             results = response['results']
             size = response['size']
@@ -190,7 +190,7 @@ class ConfluenceAPI(object):
         return children_id
 
     @classmethod
-    def handle_html_information(cls, content, content_name):
+    def __handle_html_information(cls, content, content_name):
         """Handles html information
 
         This method will handle the HTML input, returning it as a dictionary.
@@ -204,10 +204,10 @@ class ConfluenceAPI(object):
         """
         # Remove all newline characters and remove all spaces between two tags.
         content = re.sub('>+\s+<', '><', content.replace('\n', ''))
-        return {content_name: ConfluenceAPI.recursive_html_handler(content)}
+        return {content_name: ConfluenceAPI.__recursive_html_handler(content)}
 
     @classmethod
-    def recursive_html_handler(cls, content):
+    def __recursive_html_handler(cls, content):
         """Handles html information
 
         This method will handle the HTML input, returning it as a dictionary.
@@ -234,10 +234,10 @@ class ConfluenceAPI(object):
                 for child in tag.children:
                     child_to_insert = child.getText()
                     if child.find('table', recursive=False):
-                        child_to_insert = ConfluenceAPI.recursive_html_handler(
+                        child_to_insert = ConfluenceAPI.__recursive_html_handler(
                             str(child.find('table', recursive=False)))
                     if child.find('ul', recursive=False):
-                        child_to_insert = ConfluenceAPI.recursive_html_handler(str(child.find('ul', recursive=False)))
+                        child_to_insert = ConfluenceAPI.__recursive_html_handler(str(child.find('ul', recursive=False)))
                     content_list.append(child_to_insert)
 
             elif tag.name == 'table':
@@ -262,10 +262,10 @@ class ConfluenceAPI(object):
                                 else:
                                     data_to_insert = data.getText()
                                     if data.find('table', recursive=False):
-                                        data_to_insert = ConfluenceAPI.recursive_html_handler(
+                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(
                                             str(data.find('table', recursive=False)))
                                     if data.find('ul', recursive=False):
-                                        data_to_insert = ConfluenceAPI.recursive_html_handler(
+                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(
                                             str(data.find('ul', recursive=False)))
 
                                     if len(horizontal_headings) == 0:
@@ -291,7 +291,14 @@ class ConfluenceAPI(object):
                                      tag.getText())
                 content_list.append(table_dict)
             elif tag.name in supported_tags:
+                information_to_insert = tag.getText()
+                if data.find('table', recursive=False):
+                    information_to_insert = ConfluenceAPI.__recursive_html_handler(
+                        str(tag.find('table', recursive=False)))
+                if data.find('ul', recursive=False):
+                    information_to_insert = ConfluenceAPI.__recursive_html_handler(
+                        str(tag.find('ul', recursive=False)))
                 # Content does not contain any lists or tables so just return the information.
-                content_list.append(tag.getText())
+                content_list.append(information_to_insert)
 
         return content_list

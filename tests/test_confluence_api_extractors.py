@@ -3,10 +3,13 @@ import unittest
 from confluence.api import ConfluenceAPI
 
 
+# noinspection PyUnresolvedReferences
 class TestConfluenceAPIExtractor(unittest.TestCase):
+    def setUp(self):
+        self.confluence = ConfluenceAPI
 
     def test_heading_extraction(self):
-        page = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
+        page = self.confluence._ConfluenceAPI__make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
         content = ConfluenceAPI.extract_heading_information(page, 'Key Locations')
 
         self.assertEqual(content, {'Key Locations': [{'Configuring Shibboleth SPs': [['SSO Enablement Procedures',
@@ -37,7 +40,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                                                     'Date dd/mm/2016)']}]})
 
     def test_panel_extraction(self):
-        page = ConfluenceAPI.make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
+        page = self.confluence._ConfluenceAPI__make_rest_request('content', '112771136', {'expand': 'body.view'})['body']['view']['value']
         content = ConfluenceAPI.extract_panel_information(page, 'Info')
 
         self.assertEqual(content, {'Info': [{'CAUDIT Capability L0': ['Information Management'],
