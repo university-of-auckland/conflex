@@ -2,7 +2,7 @@ import json
 import re
 
 import unicodedata
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 
 from settings import *
 from urllib import request, parse
@@ -111,14 +111,6 @@ class ConfluenceAPI(object):
         """
 
         # TODO: WRITE METHOD
-        # content = BeautifulSoup(content, 'html.parser')
-        # lab = content.find('ac:parameter', string=label).parent.find('table')
-        #
-        # results = {}
-        # for row in lab.findAll('tr'):
-        #     aux = row.findAll('td')
-        #     results[aux[0].string] = aux[1].string
-        # logger.debug(lab)
         return content
 
     @classmethod
@@ -137,12 +129,14 @@ class ConfluenceAPI(object):
         """
         keys = []
         for k in content['renderedHeadings']:
-            keys.append(BeautifulSoup(k, 'html.parser').getText())
+            keys.append(BeautifulSoup(k, 'html.parser').getText().strip())
 
         values = []
         for v in content['detailLines'][0]['details']:
-            values.append(BeautifulSoup(v, 'html.parser').getText())
-        return dict(zip(keys, values))
+            values.append(ConfluenceAPI.__recursive_html_handler(v))
+        page_properties = dict(zip(keys, values))
+        page_properties.pop('', None)
+        return page_properties
 
     @classmethod
     def extract_panel_information(cls, content, panel):
@@ -218,21 +212,22 @@ class ConfluenceAPI(object):
         Returns:
             list: A list dictionary that contains the content only (no HTML).
         """
-        supported_tags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'a', 'ul', 'table']
+        supported_tags = ['p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'a', 'ul', 'table']
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
 
         # Go down the hierarchy until we are at a non-div element.
         contents = html
-        while contents.contents[0].name == 'div':
-            contents = contents.contents[0]
+        if contents.contents:
+            while contents.contents[0].name == 'div':
+                contents = contents.contents[0]
 
         # Look at each of the provided html's children tags and handle data for different cases.
         for tag in contents.children:
             if tag.name == 'ul':
                 # List handling
                 for child in tag.children:
-                    child_to_insert = child.getText()
+                    child_to_insert = child.getText().strip()
                     if child.find('table', recursive=False):
                         child_to_insert = ConfluenceAPI.__recursive_html_handler(
                             str(child.find('table', recursive=False)))
@@ -253,14 +248,14 @@ class ConfluenceAPI(object):
                         headings_only_row = not row.find('td')
                         for data in row.children:
                             if headings_only_row:
-                                horizontal_headings.append(data.getText())
+                                horizontal_headings.append(data.getText().strip())
                             else:
                                 # Data could be a heading or actual data depending on layout of
                                 # table.
                                 if data.name == 'th':
-                                    vertical_heading = data.getText()
+                                    vertical_heading = data.getText().strip()
                                 else:
-                                    data_to_insert = data.getText()
+                                    data_to_insert = data.getText().strip()
                                     if data.find('table', recursive=False):
                                         data_to_insert = ConfluenceAPI.__recursive_html_handler(
                                             str(data.find('table', recursive=False)))
@@ -288,17 +283,20 @@ class ConfluenceAPI(object):
                             current_column += 1
                     except:
                         logger.error('recursive_html_handler: Unable to parse table: %s',
-                                     tag.getText())
+                                     tag.getText().strip())
                 content_list.append(table_dict)
             elif tag.name in supported_tags:
-                information_to_insert = tag.getText()
-                if data.find('table', recursive=False):
+                information_to_insert = tag.getText().strip()
+                if tag.find('table', recursive=False):
                     information_to_insert = ConfluenceAPI.__recursive_html_handler(
                         str(tag.find('table', recursive=False)))
-                if data.find('ul', recursive=False):
+                if tag.find('ul', recursive=False):
                     information_to_insert = ConfluenceAPI.__recursive_html_handler(
                         str(tag.find('ul', recursive=False)))
                 # Content does not contain any lists or tables so just return the information.
                 content_list.append(information_to_insert)
+
+            elif type(tag) is NavigableString:
+                content_list.append(str(tag.string).strip())
 
         return content_list
