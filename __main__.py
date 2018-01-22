@@ -7,7 +7,21 @@ if __name__ == '__main__':
     # Getting configuration
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
-        print(value)
+        val = value
+        while 'pages' in val:
+            val = val['pages']
+            if 'labels' in val:
+                val = val['labels']
+                for k, v in val.items():
+                    label = k
+                    props = v
+                    print(label)
+                    print(props)
+            elif 'titles' in val:
+                val = val['titles']
+                print(val)
+            # print(value['pages'])
+            # value = value['pages']
 
     # Reading the html
     # html_doc = open('html.html', 'r')
