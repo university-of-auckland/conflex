@@ -196,8 +196,6 @@ class ConfluenceAPI(object):
         Returns:
             dict: A usable dictionary that contains the content only (no HTML).
         """
-        # Remove all newline characters and remove all spaces between two tags.
-        content = re.sub('>+\s+<', '><', content.replace('\n', ''))
         return {content_name: ConfluenceAPI.__recursive_html_handler(content)}
 
     @classmethod
@@ -212,6 +210,8 @@ class ConfluenceAPI(object):
         Returns:
             list: A list dictionary that contains the content only (no HTML).
         """
+        # Remove all newline characters and remove all spaces between two tags.
+        content = re.sub('>+\s+<', '><', content.replace('\n', ''))
         supported_tags = ['p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'a', 'ul', 'table']
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
