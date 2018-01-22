@@ -61,6 +61,25 @@ class ConfluenceAPI(object):
         return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
+    def get_homepage_id_of_space(cls, space):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        response = ConfluenceAPI.__make_rest_request('space', space, {})
+        logger.debug('get_homepage_id_of_space: %s has id of %d' %
+                     (space, int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))))
+        return int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))
+
+    @classmethod
     def extract_heading_information(cls, content, heading):
         """Extracts all information beneath a heading.
 

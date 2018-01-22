@@ -11,6 +11,11 @@ class TestConfluenceAPIPageRetrieval(unittest.TestCase):
 
         self.assertEqual(child_ids, [125700626, 121246868, 124525205, 106007803, 86508608])
 
+    def test_space_to_id_conversion(self):
+        space_id = ConfluenceAPI.get_homepage_id_of_space('APPLCTN')
+
+        self.assertEqual(space_id, 65013279)
+
 
 if __name__ == '__main__':
     unittest.main()
