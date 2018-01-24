@@ -66,7 +66,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                                                                   '112771136', 'spaceKey': 'APPLCTN'})
         content = ConfluenceAPI.extract_page_properties(page)
 
-        self.assertEqual(content, {'Business Owner': ['John Pye'],
+        self.assertEqual(content, {'Business Owner': ['jpye004'],
                                    'CAUDIT Capability L0': ['Information Management'],
                                    'CAUDIT Capability L1': ['Identity & Access Management'],
                                    'Common Names': ['Single Sign On, Web SSO, SSO, OneLogin, Shibboleth, Shibboleth '
@@ -103,11 +103,11 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                    'RTO Required': ['15 minutes'],
                                    'Reference Architecture': ['Element_Shibboleth'],
                                    'Service Criticality': ['Yes'],
-                                   'Service Manager': ['Terry Bisiar'],
-                                   'Service Owner': ['Tamara Al-Salim'],
+                                   'Service Manager': ['tbis163'],
+                                   'Service Owner': ['tals001'],
                                    'Software Licensing Model': ['Open Source'],
                                    'Source repository': ['https://stash.auckland.ac.nz/projects/ITSSHI'],
-                                   'Subject Matter Experts': ['Reid Watson, Amanda Walsh, Wenlai Wang'],
+                                   'Subject Matter Experts': ['rwat090', 'awal091', 'wwan174'],
                                    'Support Site': ['http://shibboleth.net/community/'],
                                    'TIME Cost': ['2'],
                                    'TIME Fitness': ['4'],

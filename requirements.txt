@@ -1,6 +1,8 @@
-peewee==2.10
+# peewee==2.10
 sphinx==1.6.6
 pyyaml==3.12
 flatdict==1.2
 beautifulsoup4==4.6
 # lxml==4.1
+python-dateutil==2.6.1
+PyMySQL==0.8.0

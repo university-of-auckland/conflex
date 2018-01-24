@@ -2,6 +2,9 @@ import json
 import re
 
 import unicodedata
+import dateutil.parser
+
+# noinspection PyProtectedMember
 from bs4 import BeautifulSoup, NavigableString
 
 from settings import *
@@ -191,15 +194,16 @@ class ConfluenceAPI(object):
         """
         page = 0
         size = 25
-        children_id = []
+        children_id = {}
         while size == 25:
             response = ConfluenceAPI.__make_rest_request('content', str(parent_id) + '/child/page',
-                                                       {'start': page, 'limit': 25, 'size': size})
+                                                         {'start': page, 'limit': 25, 'size': size,
+                                                          'expand': 'version'})
             results = response['results']
             size = response['size']
             page += response['size']
             for result in results:
-                children_id.append(int(result['id']))
+                children_id[int(result['id'])] = {'name': result['title'], 'last_updated':dateutil.parser.parse(result['version']['when'])}
         return children_id
 
     @classmethod
@@ -312,8 +316,15 @@ class ConfluenceAPI(object):
                 if tag.find('ul', recursive=False):
                     information_to_insert = ConfluenceAPI.__recursive_html_handler(
                         str(tag.find('ul', recursive=False)))
-                # Content does not contain any lists or tables so just return the information.
-                content_list.append(information_to_insert)
+                # Content does not contain any lists, tables or links to a user so just return the information.
+                if tag.find('a', class_='user-mention') or 'data-username' in tag.attrs:
+                    if tag.find('a', class_='user-mention'):
+                        for user in tag.find_all('a', class_='user-mention'):
+                            content_list.append(user.attrs['data-username'])
+                    else:
+                        content_list.append(tag.attrs['data-username'])
+                else:
+                    content_list.append(information_to_insert)
 
             elif type(tag) is NavigableString:
                 content_list.append(str(tag.string).strip())

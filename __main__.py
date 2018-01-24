@@ -1,27 +1,50 @@
+import sys
+
+from database.api import DatabaseAPI
 from settings import *
 from confluence.api import ConfluenceAPI
+
+
+def child_page_recursive(pages, parent_page_id):
+    """Summary line.
+
+    Extended description of function.
+
+    Args:
+        arg1 (int): Description of arg1
+        arg2 (str): Description of arg2
+
+    Returns:
+        bool: Description of return value
+
+    """
+    child_page_ids = ConfluenceAPI.get_child_page_ids(space_id)
+    # if the child page has not been updated since we last stored the information, then no need to check labels/title!
+    for page_type in pages:
+        for page_identifier in pages[page_type]:
+            for page_info_type in pages[page_type][page_identifier]:
+                print(page_info_type + ':')
+                if 'pages' in page_info_type:
+                    child_page_recursive(pages[page_type][page_identifier][page_info_type], parent_page_id)
+                elif 'database_overwrite' in page_info_type:
+                    logger.error('Currently Database overwrite is not supported')
+                else:
+                    # It must be a page_properties, panel, heading or other.
+                    for info_identifier in pages[page_type][page_identifier][page_info_type]:
+                        print(info_identifier)
+
 
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
+    DatabaseAPI.connect()
+    DatabaseAPI.create_table("test")
+    DatabaseAPI.disconnect()
+
     # Getting configuration
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
-        val = value
-        while 'pages' in val:
-            val = val['pages']
-            if 'labels' in val:
-                val = val['labels']
-                for k, v in val.items():
-                    label = k
-                    props = v
-                    print(label)
-                    print(props)
-            elif 'titles' in val:
-                val = val['titles']
-                print(val)
-            # print(value['pages'])
-            # value = value['pages']
+        child_page_recursive(value['pages'], space_id)
 
     # Reading the html
     # html_doc = open('html.html', 'r')
