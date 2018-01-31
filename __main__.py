@@ -1,5 +1,3 @@
-import sys
-
 from database.api import DatabaseAPI
 from settings import *
 from confluence.api import ConfluenceAPI
@@ -18,7 +16,7 @@ def child_page_recursive(pages, parent_page_id):
         bool: Description of return value
 
     """
-    child_page_ids = ConfluenceAPI.get_child_page_ids(space_id)
+    # child_page_ids = ConfluenceAPI.get_child_page_ids(space_id)
     # if the child page has not been updated since we last stored the information, then no need to check labels/title!
     for page_type in pages:
         for page_identifier in pages[page_type]:
@@ -38,13 +36,15 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     DatabaseAPI.connect()
-    DatabaseAPI.create_table("test")
-    DatabaseAPI.disconnect()
+    DatabaseAPI.create_spaces_table()
 
     # Getting configuration
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
+        DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
         child_page_recursive(value['pages'], space_id)
+
+    DatabaseAPI.disconnect()
 
     # Reading the html
     # html_doc = open('html.html', 'r')

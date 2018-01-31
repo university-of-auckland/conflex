@@ -12,7 +12,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
         page = \
             self.confluence._ConfluenceAPI__make_rest_request('content', '112771136', {'expand': 'body.view'})['body'][
                 'view']['value']
-        content = ConfluenceAPI.extract_heading_information(page, 'Key Locations')
+        content = self.confluence._ConfluenceAPI__extract_heading_information(page, 'Key Locations')
 
         self.assertEqual(content, {'Key Locations': [{'Configuring Shibboleth SPs': [['SSO Enablement Procedures',
                                                                                       'Apache integration with '
@@ -45,7 +45,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
         page = \
             self.confluence._ConfluenceAPI__make_rest_request('content', '112771136', {'expand': 'body.view'})['body'][
                 'view']['value']
-        content = ConfluenceAPI.extract_panel_information(page, 'Info')
+        content = self.confluence._ConfluenceAPI__extract_panel_information(page, 'Info')
 
         self.assertEqual(content, {'Info': [{'CAUDIT Capability L0': ['Information Management'],
                                              'CAUDIT Capability L1': ['Identity & Access Management'],
@@ -64,7 +64,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
     def test_page_properties_extraction(self):
         page = self.confluence._ConfluenceAPI__make_master_detail_request({'cql': 'label = inv_item_info AND id = '
                                                                                   '112771136', 'spaceKey': 'APPLCTN'})
-        content = ConfluenceAPI.extract_page_properties(page)
+        content = self.confluence._ConfluenceAPI__extract_page_properties(page)
 
         self.assertEqual(content, {'Business Owner': ['jpye004'],
                                    'CAUDIT Capability L0': ['Information Management'],
@@ -117,5 +117,6 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                    'Vendor': ['Internet2'],
                                    'Version': ['Shibboleth 3']})
 
-        if __name__ == '__main__':
-            unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()

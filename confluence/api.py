@@ -83,7 +83,23 @@ class ConfluenceAPI(object):
         return int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))
 
     @classmethod
-    def extract_heading_information(cls, content, heading):
+    def get_last_update_time_of_content(cls, content_id):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+
+        Returns:
+            datetime.datetime: Description of return value
+
+        """
+        response = ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'version'})
+        return dateutil.parser.parse(response['version']['when'])
+
+    @classmethod
+    def __extract_heading_information(cls, content, heading):
         """Extracts all information beneath a heading.
 
         This method extracts all information beneath a heading.
@@ -102,7 +118,7 @@ class ConfluenceAPI(object):
         return ConfluenceAPI.__handle_html_information(heading_container, heading)
 
     @classmethod
-    def extract_page_information(cls, content, page):
+    def __extract_page_information(cls, content, page):
         """Extracts all information from a page.
 
         This method extracts all the text information from a page.
@@ -117,7 +133,7 @@ class ConfluenceAPI(object):
         return ConfluenceAPI.__handle_html_information(content, page)
 
     @classmethod
-    def extract_page_properties_from_page(cls, content, label):
+    def __extract_page_properties_from_page(cls, content, label):
         """Extracts the page properties macro.
 
         This method will extract the page properties macro from the confluence 'body.storage' content. Unfortunately due
@@ -136,7 +152,7 @@ class ConfluenceAPI(object):
         return content
 
     @classmethod
-    def extract_page_properties(cls, content):
+    def __extract_page_properties(cls, content):
         """Extracts the page properties macro.
 
         This method will extract the page properties macro. This method assumes that the content is in the format
@@ -161,7 +177,7 @@ class ConfluenceAPI(object):
         return page_properties
 
     @classmethod
-    def extract_panel_information(cls, content, panel):
+    def __extract_panel_information(cls, content, panel):
         """Summary line.
 
         Extended description of function.
@@ -187,7 +203,7 @@ class ConfluenceAPI(object):
 
         Args:
             parent_id (int): Id of the parent page to get the children of.
-            # child_filter (str): cql filter to apply to retrieve only child pages that match the filter.
+        # child_filter (str): cql filter to apply to retrieve only child pages that match the filter.
 
         Returns:
             list: A list of all the child ids of the parent page.
