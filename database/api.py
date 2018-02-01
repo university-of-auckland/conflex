@@ -47,10 +47,13 @@ class DatabaseAPI(object):
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "CREATE TABLE IF NOT EXISTS `wiki_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `space_id` INT(11) NOT NULL UNIQUE, `name` VARCHAR(256) NOT NULL, `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP())"
+            sql = "SHOW TABLES LIKE 'wiki_spaces'"
             cursor.execute(sql)
-            logger.debug("create_spaces_table: Created table: `wiki_spaces`")
-        DatabaseAPI.__connection.commit()
+            if cursor.fetchone() is None:
+                sql = "CREATE TABLE IF NOT EXISTS `wiki_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `space_id` INT(11) NOT NULL UNIQUE, `name` VARCHAR(256) NOT NULL, `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP())"
+                cursor.execute(sql)
+                logger.debug("create_spaces_table: Created table: `wiki_spaces`")
+                DatabaseAPI.__connection.commit()
 
     @classmethod
     def update_spaces(cls, space_id, space_name, last_updated):
@@ -81,7 +84,7 @@ class DatabaseAPI(object):
                 cursor.execute(sql, (space_id, space_name, last_updated.strftime('%Y-%m-%d %H:%M:%S')))
                 logger.debug("update_spaces: Inserting wiki space %d: %s" % (space_id, space_name))
 
-        DatabaseAPI.__connection.commit()
+            DatabaseAPI.__connection.commit()
 
     @classmethod
     def create_table(cls, table_name, varchar_key=False):
@@ -98,19 +101,21 @@ class DatabaseAPI(object):
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            if varchar_key:
-                sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` VARCHAR(256) NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()) "
-                logger.debug("create_table: Creating table: `%s` with VARCHAR(256) key" % table_name)
-            else:
-                sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` INT(11) UNSIGNED NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()) "
-                logger.debug("create_table: Creating table: `%s` with INT(11) key" % table_name)
-
+            sql = "SHOW TABLES LIKE '" + table_name + "'"
             cursor.execute(sql)
+            if cursor.fetchone() is None:
+                if varchar_key:
+                    sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` VARCHAR(256) NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), INDEX `parent__index` (`parent`))"
+                    logger.debug("create_table: Creating table: `%s` with VARCHAR(256) key" % table_name)
+                else:
+                    sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` INT(11) UNSIGNED NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), INDEX `parent__index` (`parent`), INDEX `key__index` (`key`))"
+                    logger.debug("create_table: Creating table: `%s` with INT(11) key" % table_name)
 
-        DatabaseAPI.__connection.commit()
+                cursor.execute(sql)
+                DatabaseAPI.__connection.commit()
 
     @classmethod
-    def update_data(cls, table, parent, key, value, last_updated):
+    def insert_or_update(cls, table, parent, k, value, last_updated, update=False):
         """Summary line.
 
             Extended description of function.
@@ -118,31 +123,70 @@ class DatabaseAPI(object):
             Args:
                 arg1 (int): Description of arg1
                 arg2 (str): Description of arg2
+
+            Returns:
+                bool: If Data was inserted or not.
         """
-
-        # Find parent-key
-        # if last_update time different then
-        #   delete old information
-        # insert new information
-
         with DatabaseAPI.__connection.cursor() as cursor:
             try:
                 sql = "SELECT * FROM " + table + " WHERE `parent`=%s AND `key`=%s"
-                cursor.execute(sql, key)
+                cursor.execute(sql, (parent, k))
                 result = cursor.fetchone()
-                if result is not None:
+                if result is not None and update:
                     if result['last_updated'] != last_updated.replace(tzinfo=None):
-                        sql = "DELETE FROM `" + table + "` WHERE `id`=%s"
-                        cursor.execute(sql, result['id'])
-                        logger.debug("update_data: Removing Data to be updated: parent: %s, key: %s" % (str(parent), str(key)))
-                        sql = "INSERT INTO `" + table + "` (`parent`, `key`, `value`, `last_updated`) VALUES (%s, %s, %s, %s)"
-                        cursor.execute(sql, (parent, key, value, last_updated))
-                        logger.debug("update_data: Inserting into `%s` new Data: parent: %s, key: %s" % (table, str(parent), str(key)))
+                        sql = "UPDATE `" + table + "` SET `parent`=%s, `key`=%s, `value`=%s, `last_updated`=%s WHERE `id`=%s"
+                        cursor.execute(sql, (parent, k, value, last_updated, result['id']))
+                        logger.debug("insert_or_update: Updating `%s`: parent: %s, key: %s" % (table, str(parent), str(k)))
+                        DatabaseAPI.__connection.commit()
+                        return True
                 else:
                     sql = "INSERT INTO `" + table + "` (`parent`, `key`, `value`, `last_updated`) VALUES (%s, %s, %s, %s)"
-                    cursor.execute(sql, (parent, key, value, last_updated))
-                    logger.debug("update_data: Inserting into `%s` new Data: parent: %s, key: %s" % (table, str(parent), str(key)))
+                    cursor.execute(sql, (parent, k, value, last_updated))
+                    logger.debug("update_data: Inserting into `%s` new Data: parent: %s, key: %s" % (table, str(parent), str(k)))
+                    DatabaseAPI.__connection.commit()
+                    return True
 
-                DatabaseAPI.__connection.commit()
+                return False
             except:
-                logger.error("update_data: There was an issue updating some data in the database for table: %s, parent: %s, key: %s" % (table, str(parent), str(key)))
+                logger.error("insert_or_update: There was an issue updating some data in the database for table: %s, parent: %s, key: %s" % (table, str(parent), str(k)))
+                return False
+
+    @classmethod
+    def check_data_exists(cls, table, parent, k):
+        """Summary line.
+
+            Extended description of function.
+
+            Args:
+                arg1 (int): Description of arg1
+                arg2 (str): Description of arg2
+
+            Returns:
+                bool: If Data was inserted or not.
+        """
+
+        with DatabaseAPI.__connection.cursor() as cursor:
+            sql = "SELECT * FROM " + table + " WHERE `parent`=%s AND `key`=%s"
+            cursor.execute(sql, (parent, k))
+            return cursor.fetchone()
+
+    @classmethod
+    def delete(cls, table, parent, k=None):
+        """Summary line.
+
+            Extended description of function.
+
+            Args:
+                arg1 (int): Description of arg1
+                arg2 (str): Description of arg2
+
+            Returns:
+                bool: If Data was inserted or not.
+        """
+        with DatabaseAPI.__connection.cursor() as cursor:
+            if k:
+                sql = "DELETE FROM `" + table + "` WHERE `parent`=%s AND `key`=%s"
+                cursor.execute(sql, (parent, k))
+            else:
+                sql = "DELETE FROM `" + table + "` WHERE `parent`=%s"
+                cursor.execute(sql, parent)

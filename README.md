@@ -13,6 +13,14 @@ using virtualenv. Please install the required libraries through pip using: `pip 
 To run the application simply pass the containing folder to the python interpreter and the `__main__.py` will be 
 invoked. i.e. `python /path/to/capsule`.
 
+### Command Line Arguments
+
+The application supports the following command line arguments:
+
+| Argument                 | Description |
+| ------------------------ | ----------- |
+| --force-database-refresh | This argument forces the database to refresh all pages and re-check that all current pages meet the labels/titles provided. | 
+
 ## Generating Documentation
 The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the
 only way to do this is through the `Makefile`.
@@ -36,7 +44,8 @@ mysql:
   port: 3306
   database: capsule
   username: 
-  password: 
+  password:
+  wiki_table_prefix: wiki
 
 logging:
   level: DEBUG
@@ -55,6 +64,9 @@ wiki:
               - inv_item_info
               - itil_stakeholders
               - nfr
+            url:
+              - tinyui
+              - webui
             pages:
               labels:
                 support_model:
@@ -172,6 +184,7 @@ wiki:
 | page            | Gets information from the entire page. |
 | page_properties | Gets key-value pairs from the page properties macro. |
 | panels          | Gets information from within a panel element in a wiki page. (For the APPLCTN space, the Overview panel will read up to the following words before stopping: `The application is accessible from these locations:`. | 
+| url             | Retrieves URL information about a page. Sub options are `tinyui` and `webui`. 
 
 ### Using $ref
 

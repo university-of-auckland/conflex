@@ -63,7 +63,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
 
     def test_page_properties_extraction(self):
         page = self.confluence._ConfluenceAPI__make_master_detail_request({'cql': 'label = inv_item_info AND id = '
-                                                                                  '112771136', 'spaceKey': 'APPLCTN'})
+                                                                                  '112771136', 'spaceKey': '65013279'})
         content = self.confluence._ConfluenceAPI__extract_page_properties(page)
 
         self.assertEqual(content, {'Business Owner': ['jpye004'],

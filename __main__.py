@@ -1,9 +1,13 @@
+import argparse
+import datetime
+
 from database.api import DatabaseAPI
 from settings import *
 from confluence.api import ConfluenceAPI
 
 
-def child_page_recursive(pages, parent_page_id):
+# noinspection PyTypeChecker
+def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_database_refresh=None):
     """Summary line.
 
     Extended description of function.
@@ -16,24 +20,90 @@ def child_page_recursive(pages, parent_page_id):
         bool: Description of return value
 
     """
-    # child_page_ids = ConfluenceAPI.get_child_page_ids(space_id)
     # if the child page has not been updated since we last stored the information, then no need to check labels/title!
     for page_type in pages:
         for page_identifier in pages[page_type]:
-            for page_info_type in pages[page_type][page_identifier]:
-                print(page_info_type + ':')
-                if 'pages' in page_info_type:
-                    child_page_recursive(pages[page_type][page_identifier][page_info_type], parent_page_id)
-                elif 'database_overwrite' in page_info_type:
-                    logger.error('Currently Database overwrite is not supported')
+
+            # Create tables to store the pages in and the information they contain.
+            # table = table_prefix + '_' + page_type + '_' + page_identifier
+            table = table_prefix.replace(' ', '_') + '_' + page_identifier.replace(' ', '_')[:4]
+            DatabaseAPI.create_table(table)
+            info_table = table + '__info'
+            DatabaseAPI.create_table(info_table, True)
+            ignore_table = table + '__ignore'
+            DatabaseAPI.create_table(ignore_table)
+
+            child_pages = ConfluenceAPI.get_child_page_ids(parent_page_id)
+            for child_page_id in child_pages:
+                page_meets_criteria = False
+                if DatabaseAPI.check_data_exists(table, parent_page_id, child_page_id) and force_database_refresh is None:
+                    # If the page already exists in the database ignore checking the page meets the criteria, unless forced to.
+                    page_meets_criteria = True
+                elif DatabaseAPI.check_data_exists(ignore_table, parent_page_id, child_page_id) and force_database_refresh is None:
+                    # This basically does nothing but reduces calls to pages if the page is already in the ignore table.
+                    page_meets_criteria = False
                 else:
-                    # It must be a page_properties, panel, heading or other.
-                    for info_identifier in pages[page_type][page_identifier][page_info_type]:
-                        print(info_identifier)
+                    if page_type == 'titles':
+                        if child_pages[child_page_id]['name'] == page_identifier:
+                            page_meets_criteria = True
+                    elif page_type == 'labels':
+                        if page_identifier in ConfluenceAPI.get_page_labels(child_page_id):
+                            # Check that the page meets the criteria given, i.e. it is labelled as something/title is something and needs to be updated.
+                            page_meets_criteria = True
+
+                if page_meets_criteria:
+                    page_updated = DatabaseAPI.insert_or_update(table, parent_page_id, child_page_id, child_pages[child_page_id]['name'], child_pages[child_page_id]['last_updated'], True)
+
+                    # If the current page information was updated since the last run, delete all children information and re-fill it.
+                    page_content = ''
+                    if page_updated:
+                        DatabaseAPI.delete(info_table, child_page_id)
+                        page_content = ConfluenceAPI.get_page_content(child_page_id)
+
+                    for page_info_type in pages[page_type][page_identifier]:
+                        if page_info_type == 'pages':
+                            child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, force_database_refresh)
+                        else:
+                            if page_updated:
+                                if page_info_type == 'panels':
+                                    for panel_identifier in pages[page_type][page_identifier][page_info_type]:
+                                        panel = ConfluenceAPI.get_panel(page_content, panel_identifier)
+                                        for val in panel[panel_identifier]:
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, panel_identifier, val, child_pages[child_page_id]['last_updated'])
+                                elif page_info_type == 'page_properties':
+                                    # Get all page properties and put the values into the database.
+                                    page_properties = ConfluenceAPI.get_page_properties(child_page_id, space_id, pages[page_type][page_identifier][page_info_type])
+                                    for page_property in page_properties:
+                                        for val in page_properties[page_property]:
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, page_property, val, child_pages[child_page_id]['last_updated'])
+                                elif page_info_type == 'headings':
+                                    for heading_identifier in pages[page_type][page_identifier][page_info_type]:
+                                        heading = ConfluenceAPI.get_heading(page_content, heading_identifier)
+                                        for val in heading:
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, heading_identifier, val, child_pages[child_page_id]['last_updated'])
+                                elif page_info_type == 'page':
+                                    page_information = ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name'])
+                                    for val in page_information:
+                                        DatabaseAPI.insert_or_update(info_table, child_page_id, child_pages[child_page_id]['name'], val, child_pages[child_page_id]['last_updated'])
+                                elif page_info_type == 'url':
+                                    for url_type in pages[page_type][page_identifier][page_info_type]:
+                                        url = ConfluenceAPI.get_page_urls(child_page_id, url_type)
+                                        DatabaseAPI.insert_or_update(info_table, child_page_id, url_type, url, child_pages[child_page_id]['last_updated'])
+                                else:
+                                    logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
+                else:
+                    # Insert the page into the ignore table to make consecutive runs faster.
+                    DatabaseAPI.insert_or_update(ignore_table, parent_page_id, child_page_id, child_pages[child_page_id]['name'], child_pages[child_page_id]['last_updated'], True)
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
+    parser.add_argument('--force-database-refresh', help='force the database to refresh all pages and check all labels.')
+
+    args = parser.parse_args()
     logger = logging.getLogger(__name__)
+
+    logger.debug('Application starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     DatabaseAPI.connect()
     DatabaseAPI.create_spaces_table()
@@ -42,9 +112,11 @@ if __name__ == '__main__':
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id)
+        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.force_database_refresh)
 
     DatabaseAPI.disconnect()
+
+    logger.debug('Application finished updating at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # Reading the html
     # html_doc = open('html.html', 'r')

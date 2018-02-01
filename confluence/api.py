@@ -99,6 +99,43 @@ class ConfluenceAPI(object):
         return dateutil.parser.parse(response['version']['when'])
 
     @classmethod
+    def get_page_labels(cls, content_id):
+        labels = []
+        for label in ConfluenceAPI.__make_rest_request('content', str(content_id) + '/label', {})['results']:
+            labels.append(label['name'])
+        return labels
+
+    @classmethod
+    def get_page_content(cls, content_id):
+        return ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'body.view'})['body']['view']['value']
+
+    @classmethod
+    def get_panel(cls, content, panel):
+        return ConfluenceAPI.__extract_panel_information(content, panel)
+
+    @classmethod
+    def get_heading(cls, content, heading):
+        return ConfluenceAPI.__extract_heading_information(content, heading)
+
+    @classmethod
+    def get_page(cls, content, page_title):
+        return  ConfluenceAPI.__extract_page_information(content, page_title)
+
+    @classmethod
+    def get_page_properties(cls, content_id, space_key, labels):
+        cql = 'label in ('
+        for label in labels[:-1]:
+            cql += "'" + label + "',"
+        cql += "'" + labels[-1] + "') "
+        cql += 'AND id = ' + str(content_id)
+        return ConfluenceAPI.__extract_page_properties(ConfluenceAPI.__make_master_detail_request({'cql': cql, 'spaceKey': space_key}))
+
+    @classmethod
+    def get_page_urls(cls, content_id, url_type):
+        result = ConfluenceAPI.__make_rest_request('content', str(content_id), {})['_links']
+        return result['base'] + result[url_type]
+
+    @classmethod
     def __extract_heading_information(cls, content, heading):
         """Extracts all information beneath a heading.
 
@@ -114,7 +151,11 @@ class ConfluenceAPI(object):
         """
         logger.debug('extract_heading_information: Heading to extract information from: %s' % heading)
         html = BeautifulSoup(content, 'html.parser')
-        heading_container = str(html.find(string=heading).parent.next_sibling)
+        heading_container = ''
+        try:
+            heading_container = str(html.find(string=heading).parent.next_sibling)
+        except:
+            logger.warning('__extract_heading_information: The following heading does not exists for the content provided: %s' % heading)
         return ConfluenceAPI.__handle_html_information(heading_container, heading)
 
     @classmethod
@@ -165,16 +206,19 @@ class ConfluenceAPI(object):
             dict: The page properties as key value pairs.
 
         """
-        keys = []
-        for k in content['renderedHeadings']:
-            keys.append(BeautifulSoup(k, 'html.parser').getText().strip())
+        if len(content['detailLines']) > 0:
+            keys = []
+            for k in content['renderedHeadings']:
+                keys.append(BeautifulSoup(k, 'html.parser').getText().strip())
 
-        values = []
-        for v in content['detailLines'][0]['details']:
-            values.append(ConfluenceAPI.__recursive_html_handler(v))
-        page_properties = dict(zip(keys, values))
-        page_properties.pop('', None)
-        return page_properties
+            values = []
+            for v in content['detailLines'][0]['details']:
+                values.append(ConfluenceAPI.__recursive_html_handler(v))
+            page_properties = dict(zip(keys, values))
+            page_properties.pop('', None)
+            return page_properties
+        else:
+            return {}
 
     @classmethod
     def __extract_panel_information(cls, content, panel):
@@ -192,7 +236,11 @@ class ConfluenceAPI(object):
         """
         logger.debug('extract_panel_information: Panel to extract information from: %s' % panel)
         html = BeautifulSoup(content, 'html.parser')
-        panel_container = str(html.find('b', string=panel).parent.next_sibling)
+        panel_container = ''
+        try:
+            panel_container = str(html.find('b', string=panel).parent.next_sibling)
+        except:
+            logger.warning('__extract_panel_information: The following panel does not exists for the content provided: %s' % panel)
         return ConfluenceAPI.__handle_html_information(panel_container, panel)
 
     @classmethod
@@ -296,11 +344,9 @@ class ConfluenceAPI(object):
                                 else:
                                     data_to_insert = data.getText().strip()
                                     if data.find('table', recursive=False):
-                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(
-                                            str(data.find('table', recursive=False)))
+                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(str(data.find('table', recursive=False)))
                                     if data.find('ul', recursive=False):
-                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(
-                                            str(data.find('ul', recursive=False)))
+                                        data_to_insert = ConfluenceAPI.__recursive_html_handler(str(data.find('ul', recursive=False)))
 
                                     if len(horizontal_headings) == 0:
                                         if vertical_heading in table_dict:
@@ -314,11 +360,9 @@ class ConfluenceAPI(object):
                                             table_dict[horizontal_headings[current_column]] = [data_to_insert]
                                     else:
                                         if horizontal_headings[current_column] in table_dict:
-                                            table_dict[horizontal_headings[current_column]][
-                                                vertical_heading].append(data_to_insert)
+                                            table_dict[horizontal_headings[current_column]][vertical_heading].append(data_to_insert)
                                         else:
-                                            table_dict[horizontal_headings[current_column]] = {
-                                                vertical_heading: [data_to_insert]}
+                                            table_dict[horizontal_headings[current_column]] = {vertical_heading: [data_to_insert]}
                             current_column += 1
                     except:
                         logger.error('recursive_html_handler: Unable to parse table: %s',
@@ -327,11 +371,9 @@ class ConfluenceAPI(object):
             elif tag.name in supported_tags:
                 information_to_insert = tag.getText().strip()
                 if tag.find('table', recursive=False):
-                    information_to_insert = ConfluenceAPI.__recursive_html_handler(
-                        str(tag.find('table', recursive=False)))
+                    information_to_insert = ConfluenceAPI.__recursive_html_handler(str(tag.find('table', recursive=False)))
                 if tag.find('ul', recursive=False):
-                    information_to_insert = ConfluenceAPI.__recursive_html_handler(
-                        str(tag.find('ul', recursive=False)))
+                    information_to_insert = ConfluenceAPI.__recursive_html_handler(str(tag.find('ul', recursive=False)))
                 # Content does not contain any lists, tables or links to a user so just return the information.
                 if tag.find('a', class_='user-mention') or 'data-username' in tag.attrs:
                     if tag.find('a', class_='user-mention'):

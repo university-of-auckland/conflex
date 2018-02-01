@@ -17,14 +17,14 @@ class TestDatabaseAPI(unittest.TestCase):
         DatabaseAPI.create_table('test')
 
     def test_update_data(self):
-        DatabaseAPI.create_table('test')
-        data = DatabaseAPI.update_data('test', 22, 123, 'hello')
+        time = datetime.datetime(2017, 7, 27, 10, 41, 10, tzinfo=tzoffset(None, 43200))
+        data = DatabaseAPI.insert_or_update('test', 65013279, 123, 'hello', time)
 
         self.assertEqual(data, 65013279)
 
     def test_update_spaces(self):
         time = datetime.datetime(2017, 7, 27, 10, 41, 7, tzinfo=tzoffset(None, 43200))
-        DatabaseAPI.update_spaces(12232421, 'APPLCTN', time)
+        DatabaseAPI.update_spaces(65013279, 'APPLCTN', time)
 
         self.assertEqual(time, 65013279)
 
