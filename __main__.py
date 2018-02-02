@@ -7,7 +7,7 @@ from confluence.api import ConfluenceAPI
 
 
 # noinspection PyTypeChecker
-def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_database_refresh=None):
+def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False):
     """Summary line.
 
     Extended description of function.
@@ -26,7 +26,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_da
 
             # Create tables to store the pages in and the information they contain.
             # table = table_prefix + '_' + page_type + '_' + page_identifier
-            table = table_prefix.replace(' ', '_') + '_' + page_identifier.replace(' ', '_')[:4]
+            table = table_prefix.replace(' ', '') + '_' + page_identifier.replace('_', '').replace(' ', '')[:5].lower()
             DatabaseAPI.create_table(table)
             info_table = table + '__info'
             DatabaseAPI.create_table(info_table, True)
@@ -35,13 +35,15 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_da
 
             child_pages = ConfluenceAPI.get_child_page_ids(parent_page_id)
             for child_page_id in child_pages:
+
+                # Decision tree to see if the current page meets the criteria provided in the config file.
+                # if we are not forced to recheck the page meets the criteria then use the pages in the database table.
+                # else, check to see if the page meets either criteria.
                 page_meets_criteria = False
-                if DatabaseAPI.check_data_exists(table, parent_page_id, child_page_id) and force_database_refresh is None:
-                    # If the page already exists in the database ignore checking the page meets the criteria, unless forced to.
-                    page_meets_criteria = True
-                elif DatabaseAPI.check_data_exists(ignore_table, parent_page_id, child_page_id) and force_database_refresh is None:
-                    # This basically does nothing but reduces calls to pages if the page is already in the ignore table.
-                    page_meets_criteria = False
+                if not recheck_pages_meet_criteria:
+                    if DatabaseAPI.check_data_exists(table, parent_page_id, child_page_id):
+                        # If the page already exists in the database ignore checking the page meets the criteria, unless forced to.
+                        page_meets_criteria = True
                 else:
                     if page_type == 'titles':
                         if child_pages[child_page_id]['name'] == page_identifier:
@@ -57,12 +59,13 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_da
                     # If the current page information was updated since the last run, delete all children information and re-fill it.
                     page_content = ''
                     if page_updated:
+                        logger.info('Updating information in space %s for page: %s' % (str(space_id), child_pages[child_page_id]['name']))
                         DatabaseAPI.delete(info_table, child_page_id)
                         page_content = ConfluenceAPI.get_page_content(child_page_id)
 
                     for page_info_type in pages[page_type][page_identifier]:
                         if page_info_type == 'pages':
-                            child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, force_database_refresh)
+                            child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, recheck_pages_meet_criteria)
                         else:
                             if page_updated:
                                 if page_info_type == 'panels':
@@ -80,7 +83,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_da
                                     for heading_identifier in pages[page_type][page_identifier][page_info_type]:
                                         heading = ConfluenceAPI.get_heading(page_content, heading_identifier)
                                         for val in heading:
-                                            DatabaseAPI.insert_or_update(info_table, child_page_id, heading_identifier, val, child_pages[child_page_id]['last_updated'])
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, heading_identifier, heading[val], child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'page':
                                     page_information = ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name'])
                                     for val in page_information:
@@ -92,13 +95,18 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, force_da
                                 else:
                                     logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
                 else:
+                    # Cleanup the ignore, info and default table by removing any information associated with page.
+                    DatabaseAPI.delete(table, parent_page_id, child_page_id)
+                    DatabaseAPI.delete(info_table, child_page_id)
+                    DatabaseAPI.delete(ignore_table, parent_page_id, child_page_id)
+
                     # Insert the page into the ignore table to make consecutive runs faster.
                     DatabaseAPI.insert_or_update(ignore_table, parent_page_id, child_page_id, child_pages[child_page_id]['name'], child_pages[child_page_id]['last_updated'], True)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
-    parser.add_argument('--force-database-refresh', help='force the database to refresh all pages and check all labels.')
+    parser.add_argument('--recheck-pages-meet-criteria', action='store_true', help='force the database to recheck that all pages meet the criteria in the config file.')
 
     args = parser.parse_args()
     logger = logging.getLogger(__name__)
@@ -112,7 +120,7 @@ if __name__ == '__main__':
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.force_database_refresh)
+        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.recheck_pages_meet_criteria)
 
     DatabaseAPI.disconnect()
 

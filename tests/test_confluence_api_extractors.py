@@ -117,6 +117,42 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                    'Vendor': ['Internet2'],
                                    'Version': ['Shibboleth 3']})
 
+    def test_page_properties_extraction_with_empty_fields(self):
+        page = self.confluence._ConfluenceAPI__make_master_detail_request({'cql': 'label = inv_item_info AND id = '
+                                                                                  '88119617',
+                                                                           'spaceKey': '65013279'})
+        content = self.confluence._ConfluenceAPI__extract_page_properties(page)
+
+        self.assertEqual(content, {'Account Manager': ['Name:Email:Phone:'],
+                                   'Business Owner': ['regg002'],
+                                   'CAUDIT Capability L0': ['Human Resource Management'],
+                                   'CAUDIT Capability L1': ['Staff Engagement'],
+                                   'Data Sensitivity': ['Low'],
+                                   'External Users Allowed': ['No'],
+                                   'Hosting Tier': ['SaaS'],
+                                   'Hours of Support': ['24 x 7'],
+                                   'Hours of Use': ['24 x 7'],
+                                   'Implementation Year': ['2014'],
+                                   'Last Upgrade Year': ['2015'],
+                                   'Life Cycle Phase': ['INTRODUCTION'],
+                                   'Maintenance Windows': ['TBC'],
+                                   'Organisation Owner': ['IT Services'],
+                                   'Platform': ['SaaS'],
+                                   'Product homepage': ['http://www.15five.com'],
+                                   'Service Criticality': ['No'],
+                                   'Service Manager': ['regg002'],
+                                   'Service Owner': ['regg002'],
+                                   'Software Licensing Model': ['Software-as-a-Service'],
+                                   'Subject Matter Experts': ['regg002'],
+                                   'Support Site': ['http://success.15five.com/http://status.15five.com/'],
+                                   'TIME Cost': ['5'],
+                                   'TIME Fitness': ['4'],
+                                   'TIME Value': ['2'],
+                                   'Tech Contact': ['Name:Email:Phone:'],
+                                   'Type': ['Application'],
+                                   'Vendor': ['15five'],
+                                   'Version': ['2015']})
+
 
 if __name__ == '__main__':
     unittest.main()

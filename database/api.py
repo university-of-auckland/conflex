@@ -105,7 +105,7 @@ class DatabaseAPI(object):
             cursor.execute(sql)
             if cursor.fetchone() is None:
                 if varchar_key:
-                    sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` VARCHAR(256) NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), INDEX `parent__index` (`parent`))"
+                    sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` VARCHAR(512) NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), INDEX `parent__index` (`parent`))"
                     logger.debug("create_table: Creating table: `%s` with VARCHAR(256) key" % table_name)
                 else:
                     sql = "CREATE TABLE IF NOT EXISTS `" + table_name + "` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, `parent` INT(11) UNSIGNED NOT NULL, `key` INT(11) UNSIGNED NOT NULL, `value` VARCHAR(20000) NOT NULL DEFAULT '', `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(), INDEX `parent__index` (`parent`), INDEX `key__index` (`key`))"
@@ -190,3 +190,27 @@ class DatabaseAPI(object):
             else:
                 sql = "DELETE FROM `" + table + "` WHERE `parent`=%s"
                 cursor.execute(sql, parent)
+
+
+    @classmethod
+    def select(cls, table, parent, k=None):
+        """Summary line.
+
+            Extended description of function.
+
+            Args:
+                arg1 (int): Description of arg1
+                arg2 (str): Description of arg2
+
+            Returns:
+                bool: If Data was inserted or not.
+        """
+        with DatabaseAPI.__connection.cursor() as cursor:
+            if k:
+                sql = "SELECT * FROM `" + table + "` WHERE `parent`=%s AND `key`=%s"
+                cursor.execute(sql, (parent, k))
+            else:
+                sql = "SELECT * FROM `" + table + "` WHERE `parent`=%s"
+                cursor.execute(sql, parent)
+
+            return cursor.fetchall()

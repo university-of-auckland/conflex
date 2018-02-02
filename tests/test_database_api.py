@@ -20,13 +20,13 @@ class TestDatabaseAPI(unittest.TestCase):
         time = datetime.datetime(2017, 7, 27, 10, 41, 10, tzinfo=tzoffset(None, 43200))
         data = DatabaseAPI.insert_or_update('test', 65013279, 123, 'hello', time)
 
-        self.assertEqual(data, 65013279)
+        self.assertEqual(data, True)
 
     def test_update_spaces(self):
         time = datetime.datetime(2017, 7, 27, 10, 41, 7, tzinfo=tzoffset(None, 43200))
-        DatabaseAPI.update_spaces(65013279, 'APPLCTN', time)
+        data = DatabaseAPI.update_spaces(65013279, 'APPLCTN', time)
 
-        self.assertEqual(time, 65013279)
+        self.assertEqual(data, None)
 
     @classmethod
     def tearDownClass(cls):

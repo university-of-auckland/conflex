@@ -19,7 +19,7 @@ The application supports the following command line arguments:
 
 | Argument                 | Description |
 | ------------------------ | ----------- |
-| --force-database-refresh | This argument forces the database to refresh all pages and re-check that all current pages meet the labels/titles provided. | 
+| --recheck-pages-meet-criteria | This argument forces the database to refresh all pages and re-check that all current pages meet the labels/titles provided. | 
 
 ## Generating Documentation
 The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the

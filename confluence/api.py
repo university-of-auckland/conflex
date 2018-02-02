@@ -24,6 +24,8 @@ class ConfluenceAPI(object):
     __username = config['confluence']['username']
     __password = config['confluence']['password']
 
+    empty_contents = ['', ',', '.', ' ']
+
     @classmethod
     def __make_rest_request(cls, api_endpoint, content_id, url_params):
         """Low level request abstraction method.
@@ -216,6 +218,22 @@ class ConfluenceAPI(object):
                 values.append(ConfluenceAPI.__recursive_html_handler(v))
             page_properties = dict(zip(keys, values))
             page_properties.pop('', None)
+
+            # Remove empty key value pairs from dictionary.
+            keys = []
+            values = []
+            for k, v in page_properties.items():
+                vals = []
+                for val in v:
+                    if type(val) is str:
+                        if val.replace(' ', '') not in ConfluenceAPI.empty_contents:
+                            vals.append(val)
+                    else:
+                        vals.append(val)
+                if len(vals) > 0:
+                    values.append(vals)
+                    keys.append(k)
+            page_properties = dict(zip(keys, values))
             return page_properties
         else:
             return {}
@@ -320,7 +338,8 @@ class ConfluenceAPI(object):
                             str(child.find('table', recursive=False)))
                     if child.find('ul', recursive=False):
                         child_to_insert = ConfluenceAPI.__recursive_html_handler(str(child.find('ul', recursive=False)))
-                    content_list.append(child_to_insert)
+                    if child_to_insert not in ConfluenceAPI.empty_contents:
+                        content_list.append(child_to_insert)
 
             elif tag.name == 'table':
                 # Table handling.
@@ -348,25 +367,25 @@ class ConfluenceAPI(object):
                                     if data.find('ul', recursive=False):
                                         data_to_insert = ConfluenceAPI.__recursive_html_handler(str(data.find('ul', recursive=False)))
 
-                                    if len(horizontal_headings) == 0:
-                                        if vertical_heading in table_dict:
-                                            table_dict[vertical_heading].append(data_to_insert)
+                                    if data_to_insert not in ConfluenceAPI.empty_contents:
+                                        if len(horizontal_headings) == 0:
+                                            if vertical_heading in table_dict:
+                                                table_dict[vertical_heading].append(data_to_insert)
+                                            else:
+                                                table_dict[vertical_heading] = [data_to_insert]
+                                        elif vertical_heading is None:
+                                            if horizontal_headings[current_column] in table_dict:
+                                                table_dict[horizontal_headings[current_column]].append(data_to_insert)
+                                            else:
+                                                table_dict[horizontal_headings[current_column]] = [data_to_insert]
                                         else:
-                                            table_dict[vertical_heading] = [data_to_insert]
-                                    elif vertical_heading is None:
-                                        if horizontal_headings[current_column] in table_dict:
-                                            table_dict[horizontal_headings[current_column]].append(data_to_insert)
-                                        else:
-                                            table_dict[horizontal_headings[current_column]] = [data_to_insert]
-                                    else:
-                                        if horizontal_headings[current_column] in table_dict:
-                                            table_dict[horizontal_headings[current_column]][vertical_heading].append(data_to_insert)
-                                        else:
-                                            table_dict[horizontal_headings[current_column]] = {vertical_heading: [data_to_insert]}
+                                            if horizontal_headings[current_column] in table_dict:
+                                                table_dict[horizontal_headings[current_column]][vertical_heading].append(data_to_insert)
+                                            else:
+                                                table_dict[horizontal_headings[current_column]] = {vertical_heading: [data_to_insert]}
                             current_column += 1
                     except:
-                        logger.error('recursive_html_handler: Unable to parse table: %s',
-                                     tag.getText().strip())
+                        logger.error('recursive_html_handler: Unable to parse table: %s', tag.getText().strip())
                 content_list.append(table_dict)
             elif tag.name in supported_tags:
                 information_to_insert = tag.getText().strip()
@@ -382,7 +401,8 @@ class ConfluenceAPI(object):
                     else:
                         content_list.append(tag.attrs['data-username'])
                 else:
-                    content_list.append(information_to_insert)
+                    if information_to_insert not in ConfluenceAPI.empty_contents:
+                        content_list.append(information_to_insert)
 
             elif type(tag) is NavigableString:
                 content_list.append(str(tag.string).strip())
