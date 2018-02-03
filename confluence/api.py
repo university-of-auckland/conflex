@@ -333,6 +333,10 @@ class ConfluenceAPI(object):
 
         # Look at each of the provided html's children tags and handle data for different cases.
         for tag in contents.children:
+
+            while tag.name == 'div':
+                tag = tag.contents[0]
+
             if tag.name == 'ul':
                 # List handling
                 for child in tag.children:

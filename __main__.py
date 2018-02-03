@@ -70,7 +70,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                             if page_updated:
                                 if page_info_type == 'panels':
                                     for panel_identifier in pages[page_type][page_identifier][page_info_type]:
-                                        panel = ConfluenceAPI.get_panel(page_content, panel_identifier)
+                                        panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier))
                                         for val in panel[panel_identifier]:
                                             DatabaseAPI.insert_or_update(info_table, child_page_id, panel_identifier, val, child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'page_properties':

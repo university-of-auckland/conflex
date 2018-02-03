@@ -13,7 +13,6 @@ ref = []
 for key in config:
     if '$ref' in key:
         config[key.replace(':$ref', '')] = config[config[key].replace('#/', '').replace('/', ':')]
-
 config = config.as_dict()
 # print(config)
 stream.close()
