@@ -2,13 +2,15 @@ import json
 import re
 
 import unicodedata
+
+import backoff
 import dateutil.parser
 
 # noinspection PyProtectedMember
 from bs4 import BeautifulSoup, NavigableString
 
 from settings import *
-from urllib import request, parse
+from urllib import request, parse, error
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ class ConfluenceAPI(object):
     empty_contents = ['', ',', '.', ' ']
 
     @classmethod
+    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, error.HTTPError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
     def __make_rest_request(cls, api_endpoint, content_id, url_params):
         """Low level request abstraction method.
 
@@ -47,6 +50,7 @@ class ConfluenceAPI(object):
         return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
+    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, error.HTTPError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
     def __make_master_detail_request(cls, url_params):
         """Low level request abstraction method.
 

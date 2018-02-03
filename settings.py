@@ -22,3 +22,7 @@ stream.close()
 level = logging.getLevelName(config['logging']['level'])
 
 logging.basicConfig(level=level)
+
+# Setup backoff logging for when we get URL errors.
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
+logging.getLogger('backoff').setLevel(level)
