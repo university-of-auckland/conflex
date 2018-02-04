@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import re
 
 from database.api import DatabaseAPI
 from settings import *
@@ -30,8 +31,6 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
             DatabaseAPI.create_table(table)
             info_table = table + '__info'
             DatabaseAPI.create_table(info_table, True)
-            ignore_table = table + '__ignore'
-            DatabaseAPI.create_table(ignore_table)
 
             child_pages = ConfluenceAPI.get_child_page_ids(parent_page_id)
             for child_page_id in child_pages:
@@ -70,10 +69,12 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                             if page_updated:
                                 if page_info_type == 'panels':
                                     for panel_identifier in pages[page_type][page_identifier][page_info_type]:
-                                        # TODO: FIX BELOW.
                                         panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier))
-                                        for val in panel[panel_identifier]:
-                                            DatabaseAPI.insert_or_update(info_table, child_page_id, panel_identifier, val, child_pages[child_page_id]['last_updated'])
+                                        for k, v in panel.items():
+                                            # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                            k = re.sub(':(\d+)', '', k)
+                                            k = re.sub(':(\d+):', ':', k)
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'page_properties':
                                     # Get all page properties and put the values into the database.
                                     page_properties = ConfluenceAPI.get_page_properties(child_page_id, space_id, pages[page_type][page_identifier][page_info_type])
@@ -82,13 +83,19 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                                             DatabaseAPI.insert_or_update(info_table, child_page_id, page_property, val, child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'headings':
                                     for heading_identifier in pages[page_type][page_identifier][page_info_type]:
-                                        heading = ConfluenceAPI.get_heading(page_content, heading_identifier)
-                                        for val in heading:
-                                            DatabaseAPI.insert_or_update(info_table, child_page_id, heading_identifier, heading[val], child_pages[child_page_id]['last_updated'])
+                                        heading = FlatDict(ConfluenceAPI.get_heading(page_content, heading_identifier))
+                                        for k, v in heading.items():
+                                            # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                            k = re.sub(':(\d+)', '', k)
+                                            k = re.sub(':(\d+):', ':', k)
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'page':
-                                    page_information = ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name'])
-                                    for val in page_information:
-                                        DatabaseAPI.insert_or_update(info_table, child_page_id, child_pages[child_page_id]['name'], val, child_pages[child_page_id]['last_updated'])
+                                    page_information = FlatDict(ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name']))
+                                    for k, v in page_information.items():
+                                        # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                        k = re.sub(':(\d+)', '', k)
+                                        k = re.sub(':(\d+):', ':', k)
+                                        DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
                                 elif page_info_type == 'url':
                                     for url_type in pages[page_type][page_identifier][page_info_type]:
                                         url = ConfluenceAPI.get_page_urls(child_page_id, url_type)
@@ -99,10 +106,6 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                     # Cleanup the ignore, info and default table by removing any information associated with page.
                     DatabaseAPI.delete(table, parent_page_id, child_page_id)
                     DatabaseAPI.delete(info_table, child_page_id)
-                    DatabaseAPI.delete(ignore_table, parent_page_id, child_page_id)
-
-                    # Insert the page into the ignore table to make consecutive runs faster.
-                    DatabaseAPI.insert_or_update(ignore_table, parent_page_id, child_page_id, child_pages[child_page_id]['name'], child_pages[child_page_id]['last_updated'], True)
 
 
 if __name__ == '__main__':
