@@ -321,6 +321,7 @@ class ConfluenceAPI(object):
         """
         # Remove all newline characters and remove all spaces between two tags.
         content = re.sub('>+\s+<', '><', content.replace('\n', ''))
+        heading = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7']
         supported_tags = ['p', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'a', 'ul', 'table']
         content_list = []
         html = BeautifulSoup(content, 'html.parser')
@@ -333,7 +334,12 @@ class ConfluenceAPI(object):
 
         # Look at each of the provided html's children tags and handle data for different cases.
         for tag in contents.children:
+            # Check if previous sibling was a heading.
+            if tag.previous_sibling:
+                if tag.previous_sibling.name in heading:
+                    continue
 
+            # Making sure we are at the lowest element in the current tag.
             while tag.name == 'div':
                 tag = tag.contents[0]
 
@@ -388,13 +394,20 @@ class ConfluenceAPI(object):
                                                 table_dict[horizontal_headings[current_column]] = [data_to_insert]
                                         else:
                                             if horizontal_headings[current_column] in table_dict:
-                                                table_dict[horizontal_headings[current_column]][vertical_heading].append(data_to_insert)
+                                                if vertical_heading in table_dict[horizontal_headings[current_column]]:
+                                                    table_dict[horizontal_headings[current_column]][vertical_heading].append(data_to_insert)
+                                                else:
+                                                    table_dict[horizontal_headings[current_column]][vertical_heading] = [data_to_insert]
                                             else:
                                                 table_dict[horizontal_headings[current_column]] = {vertical_heading: [data_to_insert]}
                             current_column += 1
                     except:
                         logger.error('recursive_html_handler: Unable to parse table: %s', tag.getText().strip())
                 content_list.append(table_dict)
+            elif tag.name in heading:
+                heading_to_insert = tag.getText().strip()
+                heading_content = ConfluenceAPI.__recursive_html_handler(str(tag.next_sibling))
+                content_list.append({heading_to_insert: heading_content})
             elif tag.name in supported_tags:
                 information_to_insert = tag.getText().strip()
                 if tag.find('table', recursive=False):
