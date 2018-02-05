@@ -193,6 +193,25 @@ class DatabaseAPI(object):
 
 
     @classmethod
+    def get_spaces(cls):
+        """Summary line.
+
+            Extended description of function.
+
+            Args:
+                arg1 (int): Description of arg1
+                arg2 (str): Description of arg2
+
+            Returns:
+                bool: If Data was inserted or not.
+        """
+        with DatabaseAPI.__connection.cursor() as cursor:
+            sql = "SELECT * FROM `wiki_spaces`"
+            cursor.execute(sql)
+
+            return cursor.fetchall()
+
+    @classmethod
     def select(cls, table, parent, k=None):
         """Summary line.
 
