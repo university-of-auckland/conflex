@@ -14,13 +14,22 @@ To run the application simply pass the containing folder to the python interpret
 invoked. i.e. `python /path/to/capsule`.
 
 ## Modes of Operation
-There are basically two modes of operation for the capsule application.
+There are two modes of operation for the capsule application.
 
-### Full Delta Change Mode
+### Full Delta Sync
 In this mode, all pages on the wiki are rechecked to ensure that they meet the criteria set out in the config file.
+To enable this mode, set the `--recheck-pages-meet-criteria` flag when running the main application.
+(See Command Line Arguments section for more details).
 
-### Half Delta Change Mode
+### Half Delta Sync
+In this mode, the application will only perform delta updates on pages that it currently knows about/that are stored in
+the local database. This means that new pages added to the wiki will not be synced. Also, pages that no longer meet the
+criteria set out in the config file will not be removed.
 
+### Recommended Mode of Operation
+It is recommended to run the application overnight for a Full Delta Sync as this mode of operation takes a much longer time
+than the Half Delta Sync. Running the below configuration file takes an average of 5 minutes on a Half Delta Sync, so this
+can be run more often.
 
 ## Usage Notes
 The following are important usage notes for the capsule application:
@@ -44,7 +53,6 @@ The application supports documentation through Sphinx. To generate the Documenta
 only way to do this is through the `Makefile`.
 
 ## Configuration
-
 The configuration file is written in YAML. Currently the capsule application only supports a file in the application
 directory named `config.yaml`.
 
