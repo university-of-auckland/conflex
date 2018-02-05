@@ -154,59 +154,30 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                    'Version': ['2015']})
 
     def test_panel_extraction_Infrastructure_table(self):
-        page = self.confluence._ConfluenceAPI__make_rest_request('content', '93555888', {'expand': 'body.view'})['body']['view']['value']
+        page = \
+        self.confluence._ConfluenceAPI__make_rest_request('content', '111481721', {'expand': 'body.view'})['body'][
+            'view']['value']
         content = self.confluence._ConfluenceAPI__extract_panel_information(page, 'Infrastructure')
 
-        self.assertEqual(content, {'Infrastructure': [{'Servers': [{'Production': {'API Calls to': ['CECWSVPxx.uoa.auckland.ac.nz '
-                                                                  '(Microsoft '
-                                                                  'Server 2012 '
-                                                                  'R2)'],
-                                                 'Database': ['cecsqlp02.uoa.auckland.ac.nz '
-                                                              '(Microsoft '
-                                                              'Server '
-                                                              '2008)cecsqlp03.uoa.auckland.ac.nz '
-                                                              '(Microsoft '
-                                                              'Server 2008)'],
-                                                 'FIle Storage': [['\\\\uoa.auckland.ac.nz\\apps\\ADB\\',
-                                                                   '\\\\adb.files.auckland.ac.nz\\ADB\\ '
-                                                                   '(direct '
-                                                                   'path for '
-                                                                   'UNIX '
-                                                                   'users)']],
-                                                 'Web': ['cecadbp01.uoa.auckland.ac.nz '
-                                                         '(Microsoft Server '
-                                                         '2008 '
-                                                         'R2)cecadbp02.uoa.auckland.ac.nz  '
-                                                         '(Microsoft Server '
-                                                         '2008 R2)']},
-                                  'Test': {'API Calls to': ['CECWSVTxx.uoa.auckland.ac.nz '
-                                                            '(Microsoft Server '
-                                                            '2012 R2)'],
-                                           'Database': ['cecsqlt01.uoa.auckland.ac.nz '
-                                                        '(Microsoft Server '
-                                                        '2008)'],
-                                           'FIle Storage': [['\\\\uoa.auckland.ac.nz\\apps\\ADB-TEST\\',
-                                                             '\\\\adb.files.auckland.ac.nz\\ADB-TEST\\ '
-                                                             '(direct path for '
-                                                             'UNIX users)']],
-                                           'Web': ['cecadbt01.uoa.auckland.ac.nz '
-                                                   '(Microsoft Server 2008 R2) '
-                                                   'cecadbt02.uoa.auckland.ac.nz '
-                                                   '(Microsoft Server 2008 '
-                                                   'R2)']}}]},
-                    {'Database': [{'Production': {'Account': ['Authorised '
-                                                              'Admin Account'],
-                                                  'Host': ['cecslsqlp02.uoa.auckland.ac.nzcecslsqlp03.uoa.auckland.ac.nz'],
-                                                  'Schema': ['Assignment '
-                                                             'Dropbox'],
-                                                  'Type': ['SQL server 2008 R2 '
-                                                           '10.0.5520']},
-                                   'Test': {'Account': ['Authorised Admin '
-                                                        'Account'],
-                                            'Host': ['cecsqlt01.uoa.auckland.ac.nz'],
-                                            'Schema': ['Assignment Dropbox'],
-                                            'Type': ['SQL server 2008 R2 '
-                                                     '10.0.5520']}}]}]})
+        self.assertEqual(content, {'Infrastructure': [{'Servers': ['App',
+                                                                   'optfssprd01.uoa.auckland.ac.nz',
+                                                                   'Database']},
+                                                      {'Database': [{'': ['Type',
+                                                                          'Host',
+                                                                          'Schema',
+                                                                          'Account',
+                                                                          'Password'],
+                                                                     'Development': ['FoxPro File System',
+                                                                                     'Local Host',
+                                                                                     'Local Host',
+                                                                                     'VCADMIN',
+                                                                                     'Ask'],
+                                                                     'Production': ['FoxPro File System',
+                                                                                    '\\\\optfssprd01.uoa.auckland.ac.nz\\Accounts '
+                                                                                    'Manager - Clinic',
+                                                                                    'VCADMIN',
+                                                                                    'Ask']}]}]})
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -59,7 +59,7 @@ class TestConfluenceAPIWebPageCrawlingTables(unittest.TestCase):
         lst = self.confluence._ConfluenceAPI__handle_html_information(html_doc.read(), 'data_only')
         html_doc.close()
 
-        self.assertEqual(lst, {'data_only': [{None: ['Jill', 'Smith', 'Eve', 'Jackson']}]})
+        self.assertEqual(lst, {'data_only': ['Jill', 'Smith', 'Eve', 'Jackson']})
 
     def test_basic_table_horizontal_headings(self):
         html_doc = open('tests/data/tables/horizontal_headings.html', 'r')

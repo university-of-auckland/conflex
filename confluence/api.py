@@ -382,7 +382,10 @@ class ConfluenceAPI(object):
                                         data_to_insert = ConfluenceAPI.__recursive_html_handler(str(data.find('ul', recursive=False)))
 
                                     if data_to_insert not in ConfluenceAPI.empty_contents:
-                                        if len(horizontal_headings) == 0:
+                                        if len(horizontal_headings) == 0 and vertical_heading is None:
+                                            # Dealing with a completely flat table.
+                                            content_list.append(data_to_insert)
+                                        elif len(horizontal_headings) == 0:
                                             if vertical_heading in table_dict:
                                                 table_dict[vertical_heading].append(data_to_insert)
                                             else:
@@ -403,7 +406,8 @@ class ConfluenceAPI(object):
                             current_column += 1
                     except:
                         logger.error('recursive_html_handler: Unable to parse table: %s', tag.getText().strip())
-                content_list.append(table_dict)
+                if table_dict != {}:
+                    content_list.append(table_dict)
             elif tag.name in heading:
                 heading_to_insert = tag.getText().strip()
                 heading_content = ConfluenceAPI.__recursive_html_handler(str(tag.next_sibling))
