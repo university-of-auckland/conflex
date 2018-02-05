@@ -1,0 +1,1046 @@
+<ac:layout>
+    <ac:layout-section ac:type="two_right_sidebar">
+        <ac:layout-cell>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="66be7f71-dd11-42dc-a03a-156689cc83ba">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Overview</ac:parameter>
+                <ac:rich-text-body>
+                    <p>Shibboleth is a standards based, open source software package for web single sign-on across or
+                        within organisational boundaries. It allows sites to make informed decisions for individual
+                        access of protected online resources in a privacy-preserving manner.
+                    </p>
+                    <p>The Shibboleth software implements widely used federated identity standards, principally the&nbsp;<a
+                            style="text-decoration: underline;" href="https://www.oasis-open.org/">OASIS</a>&nbsp;Security
+                        Assertion Markup Language (SAML), to provide a federated single sign-on and attribute exchange
+                        framework. A user authenticates with his or her organizational credentials, and the organisation
+                        (or identity provider) passes the minimal identity information necessary to the service provider
+                        to enable an authorisation [is the user authorised to access the site]&nbsp;decision. Shibboleth
+                        also provides extended privacy functionality allowing a user and their home site to control the
+                        attributes released to each application.
+                    </p>
+                    <p>
+                        <a href="https://wiki.shibboleth.net/confluence/display/IDP30/Home">Shibboleth IDP3</a>
+                        has been implemented as the identity provider (IdP) for all web-sso protected applications
+                        within the university.
+                    </p>
+                    <p>The University of Auckland's web-sso provides seamless access to shared computing resources and
+                        collaboration environments provided through the <a
+                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Tuakiri">Tuakiri
+                        </a> access federation
+                    </p>
+                    <p>The application is typically accessed via a login page when trying to access a protected
+                        application, but can be accessed directly from these locations:
+                    </p>
+                    <table class="wrapped">
+                        <tbody>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Production</th>
+                                <th colspan="1">Test</th>
+                                <th colspan="1">Development</th>
+                            </tr>
+                            <tr>
+                                <td>End user</td>
+                                <td>
+                                    <span class="nolink">
+                                        <span class="nolink">https://idp3.auckland.ac.nz</span>
+                                    </span>
+                                </td>
+                                <td colspan="1">
+                                    <span class="nolink">https://idp3.test.auckland.ac.nz</span>
+                                </td>
+                                <td colspan="1">https://idp3.dev.auckland.ac.nz</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1">Administrator</td>
+                                <td colspan="1">NA</td>
+                                <td colspan="1">NA</td>
+                                <td colspan="1">NA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>Key Locations</h3>
+                    <ac:structured-macro ac:name="details" ac:schema-version="1"
+                                         ac:macro-id="95b8a1c6-384a-4d5f-9fc8-21ce410d4995">
+                        <ac:parameter ac:name="label">key_locations</ac:parameter>
+                        <ac:rich-text-body>
+                            <table class="wrapped">
+                                <colgroup>
+                                    <col/>
+                                    <col/>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th colspan="1">Product homepage</th>
+                                        <td colspan="1">
+                                            <a href="https://shibboleth.net/">https://shibboleth.net/</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Knowledge</th>
+                                        <td colspan="1">
+                                            <p>
+                                                <a href="https://wiki.shibboleth.net/confluence/display/IDP30">
+                                                    https://wiki.shibboleth.net/confluence/display/IDP30
+                                                </a>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Product management</th>
+                                        <td>
+                                            <p>
+                                                <a href="https://jira.auckland.ac.nz/browse/IDENTITY">
+                                                    https://jira.auckland.ac.nz/browse/IDENTITY
+                                                </a>
+                                            </p>
+                                            <p>
+                                                <ac:link>
+                                                    <ri:page ri:space-key="GroupApps"
+                                                             ri:content-title="Shibboleth IDP3 Upgrade Development Notes"/>
+                                                </ac:link>
+                                            </p>
+                                            <p>(Applications Engineering) Attribute list -
+                                                <ac:link>
+                                                    <ri:page ri:space-key="GroupApps"
+                                                             ri:content-title="Attribute Resolver Migration"/>
+                                                </ac:link>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Reference Architecture</th>
+                                        <td colspan="1">
+                                            <ac:link>
+                                                <ri:page ri:space-key="REFARCH" ri:content-title="Element_Shibboleth"/>
+                                            </ac:link>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Test plan</th>
+                                        <td>
+                                            <a href="https://wiki.auckland.ac.nz/pages/viewpage.action?pageId=111493041">
+                                                Shibboleth Upgrade - EPR v4.26.x (Release Date dd/mm/2016)
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Source repository</th>
+                                        <td colspan="1">
+                                            <p>
+                                                <a href="https://stash.auckland.ac.nz/projects/ITSSHI">
+                                                    https://stash.auckland.ac.nz/projects/ITSSHI
+                                                </a>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Support Site</th>
+                                        <td colspan="1">
+                                            <a href="http://shibboleth.net/community/">
+                                                http://shibboleth.net/community/
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">
+                                            <span>
+                                                <span>Configuring Shibboleth SPs</span>
+                                            </span>
+                                        </th>
+                                        <td colspan="1">
+                                            <ul>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/SSO+Enablement+Procedures">
+                                                        SSO Enablement Procedures
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/IAM/Apache+integration+with+Shibboleth+for+Single+Sign+On">
+                                                        Apache integration with Shibboleth for Single Sign On
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Windows+Based+Migration+Procedures">
+                                                        Windows Based Migration Procedures
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Shibboleth+SP+Installer+for+IIS">
+                                                        Shibboleth SP Installer for IIS
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Windows+Server+with+Virtual+Hosts+to+EPR+Shibboleth">
+                                                        Windows Server with Virtual Hosts to EPR Shibboleth
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="5ba1d89e-9292-4454-af76-08ba7592a490">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Architecture Overview</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="report-block" ac:schema-version="1"
+                                         ac:macro-id="1b9b8867-e615-4e6e-a692-e1255fea1b80">
+                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                        <ac:rich-text-body>
+                            <ac:structured-macro ac:name="local-reporter" ac:schema-version="1"
+                                                 ac:macro-id="808ec342-51e3-462c-acfa-e8db9d8b8830">
+                                <ac:parameter ac:name="">page:children</ac:parameter>
+                                <ac:rich-text-body>
+                                    <p>
+                                        <ac:structured-macro ac:name="content-filter" ac:schema-version="1"
+                                                             ac:macro-id="6f5ef806-6f4c-4b28-8098-70fad8291d0f">
+                                            <ac:parameter ac:name="label">+inv_architecture_overview</ac:parameter>
+                                            <ac:parameter ac:name="type">+page</ac:parameter>
+                                        </ac:structured-macro>&nbsp;
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-body" ac:schema-version="1"
+                                                 ac:macro-id="3aea1b47-8601-40ab-9068-d8b0346fa594">
+                                <ac:rich-text-body>
+                                    <p>
+                                        <ac:structured-macro ac:name="report-info" ac:schema-version="1"
+                                                             ac:macro-id="2f997915-176b-4cd1-a26c-8caefa6dfbc5">
+                                            <ac:parameter ac:name="render">richtext</ac:parameter>
+                                            <ac:parameter ac:name="">content:excerpt</ac:parameter>
+                                        </ac:structured-macro>
+                                    </p>
+                                    <p>View
+                                        <ac:structured-macro ac:name="report-info" ac:schema-version="1"
+                                                             ac:macro-id="fb43972d-7dfd-4ea5-b8b8-0a8670d6f312">
+                                            <ac:parameter ac:name="link">true</ac:parameter>
+                                            <ac:parameter ac:name="render">richtext</ac:parameter>
+                                            <ac:parameter ac:name="">page:title</ac:parameter>
+                                        </ac:structured-macro>
+                                        .
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-empty" ac:schema-version="1"
+                                                 ac:macro-id="ade1508a-103f-4f5f-ab9d-6bf88375fce6">
+                                <ac:rich-text-body>
+                                    <ac:structured-macro ac:name="create-page" ac:schema-version="1"
+                                                         ac:macro-id="c1604e78-897a-4798-b0f1-bcfdfdd20c67">
+                                        <ac:parameter ac:name="template">Architecture Overview</ac:parameter>
+                                        <ac:parameter ac:name="title">%parenttitle% Architecture Overview</ac:parameter>
+                                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                                        <ac:parameter ac:name="labels">inv_architecture_overview</ac:parameter>
+                                        <ac:parameter ac:name="target">edit</ac:parameter>
+                                        <ac:plain-text-body><![CDATA[Add Architecture Overview]]></ac:plain-text-body>
+                                    </ac:structured-macro>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="97f5f29d-7a0f-4ee3-81c9-55d0a26a0035">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Infrastructure</ac:parameter>
+                <ac:rich-text-body>
+                    <p>
+                        <ac:placeholder>Remove this section for SaaS/Cloud application.</ac:placeholder>
+                    </p>
+                    <h3>Servers</h3>
+                    <table class="wrapped">
+                        <tbody>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Production</th>
+                                <th>Test</th>
+                                <th colspan="1">Development</th>
+                                <th colspan="1">Alpha</th>
+                                <th colspan="1">Beta</th>
+                            </tr>
+                            <tr>
+                                <td>Web</td>
+                                <td>
+                                    <p>shibidpprd01.its.auckland.ac.nz</p>
+                                    <p>shibidpprd02.its</p>
+                                </td>
+                                <td>
+                                    <p>shibidptst01.its.auckland.ac.nz</p>
+                                    <p>shibidptst02.its.auckland.ac.nz</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>shibidpdev01.its.auckland.ac.nz</p>
+                                    <p>shibidpdev02.its.auckland.ac.nz</p>
+                                </td>
+                                <td colspan="1">
+                                    <a href="http://idpsnddev01.its.auckland.ac.nz">idpsnddev01.its.auckland.ac.nz</a>
+                                </td>
+                                <td colspan="1">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>App</td>
+                                <td>
+                                    <p>shibidpprd01.its</p>
+                                    <p>shibidpprd02.its</p>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td>
+                                    <p>shibidptst01.its.auckland.ac.nz</p>
+                                    <p>shibidptst02.its.auckland.ac.nz</p>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>shibidpdev01.its.auckland.ac.nz</p>
+                                    <p>shibidpdev02.its.auckland.ac.nz</p>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td colspan="1">&nbsp;</td>
+                                <td colspan="1">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1">
+                                    <p>EPR Database</p>
+                                    <p>(dependency)</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>aueprprd.db</p>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>aueprtst.db</p>
+                                    <p>gdsoratst01.its.auckland.ac.nz</p>
+                                    <p>gdsoratst02.its.auckland.ac.nz</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>&nbsp;</p>
+                                    <p>AUEPRDEV.db.auckland.ac.nz</p>
+                                </td>
+                                <td colspan="1">
+                                    <em>auepralp.db</em>
+                                </td>
+                                <td colspan="1">auepralp.db</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1">Elastic Search</td>
+                                <td colspan="1">
+                                    <p>elsticprd01.its</p>
+                                    <p>elsticprd02.its</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>elstictst01.its</p>
+                                    <p>elstictst02.its</p>
+                                </td>
+                                <td colspan="1">
+                                    <p>elsticdev01.its</p>
+                                    <p>elsticdev02.its</p>
+                                </td>
+                                <td colspan="1">
+                                    <em>idpsnddev01.its</em>
+                                    <br/>
+                                    <em>idpsnddev02.its</em>
+                                </td>
+                                <td colspan="1">
+                                    <em>idpsndtst01.its</em>
+                                    <br/>
+                                    <em>idpsndtst02.its</em>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>Database - EPR</h3>
+                    <table class="wrapped">
+                        <tbody>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Production</th>
+                                <th>Test</th>
+                                <th>Development</th>
+                            </tr>
+                            <tr>
+                                <td colspan="1">Type</td>
+                                <td colspan="1">Oracle</td>
+                                <td colspan="1">
+                                    <span style="color: rgb(112,112,112);">&nbsp;Oracle
+                                        <br/>
+                                    </span>
+                                </td>
+                                <td colspan="1">Oracle</td>
+                            </tr>
+                            <tr>
+                                <td>Host</td>
+                                <td>aueprprd.db</td>
+                                <td>
+                                    <p>AUEPRTST.db.auckland.ac.nz</p>
+                                    <p>gdsoratst01.its.auckland.ac.nz</p>
+                                    <p>gdsoratst02.its.auckland.ac.nz</p>
+                                </td>
+                                <td>AUEPRDEV.db.auckland.ac.nz</td>
+                            </tr>
+                            <tr>
+                                <td>Schema</td>
+                                <td>AUEPRPRD</td>
+                                <td>AUEPRTST_HA</td>
+                                <td>AUEPRDEV</td>
+                            </tr>
+                            <tr>
+                                <td>Account</td>
+                                <td>eprapp</td>
+                                <td>EPRAPP</td>
+                                <td>EPRAPP</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="6fbaaaea-0162-4a84-b826-1b907d67b560">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Access and Security</ac:parameter>
+                <ac:rich-text-body>
+                    <p>
+                        <span style="color: rgb(0,0,0);">
+                            <strong>1.&nbsp;Application Security Overview</strong>
+                        </span>
+                        <br/>
+                        <span style="color: rgb(0,0,0);">
+                            <span style="color: rgb(112,112,112);">
+                                <span style="color: rgb(0,0,0);">Shibboleth</span>
+                            </span>
+                            provides authentication for all Web SSO enabled applications.&nbsp; It does not provide for
+                            group-based authorisations. It is solely an authentication solution.
+                        </span>
+                    </p>
+                    <p>
+                        <span style="color: rgb(0,0,0);">
+                            <strong>2. Who are the users?</strong>
+                        </span>
+                    </p>
+                    <p>End users &amp; anyone who is trying to log into an application that has SSO enabled</p>
+                    <p>
+                        <span style="color: rgb(0,0,0);">
+                            <strong>3. Which affiliations and groups are used for access control?</strong>
+                            <br/>There are neither affiliations, nor groups related to access control.&nbsp; SSO itself
+                            provides access control in the form of authentication.
+                            <br/>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            <span style="color: rgb(0,0,0);">4. What is the process for requestin</span>
+                            <span style="color: rgb(0,0,0);">g the</span>
+                            <span style="color: rgb(0,0,0);">access?</span>
+                        </strong>
+                        <span style="color: rgb(0,0,0);"><br/>End user access to web-sso is provided upon registration
+                            (usually self-registation) to the
+                            <ac:link>
+                                <ri:page ri:content-title="Enterprise Person Registry"/>
+                            </ac:link>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            <span style="color: rgb(0,0,0);">5. Levels of Authentication</span>
+                        </strong>
+                    </p>
+                    <p>
+                        <span style="color: rgb(0,0,0);">
+                            <span style="color: rgb(0,0,0);">Web-SSO provides two levels of authentication</span>
+                        </span>
+                    </p>
+                    <ul>
+                        <li>
+                            <span style="color: rgb(0,0,0);">Level 2 - username and password. Provides the minimum level
+                                of authentication requiring username and password to access a resource.
+                                <br/>
+                            </span>
+                        </li>
+                        <li>
+                            <span style="color: rgb(0,0,0);">Level 3 - <a
+                                    href="https://wiki.auckland.ac.nz/display/APPLCTN/Two+Factor+Authentication">
+                                two-step verification</a>. Provides additional security by requiring a user to login by
+                                entering a one-time token in addition to username and password.&nbsp; Users are required
+                                to register for two factor authentication through the
+                                <ac:link>
+                                    <ri:page ri:content-title="MyToken"/>
+                                    <ac:plain-text-link-body><![CDATA[mytoken]]></ac:plain-text-link-body>
+                                </ac:link>
+                                service.
+                            </span>
+                        </li>
+                        <li>
+                            <span style="color: rgb(0,0,0);">
+                                <em>Note: Level 0 and Level 1 are deprecated levels of authentication.</em>
+                            </span>
+                        </li>
+                    </ul>
+                    <p>
+                        <strong>
+                            <span style="color: rgb(0,0,0);">6. Desktop Single Signon (DSSO)</span>
+                        </strong>
+                    </p>
+                    <p>
+                        <span style="color: rgb(0,0,0);">A&nbsp;<ac:link>
+                            <ri:page ri:content-title="Desktop Single Sign On"/>
+                        </ac:link>
+                            solution has been developed to provide a seamless web-sso authentication solution for
+                            domain-connected users running the DSSO service.&nbsp; Once logged onto their computer,
+                            users are able to access web-sso protected resources without having to manually
+                            authenticate.
+                        </span>
+                    </p>
+                    <p>
+                        <strong>
+                            <span style="color: rgb(0,0,0);">7. Authentication Logging</span>
+                        </strong>
+                    </p>
+                    <p>
+                        <span style="color: rgb(0,0,0);">refer:
+                            <ac:link>
+                                <ri:page ri:content-title="Web Single Sign On - Authentication Logging"/>
+                            </ac:link>
+                        </span>
+                    </p>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="16890409-16fd-4556-a793-9e85f6978994">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Operational Readiness</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="report-block" ac:schema-version="1"
+                                         ac:macro-id="4faff32c-5326-45a6-ab23-0e7750f8d6c8">
+                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                        <ac:rich-text-body>
+                            <ac:structured-macro ac:name="local-reporter" ac:schema-version="1"
+                                                 ac:macro-id="2e4d43fd-8ec0-4f83-a3d5-712ea0a4f06d">
+                                <ac:parameter ac:name="">page:children</ac:parameter>
+                                <ac:rich-text-body>
+                                    <p>
+                                        <ac:structured-macro ac:name="content-filter" ac:schema-version="1"
+                                                             ac:macro-id="3ddda707-c331-456e-8c61-caa6bbd256f2">
+                                            <ac:parameter ac:name="label">+operational_readiness</ac:parameter>
+                                            <ac:parameter ac:name="type">+page</ac:parameter>
+                                        </ac:structured-macro>&nbsp;
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-body" ac:schema-version="1"
+                                                 ac:macro-id="5106171a-42f9-484c-b159-9fceb03d4e56">
+                                <ac:rich-text-body>
+                                    <p>View the
+                                        <ac:structured-macro ac:name="report-info" ac:schema-version="1"
+                                                             ac:macro-id="1b951def-ca8e-4d3a-a522-4e1eb4809190">
+                                            <ac:parameter ac:name="link">true</ac:parameter>
+                                            <ac:parameter ac:name="render">richtext</ac:parameter>
+                                            <ac:parameter ac:name="">page:title</ac:parameter>
+                                        </ac:structured-macro>
+                                        .
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-empty" ac:schema-version="1"
+                                                 ac:macro-id="afc68fd5-01fb-4003-b3a8-a6044429971f">
+                                <ac:rich-text-body>
+                                    <ac:structured-macro ac:name="create-page" ac:schema-version="1"
+                                                         ac:macro-id="40f92b5a-09d1-4904-80f9-52068f1d1a12">
+                                        <ac:parameter ac:name="template">Operational Readiness v2</ac:parameter>
+                                        <ac:parameter ac:name="title">%parenttitle% Operational Readiness</ac:parameter>
+                                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                                        <ac:parameter ac:name="labels">operational_readiness</ac:parameter>
+                                        <ac:plain-text-body>
+                                            <![CDATA[Add Operational Readiness Checklist]]></ac:plain-text-body>
+                                    </ac:structured-macro>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="83c5f558-61b8-4dc0-a133-cbf6696d6775">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Roadmap</ac:parameter>
+                <ac:rich-text-body>
+                    <p>
+                        <ac:link>
+                            <ri:page ri:space-key="UIS" ri:content-title="Identity and Access Management - 2016 -2018"/>
+                        </ac:link>
+                    </p>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="64b1787a-19bb-4c0e-8c44-d7b12c4e7907">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#254C6C</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">FAQ</ac:parameter>
+                <ac:rich-text-body>
+                    <p>&nbsp;</p>
+                    <a href="https://wiki.auckland.ac.nz/display/IAM/SSO+and+DSSO+knowledgebase+articles">SSO and DSSO
+                        knowledgebase articles
+                    </a>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+        </ac:layout-cell>
+        <ac:layout-cell>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="cf80bd18-3e1d-4f63-ba30-1a6cdc3a03a0">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#0085B7</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Info</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="details" ac:schema-version="1"
+                                         ac:macro-id="9d213503-c8fd-4463-a151-f4f417481719">
+                        <ac:parameter ac:name="label">inv_item_info</ac:parameter>
+                        <ac:rich-text-body>
+                            <table class="wrapped">
+                                <colgroup>
+                                    <col/>
+                                    <col/>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th colspan="1">Type</th>
+                                        <td colspan="1">Application</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Life Cycle Phase</th>
+                                        <td colspan="1">
+                                            <div class="content-wrapper">
+                                                <p>
+                                                    <ac:structured-macro ac:name="status" ac:schema-version="1"
+                                                                         ac:macro-id="76b68306-57bf-4bc9-9234-5b04dd331e79">
+                                                        <ac:parameter ac:name="subtle">true</ac:parameter>
+                                                        <ac:parameter ac:name="colour">Green</ac:parameter>
+                                                        <ac:parameter ac:name="title">MATURITY</ac:parameter>
+                                                        <ac:parameter ac:name=""/>
+                                                    </ac:structured-macro>
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Common Names</th>
+                                        <td colspan="1">Single Sign On, Web SSO, SSO, OneLogin, Shibboleth, Shibboleth
+                                            IdP3.
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Implementation Year</th>
+                                        <td colspan="1">2010</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">
+                                            <span>CAUDIT Capability L0</span>
+                                        </th>
+                                        <td colspan="1">Information Management</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">
+                                            <span>CAUDIT Capability L1</span>
+                                        </th>
+                                        <td colspan="1">Identity &amp; Access Management</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Software Licensing Model</th>
+                                        <td colspan="1">Open Source
+                                            <br/>
+                                            <p>&nbsp;</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">External Users Allowed</th>
+                                        <td colspan="1">
+                                            <p>Yes</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Last Upgrade Year</th>
+                                        <td colspan="1">2016</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Version</th>
+                                        <td colspan="1">Shibboleth 3</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Platform</th>
+                                        <td colspan="1">Java</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Vendor</th>
+                                        <td colspan="1">Internet2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="35cd1d95-b335-472b-97be-b103c92746c8">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#0085B7</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Stakeholders</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="details" ac:schema-version="1"
+                                         ac:macro-id="f8d165db-f14b-472d-8a69-848e8012cf69">
+                        <ac:parameter ac:name="label">itil_stakeholders</ac:parameter>
+                        <ac:rich-text-body>
+                            <table class="wrapped">
+                                <colgroup>
+                                    <col/>
+                                    <col/>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th colspan="1">Organisation Owner
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-ValidOrganisationalOwners">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td colspan="1">Digital Strategy and Architecture</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Business Owner</th>
+                                        <td colspan="1">
+                                            <div class="content-wrapper">
+                                                <ac:link>
+                                                    <ri:user ri:userkey="02588ac94220fe3f014220ffd85f0751"/>
+                                                </ac:link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Service Owner</th>
+                                        <td colspan="1">
+                                            <div class="content-wrapper">
+                                                <ac:link>
+                                                    <ri:user ri:userkey="02588ac94220fe3f014220ffdd8e0bea"/>
+                                                </ac:link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Service Manager</th>
+                                        <td>
+                                            <div class="content-wrapper">
+                                                <ac:link>
+                                                    <ri:user ri:userkey="8a8500e4549f53990154b79fab9c0015"/>
+                                                </ac:link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Subject Matter Experts</th>
+                                        <td colspan="1">
+                                            <div class="content-wrapper">
+                                                <p>
+                                                    <ac:link>
+                                                        <ri:user ri:userkey="02588ac94220fe3f014220ffe1ec1050"/>
+                                                    </ac:link>
+                                                    ,
+                                                    <ac:link>
+                                                        <ri:user ri:userkey="02588ac94220fe3f014220ffe4671212"/>
+                                                    </ac:link>
+                                                    ,
+                                                    <ac:link>
+                                                        <ri:user ri:userkey="02588ac94220fe3f014220ffec37179b"/>
+                                                    </ac:link>
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Delivery Team</th>
+                                        <td colspan="1">Identity &amp; Access Management</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                    <ac:structured-macro ac:name="info" ac:schema-version="1"
+                                         ac:macro-id="d7b0d0c2-341e-4d68-8e1c-a3e0d0530c30">
+                        <ac:rich-text-body>
+                            <p>Information on how to define stakeholders can be found <a
+                                    href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Stakeholders">
+                                here</a>.
+                            </p>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="ed1f5409-10f9-425b-8dcf-d799c194a6fd">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#0085B7</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Support</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="report-block" ac:schema-version="1"
+                                         ac:macro-id="5f239920-7ddd-4160-b073-d4022239aac6">
+                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                        <ac:rich-text-body>
+                            <ac:structured-macro ac:name="local-reporter" ac:schema-version="1"
+                                                 ac:macro-id="b37cc8a5-31d2-4e42-b877-1e41b665dc81">
+                                <ac:parameter ac:name="">page:children</ac:parameter>
+                                <ac:rich-text-body>
+                                    <p>
+                                        <ac:structured-macro ac:name="content-filter" ac:schema-version="1"
+                                                             ac:macro-id="5debf290-2a3a-4637-94f4-79a968dc3884">
+                                            <ac:parameter ac:name="label">+support_model</ac:parameter>
+                                            <ac:parameter ac:name="type">+page</ac:parameter>
+                                        </ac:structured-macro>&nbsp;
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-body" ac:schema-version="1"
+                                                 ac:macro-id="c7bad31b-fae6-48b7-ae2a-0a97fc936721">
+                                <ac:rich-text-body>
+                                    <p>
+                                        <ac:structured-macro ac:name="report-info" ac:schema-version="1"
+                                                             ac:macro-id="ec328235-8ca1-4e97-9d64-0aba710d0047">
+                                            <ac:parameter ac:name="render">richtext</ac:parameter>
+                                            <ac:parameter ac:name="">content:excerpt</ac:parameter>
+                                        </ac:structured-macro>
+                                    </p>
+                                    <p>View the&nbsp;full
+                                        <ac:structured-macro ac:name="report-info" ac:schema-version="1"
+                                                             ac:macro-id="f655b212-156d-4e21-9347-7224cda970aa">
+                                            <ac:parameter ac:name="link">true</ac:parameter>
+                                            <ac:parameter ac:name="render">richtext</ac:parameter>
+                                            <ac:parameter ac:name="">page:title</ac:parameter>
+                                        </ac:structured-macro>
+                                        .
+                                    </p>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                            <ac:structured-macro ac:name="report-empty" ac:schema-version="1"
+                                                 ac:macro-id="2260fcaa-55c9-4041-a81c-764229c6b7e5">
+                                <ac:rich-text-body>
+                                    <ac:structured-macro ac:name="create-page" ac:schema-version="1"
+                                                         ac:macro-id="3bc81c9c-cf75-48e2-9c35-745ac8e6a0f4">
+                                        <ac:parameter ac:name="template">Support Model</ac:parameter>
+                                        <ac:parameter ac:name="title">%parenttitle% Support Model</ac:parameter>
+                                        <ac:parameter ac:name="atlassian-macro-output-type">BLOCK</ac:parameter>
+                                        <ac:parameter ac:name="labels">support_model</ac:parameter>
+                                        <ac:parameter ac:name="target">edit</ac:parameter>
+                                        <ac:plain-text-body><![CDATA[Add Support Model]]></ac:plain-text-body>
+                                    </ac:structured-macro>
+                                </ac:rich-text-body>
+                            </ac:structured-macro>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="7de56f07-e6d8-435d-84a6-7439b6eb9738">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#0085B7</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Non-Functional Requirements</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="details" ac:schema-version="1"
+                                         ac:macro-id="f8b139b2-cbe8-473b-bd2b-82bc757de1b6">
+                        <ac:parameter ac:name="label">nfr</ac:parameter>
+                        <ac:rich-text-body>
+                            <table class="wrapped">
+                                <colgroup>
+                                    <col/>
+                                    <col/>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <th>Hours of Support
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <p>24x7
+                                                <br/>
+                                                <span style="color: rgb(112,112,112);">&nbsp;</span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Hours of Use
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td>24x7</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Maintenance Windows
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <span style="color: rgb(255,0,0);">
+                                                <span style="color: rgb(0,0,0);">6 am Friday mornings (if required)
+                                                </span>
+                                                <br/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Patching Cycle
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td colspan="1">Auto-patched</td>
+                                    </tr>
+                                    <tr>
+                                        <th>RTO Current
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <p>
+                                                <span style="color: rgb(255,0,0);">1 minute
+                                                    <br/>
+                                                </span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>RPO Current
+                                            <a href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements">
+                                                <ac:emoticon ac:name="question"/>
+                                            </a>
+                                        </th>
+                                        <td>
+                                            <span style="color: rgb(255,0,0);">Zero</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">RTO Required</th>
+                                        <td colspan="1">
+                                            <span style="color: rgb(255,0,0);">15 minutes
+                                                <br/>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">RPO Required</th>
+                                        <td colspan="1">
+                                            <span style="color: rgb(255,0,0);">zero</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">Hosting Tier</th>
+                                        <td colspan="1">
+                                            <p>Platinum</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Service Criticality</th>
+                                        <td>
+                                            <p>Yes</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Data Sensitivity</th>
+                                        <td>
+                                            <p>High</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">TIME Fitness</th>
+                                        <td colspan="1">4</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">TIME Value</th>
+                                        <td colspan="1">5</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">TIME Cost</th>
+                                        <td colspan="1">2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+            <ac:structured-macro ac:name="panel" ac:schema-version="1"
+                                 ac:macro-id="3101fdfc-bf29-4d61-b6d1-623cb5863096">
+                <ac:parameter ac:name="borderColor">#e5e5e5</ac:parameter>
+                <ac:parameter ac:name="titleColor">#f5f5f5</ac:parameter>
+                <ac:parameter ac:name="titleBGColor">#f89c2e</ac:parameter>
+                <ac:parameter ac:name="borderStyle">solid</ac:parameter>
+                <ac:parameter ac:name="title">Additional Information</ac:parameter>
+                <ac:rich-text-body>
+                    <ac:structured-macro ac:name="info" ac:schema-version="1"
+                                         ac:macro-id="79fbb216-12a3-4a37-ab2d-1f12197b9bbe">
+                        <ac:rich-text-body>
+                            <p>Use this space to list additional metadata specific to this page.</p>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                    <ac:structured-macro ac:name="details" ac:schema-version="1"
+                                         ac:macro-id="e3214181-437b-4baf-b1bd-6f913263217d">
+                        <ac:parameter ac:name="label">inv_additional_info</ac:parameter>
+                        <ac:rich-text-body>
+                            <p>
+                                <span style="color: rgb(112,112,112);">
+                                    <ac:placeholder>Add(or remove) rows to list additional metadata or attributes, if
+                                        applicable.
+                                    </ac:placeholder>
+                                </span>
+                            </p>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th colspan="1">
+                                            <ac:placeholder>Additional Attribute Name</ac:placeholder>
+                                        </th>
+                                        <td colspan="1">
+                                            <ac:placeholder>Value</ac:placeholder>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </ac:rich-text-body>
+                    </ac:structured-macro>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+        </ac:layout-cell>
+    </ac:layout-section>
+</ac:layout>

@@ -1,0 +1,746 @@
+<div class="contentLayout2">
+    <div class="columnLayout two-right-sidebar" data-layout="two-right-sidebar">
+        <div class="cell normal" data-type="normal">
+            <div class="innerCell">
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Overview</b></div>
+                    <div class="panelContent"><p>Shibboleth is a standards based, open source software package for web
+                        single sign-on across or within organisational boundaries. It allows sites to make informed
+                        decisions for individual access of protected online resources in a privacy-preserving
+                        manner.</p>
+                        <p>The Shibboleth software implements widely used federated identity standards, principally the <a
+                                class="external-link" href="https://www.oasis-open.org/" rel="nofollow"
+                                style="text-decoration: underline;">OASIS</a> Security Assertion Markup Language (SAML),
+                            to provide a federated single sign-on and attribute exchange framework. A user authenticates
+                            with his or her organizational credentials, and the organisation (or identity provider)
+                            passes the minimal identity information necessary to the service provider to enable an
+                            authorisation [is the user authorised to access the site] decision. Shibboleth also provides
+                            extended privacy functionality allowing a user and their home site to control the attributes
+                            released to each application.</p>
+                        <p><a class="external-link" href="https://wiki.shibboleth.net/confluence/display/IDP30/Home"
+                              rel="nofollow">Shibboleth IDP3</a> has been implemented as the identity provider (IdP) for
+                            all web-sso protected applications within the university.</p>
+                        <p>The University of Auckland's web-sso provides seamless access to shared computing resources
+                            and collaboration environments provided through the <a
+                                    href="https://wiki.auckland.ac.nz/display/APPLCTN/Tuakiri"
+                                    rel="nofollow">Tuakiri</a> access federation</p>
+                        <p>The application is typically accessed via a login page when trying to access a protected
+                            application, but can be accessed directly from these locations:</p>
+                        <div class="table-wrap">
+                            <table class="wrapped confluenceTable">
+                                <tbody>
+                                <tr>
+                                    <th class="confluenceTh"> </th>
+                                    <th class="confluenceTh">Production</th>
+                                    <th colspan="1" class="confluenceTh">Test</th>
+                                    <th colspan="1" class="confluenceTh">Development</th>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">End user</td>
+                                    <td class="confluenceTd"><span class="nolink"><span class="nolink">https://idp3.auckland.ac.nz</span></span>
+                                    </td>
+                                    <td colspan="1" class="confluenceTd"><span class="nolink">https://idp3.test.auckland.ac.nz</span>
+                                    </td>
+                                    <td colspan="1" class="confluenceTd">https://idp3.dev.auckland.ac.nz</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="confluenceTd">Administrator</td>
+                                    <td colspan="1" class="confluenceTd">NA</td>
+                                    <td colspan="1" class="confluenceTd">NA</td>
+                                    <td colspan="1" class="confluenceTd">NA</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h3 id="WebSingleSignOn-KeyLocations">Key Locations</h3>
+                        <div class="plugin-tabmeta-details conf-macro output-block" data-hasbody="true"
+                             data-macro-name="details">
+                            <div class="table-wrap">
+                                <table class="wrapped confluenceTable">
+                                    <colgroup>
+                                        <col/>
+                                        <col/>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Product homepage</th>
+                                        <td colspan="1" class="confluenceTd"><a class="external-link"
+                                                                                href="https://shibboleth.net/"
+                                                                                rel="nofollow">https://shibboleth.net/</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Knowledge</th>
+                                        <td colspan="1" class="confluenceTd"><p><a class="external-link"
+                                                                                   href="https://wiki.shibboleth.net/confluence/display/IDP30"
+                                                                                   rel="nofollow">https://wiki.shibboleth.net/confluence/display/IDP30</a>
+                                        </p></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Product management</th>
+                                        <td class="confluenceTd"><p><a class="external-link"
+                                                                       href="https://jira.auckland.ac.nz/browse/IDENTITY"
+                                                                       rel="nofollow">https://jira.auckland.ac.nz/browse/IDENTITY</a>
+                                        </p>
+                                            <p><a href="/display/GroupApps/Shibboleth+IDP3+Upgrade+Development+Notes">Shibboleth
+                                                IDP3 Upgrade Development Notes</a></p>
+                                            <p>(Applications Engineering) Attribute list - <a
+                                                    href="/display/GroupApps/Attribute+Resolver+Migration">Attribute
+                                                Resolver Migration</a></p></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Reference Architecture</th>
+                                        <td colspan="1" class="confluenceTd"><a
+                                                href="/display/REFARCH/Element_Shibboleth">Element_Shibboleth</a></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Test plan</th>
+                                        <td class="confluenceTd"><a
+                                                href="https://wiki.auckland.ac.nz/pages/viewpage.action?pageId=111493041"
+                                                rel="nofollow">Shibboleth Upgrade - EPR v4.26.x (Release Date
+                                            dd/mm/2016)</a></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Source repository</th>
+                                        <td colspan="1" class="confluenceTd"><p><a class="external-link"
+                                                                                   href="https://stash.auckland.ac.nz/projects/ITSSHI"
+                                                                                   rel="nofollow">https://stash.auckland.ac.nz/projects/ITSSHI</a>
+                                        </p></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Support Site</th>
+                                        <td colspan="1" class="confluenceTd"><a class="external-link"
+                                                                                href="http://shibboleth.net/community/"
+                                                                                rel="nofollow">http://shibboleth.net/community/</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">
+                                            <span><span>Configuring Shibboleth SPs</span></span></th>
+                                        <td colspan="1" class="confluenceTd">
+                                            <ul>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/SSO+Enablement+Procedures"
+                                                       rel="nofollow">SSO Enablement Procedures</a></li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/IAM/Apache+integration+with+Shibboleth+for+Single+Sign+On"
+                                                       rel="nofollow">Apache integration with Shibboleth for Single Sign
+                                                        On</a></li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Windows+Based+Migration+Procedures"
+                                                       rel="nofollow">Windows Based Migration Procedures</a></li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Shibboleth+SP+Installer+for+IIS"
+                                                       rel="nofollow">Shibboleth SP Installer for IIS</a></li>
+                                                <li>
+                                                    <a href="https://wiki.auckland.ac.nz/display/ITPRO/Windows+Server+with+Virtual+Hosts+to+EPR+Shibboleth"
+                                                       rel="nofollow">Windows Server with Virtual Hosts to EPR
+                                                        Shibboleth</a></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Architecture Overview</b></div>
+                    <div class="panelContent">View <a href="/display/APPLCTN/Web+Single+Sign+On+Architecture+Overview"
+                                                      title="" alt="">Web Single Sign On Architecture Overview</a>.
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Infrastructure</b></div>
+                    <div class="panelContent"><p></p>
+                        <h3 id="WebSingleSignOn-Servers">Servers</h3>
+                        <div class="table-wrap">
+                            <table class="wrapped confluenceTable">
+                                <tbody>
+                                <tr>
+                                    <th class="confluenceTh"> </th>
+                                    <th class="confluenceTh">Production</th>
+                                    <th class="confluenceTh">Test</th>
+                                    <th colspan="1" class="confluenceTh">Development</th>
+                                    <th colspan="1" class="confluenceTh">Alpha</th>
+                                    <th colspan="1" class="confluenceTh">Beta</th>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">Web</td>
+                                    <td class="confluenceTd"><p>shibidpprd01.its.auckland.ac.nz</p>
+                                        <p>shibidpprd02.its</p></td>
+                                    <td class="confluenceTd"><p>shibidptst01.its.auckland.ac.nz</p>
+                                        <p>shibidptst02.its.auckland.ac.nz</p></td>
+                                    <td colspan="1" class="confluenceTd"><p>shibidpdev01.its.auckland.ac.nz</p>
+                                        <p>shibidpdev02.its.auckland.ac.nz</p></td>
+                                    <td colspan="1" class="confluenceTd"><a class="external-link"
+                                                                            href="http://idpsnddev01.its.auckland.ac.nz"
+                                                                            rel="nofollow">idpsnddev01.its.auckland.ac.nz</a>
+                                    </td>
+                                    <td colspan="1" class="confluenceTd"> </td>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">App</td>
+                                    <td class="confluenceTd"><p>shibidpprd01.its</p>
+                                        <p>shibidpprd02.its</p>
+                                        <p> </p></td>
+                                    <td class="confluenceTd"><p>shibidptst01.its.auckland.ac.nz</p>
+                                        <p>shibidptst02.its.auckland.ac.nz</p>
+                                        <p> </p></td>
+                                    <td colspan="1" class="confluenceTd"><p>shibidpdev01.its.auckland.ac.nz</p>
+                                        <p>shibidpdev02.its.auckland.ac.nz</p>
+                                        <p> </p></td>
+                                    <td colspan="1" class="confluenceTd"> </td>
+                                    <td colspan="1" class="confluenceTd"> </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="confluenceTd"><p>EPR Database</p>
+                                        <p>(dependency)</p></td>
+                                    <td colspan="1" class="confluenceTd"><p>aueprprd.db</p>
+                                        <p> </p></td>
+                                    <td colspan="1" class="confluenceTd"><p>aueprtst.db</p>
+                                        <p>gdsoratst01.its.auckland.ac.nz</p>
+                                        <p>gdsoratst02.its.auckland.ac.nz</p></td>
+                                    <td colspan="1" class="confluenceTd"><p> </p>
+                                        <p>AUEPRDEV.db.auckland.ac.nz</p></td>
+                                    <td colspan="1" class="confluenceTd"><em>auepralp.db</em></td>
+                                    <td colspan="1" class="confluenceTd">auepralp.db</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="confluenceTd">Elastic Search</td>
+                                    <td colspan="1" class="confluenceTd"><p>elsticprd01.its</p>
+                                        <p>elsticprd02.its</p></td>
+                                    <td colspan="1" class="confluenceTd"><p>elstictst01.its</p>
+                                        <p>elstictst02.its</p></td>
+                                    <td colspan="1" class="confluenceTd"><p>elsticdev01.its</p>
+                                        <p>elsticdev02.its</p></td>
+                                    <td colspan="1" class="confluenceTd"><em>idpsnddev01.its</em><br/><em>idpsnddev02.its</em>
+                                    </td>
+                                    <td colspan="1" class="confluenceTd"><em>idpsndtst01.its</em><br/><em>idpsndtst02.its</em>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <h3 id="WebSingleSignOn-Database-EPR">Database - EPR</h3>
+                        <div class="table-wrap">
+                            <table class="wrapped confluenceTable">
+                                <tbody>
+                                <tr>
+                                    <th class="confluenceTh"> </th>
+                                    <th class="confluenceTh">Production</th>
+                                    <th class="confluenceTh">Test</th>
+                                    <th class="confluenceTh">Development</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="1" class="confluenceTd">Type</td>
+                                    <td colspan="1" class="confluenceTd">Oracle</td>
+                                    <td colspan="1" class="confluenceTd"><span
+                                            style="color: rgb(112,112,112);"> Oracle<br/></span></td>
+                                    <td colspan="1" class="confluenceTd">Oracle</td>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">Host</td>
+                                    <td class="confluenceTd">aueprprd.db</td>
+                                    <td class="confluenceTd"><p>AUEPRTST.db.auckland.ac.nz</p>
+                                        <p>gdsoratst01.its.auckland.ac.nz</p>
+                                        <p>gdsoratst02.its.auckland.ac.nz</p></td>
+                                    <td class="confluenceTd">AUEPRDEV.db.auckland.ac.nz</td>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">Schema</td>
+                                    <td class="confluenceTd">AUEPRPRD</td>
+                                    <td class="confluenceTd">AUEPRTST_HA</td>
+                                    <td class="confluenceTd">AUEPRDEV</td>
+                                </tr>
+                                <tr>
+                                    <td class="confluenceTd">Account</td>
+                                    <td class="confluenceTd">eprapp</td>
+                                    <td class="confluenceTd">EPRAPP</td>
+                                    <td class="confluenceTd">EPRAPP</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Access and Security</b></div>
+                    <div class="panelContent"><p><span style="color: rgb(0,0,0);"> <strong>1. Application Security Overview</strong> </span>
+                        <br/> <span style="color: rgb(0,0,0);"><span style="color: rgb(112,112,112);"><span
+                                style="color: rgb(0,0,0);">Shibboleth</span></span> provides authentication for all Web SSO enabled applications.  It does not provide for group-based authorisations. It is solely an authentication solution.</span>
+                    </p>
+                        <p><span style="color: rgb(0,0,0);"> <strong>2. Who are the users?</strong> </span></p>
+                        <p>End users – anyone who is trying to log into an application that has SSO enabled</p>
+                        <p><span style="color: rgb(0,0,0);"> <strong>3. Which affiliations and groups are used for access control?</strong> <br/>There are neither affiliations, nor groups related to access control.  SSO itself provides access control in the form of authentication. <br/> </span>
+                        </p>
+                        <p><strong> <span style="color: rgb(0,0,0);">4. What is the process for requestin</span><span
+                                style="color: rgb(0,0,0);">g the</span> <span style="color: rgb(0,0,0);"> access?</span>
+                        </strong> <span style="color: rgb(0,0,0);"> <br/>End user access to web-sso is provided upon registration (usually self-registation) to the <a
+                                href="/display/APPLCTN/Enterprise+Person+Registry">Enterprise Person Registry</a></span>
+                        </p>
+                        <p><strong><span style="color: rgb(0,0,0);">5. Levels of Authentication</span></strong></p>
+                        <p><span style="color: rgb(0,0,0);"><span style="color: rgb(0,0,0);">Web-SSO provides two levels of authentication</span></span>
+                        </p>
+                        <ul>
+                            <li><span style="color: rgb(0,0,0);">Level 2 - username and password. Provides the minimum level of authentication requiring username and password to access a resource.<br/></span>
+                            </li>
+                            <li><span style="color: rgb(0,0,0);">Level 3 - <a
+                                    href="https://wiki.auckland.ac.nz/display/APPLCTN/Two+Factor+Authentication"
+                                    rel="nofollow">two-step verification</a>. Provides additional security by requiring a user to login by entering a one-time token in addition to username and password.  Users are required to register for two factor authentication through the <a
+                                    href="/display/APPLCTN/MyToken">mytoken</a> service.</span></li>
+                            <li><span style="color: rgb(0,0,0);"><em>Note: Level 0 and Level 1 are deprecated levels of authentication.</em></span>
+                            </li>
+                        </ul>
+                        <p><strong><span style="color: rgb(0,0,0);">6. Desktop Single Signon (DSSO)</span></strong></p>
+                        <p><span style="color: rgb(0,0,0);">A <a href="/display/APPLCTN/Desktop+Single+Sign+On">Desktop Single Sign On</a> solution has been developed to provide a seamless web-sso authentication solution for domain-connected users running the DSSO service.  Once logged onto their computer, users are able to access web-sso protected resources without having to manually authenticate.</span>
+                        </p>
+                        <p><strong><span style="color: rgb(0,0,0);">7. Authentication Logging</span></strong></p>
+                        <p><span style="color: rgb(0,0,0);">refer: <a
+                                href="/display/APPLCTN/Web+Single+Sign+On+-+Authentication+Logging">Web Single Sign On - Authentication Logging</a></span>
+                        </p></div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Operational Readiness</b></div>
+                    <div class="panelContent">View the <a
+                            href="/display/APPLCTN/Web+Single+Sign+On+Operational+Readiness" title="" alt="">Web Single
+                        Sign On Operational Readiness</a>.
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>Roadmap</b></div>
+                    <div class="panelContent"><p><a href="/display/UIS/Identity+and+Access+Management+-+2016+-2018">Identity
+                        and Access Management - 2016 -2018</a></p></div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #254C6C;color: #f5f5f5;">
+                        <b>FAQ</b></div>
+                    <div class="panelContent"><p> </p><a
+                            href="https://wiki.auckland.ac.nz/display/IAM/SSO+and+DSSO+knowledgebase+articles"
+                            rel="nofollow">SSO and DSSO knowledgebase articles</a>
+                        <p> </p>
+                        <p> </p></div>
+                </div>
+            </div>
+        </div>
+        <div class="cell aside" data-type="aside">
+            <div class="innerCell">
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #0085B7;color: #f5f5f5;">
+                        <b>Info</b></div>
+                    <div class="panelContent">
+                        <div class="plugin-tabmeta-details conf-macro output-block" data-hasbody="true"
+                             data-macro-name="details">
+                            <div class="table-wrap">
+                                <table class="wrapped confluenceTable">
+                                    <colgroup>
+                                        <col/>
+                                        <col/>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Type</th>
+                                        <td colspan="1" class="confluenceTd">Application</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Life Cycle Phase</th>
+                                        <td colspan="1" class="confluenceTd">
+                                            <div class="content-wrapper"><p><span
+                                                    class="status-macro aui-lozenge aui-lozenge-success aui-lozenge-subtle conf-macro output-inline"
+                                                    data-hasbody="false" data-macro-name="status">MATURITY</span></p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Common Names</th>
+                                        <td colspan="1" class="confluenceTd">Single Sign On, Web SSO, SSO, OneLogin,
+                                            Shibboleth, Shibboleth IdP3.
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Implementation Year</th>
+                                        <td colspan="1" class="confluenceTd">2010</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh"><span>CAUDIT Capability L0</span></th>
+                                        <td colspan="1" class="confluenceTd">Information Management</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh"><span>CAUDIT Capability L1</span></th>
+                                        <td colspan="1" class="confluenceTd">Identity &amp; Access Management</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Software Licensing Model</th>
+                                        <td colspan="1" class="confluenceTd">Open Source<br/>
+                                            <p> </p></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">External Users Allowed</th>
+                                        <td colspan="1" class="confluenceTd"><p>Yes</p></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Last Upgrade Year</th>
+                                        <td colspan="1" class="confluenceTd">2016</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Version</th>
+                                        <td colspan="1" class="confluenceTd">Shibboleth 3</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Platform</th>
+                                        <td colspan="1" class="confluenceTd">Java</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Vendor</th>
+                                        <td colspan="1" class="confluenceTd">Internet2</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #0085B7;color: #f5f5f5;">
+                        <b>Stakeholders</b></div>
+                    <div class="panelContent">
+                        <div class="plugin-tabmeta-details conf-macro output-block" data-hasbody="true"
+                             data-macro-name="details">
+                            <div class="table-wrap">
+                                <table class="wrapped confluenceTable">
+                                    <colgroup>
+                                        <col/>
+                                        <col/>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Organisation Owner<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-ValidOrganisationalOwners"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td colspan="1" class="confluenceTd">Digital Strategy and Architecture</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Business Owner</th>
+                                        <td colspan="1" class="confluenceTd">
+                                            <div class="content-wrapper"><a class="confluence-userlink user-mention"
+                                                                            data-username="jpye004"
+                                                                            href="/display/~jpye004"
+                                                                            data-linked-resource-id="30670980"
+                                                                            data-linked-resource-version="1"
+                                                                            data-linked-resource-type="userinfo"
+                                                                            data-base-url="https://wiki.auckland.ac.nz">John
+                                                Pye</a></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Service Owner</th>
+                                        <td colspan="1" class="confluenceTd">
+                                            <div class="content-wrapper"><a class="confluence-userlink user-mention"
+                                                                            data-username="tals001"
+                                                                            href="/display/~tals001"
+                                                                            data-linked-resource-id="40668536"
+                                                                            data-linked-resource-version="1"
+                                                                            data-linked-resource-type="userinfo"
+                                                                            data-base-url="https://wiki.auckland.ac.nz">Tamara
+                                                Al-Salim</a></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Service Manager</th>
+                                        <td class="confluenceTd">
+                                            <div class="content-wrapper"><a class="confluence-userlink user-mention"
+                                                                            data-username="tbis163"
+                                                                            href="/display/~tbis163"
+                                                                            data-linked-resource-id="112755898"
+                                                                            data-linked-resource-version="1"
+                                                                            data-linked-resource-type="userinfo"
+                                                                            data-base-url="https://wiki.auckland.ac.nz">Terry
+                                                Bisiar</a></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Subject Matter Experts</th>
+                                        <td colspan="1" class="confluenceTd">
+                                            <div class="content-wrapper"><p><a class="confluence-userlink user-mention"
+                                                                               data-username="rwat090"
+                                                                               href="/display/~rwat090"
+                                                                               data-linked-resource-id="30670873"
+                                                                               data-linked-resource-version="2"
+                                                                               data-linked-resource-type="userinfo"
+                                                                               data-base-url="https://wiki.auckland.ac.nz">Reid
+                                                Watson</a>, <a class="confluence-userlink user-mention"
+                                                               data-username="awal091" href="/display/~awal091"
+                                                               data-linked-resource-id="30671898"
+                                                               data-linked-resource-version="1"
+                                                               data-linked-resource-type="userinfo"
+                                                               data-base-url="https://wiki.auckland.ac.nz">Amanda
+                                                Walsh</a>, <a class="confluence-userlink user-mention"
+                                                              data-username="wwan174" href="/display/~wwan174"
+                                                              data-linked-resource-id="10720941"
+                                                              data-linked-resource-version="1"
+                                                              data-linked-resource-type="userinfo"
+                                                              data-base-url="https://wiki.auckland.ac.nz">Wenlai
+                                                Wang</a></p></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Delivery Team</th>
+                                        <td colspan="1" class="confluenceTd">Identity &amp; Access Management</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="confluence-information-macro confluence-information-macro-information conf-macro output-block"
+                             data-hasbody="true" data-macro-name="info"><span
+                                class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"> </span>
+                            <div class="confluence-information-macro-body"><p>Information on how to define stakeholders
+                                can be found <a
+                                        href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Stakeholders"
+                                        rel="nofollow">here</a>.</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #0085B7;color: #f5f5f5;">
+                        <b>Support</b></div>
+                    <div class="panelContent">
+                        <div class="plugin-tabmeta-details conf-macro output-block conf-macro output-inline"
+                             data-hasbody="false" data-macro-name="report-info">
+                            <div class="table-wrap">
+                                <table style="line-height: 1.4285;" class="confluenceTable">
+                                    <tbody>
+                                    <tr>
+                                        <th class="confluenceTh">1st Level Support</th>
+                                        <td class="confluenceTd"><span>Staff Service Centre</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">2nd Level Support</th>
+                                        <td class="confluenceTd">ITS Application Support </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">3rd Level Support - Development</th>
+                                        <td class="confluenceTd">ITS Application Development</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">3rd Level Support - Operational</th>
+                                        <td class="confluenceTd">ITS Application Engineering</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Application Data</th>
+                                        <td class="confluenceTd">ITS Application Engineering</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <p></p>
+                        <p>View the full <a href="/display/APPLCTN/Web+Single+Sign+On+Support+Model" title="" alt="">Web
+                            Single Sign On Support Model</a>.</p></div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #0085B7;color: #f5f5f5;">
+                        <b>Non-Functional Requirements</b></div>
+                    <div class="panelContent">
+                        <div class="plugin-tabmeta-details conf-macro output-block" data-hasbody="true"
+                             data-macro-name="details">
+                            <div class="table-wrap">
+                                <table class="wrapped confluenceTable">
+                                    <colgroup>
+                                        <col/>
+                                        <col/>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <th class="confluenceTh">Hours of Support<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td class="confluenceTd"><p>24x7<br/> <span
+                                                style="color: rgb(112,112,112);"> </span></p></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Hours of Use<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td class="confluenceTd">24x7</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Maintenance Windows<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td class="confluenceTd"><span style="color: rgb(255,0,0);"><span
+                                                style="color: rgb(0,0,0);">6 am Friday mornings (if required)</span><br/></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Patching Cycle<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td colspan="1" class="confluenceTd">Auto-patched</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">RTO Current<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td class="confluenceTd"><p><span
+                                                style="color: rgb(255,0,0);">1 minute<br/></span></p></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">RPO Current<a
+                                                href="https://wiki.auckland.ac.nz/display/APPLCTN/Application+Inventory+Glossary+of+Terms#ApplicationInventoryGlossaryofTerms-Non-FunctionalRequirements"
+                                                rel="nofollow"><img class="emoticon emoticon-question"
+                                                                    src="/s/en_GB/6441/82994790ee2f720a5ec8daf4850ac5b7b34d2194/_/images/icons/emoticons/help_16.png"
+                                                                    data-emoticon-name="question" alt="(question)"/></a>
+                                        </th>
+                                        <td class="confluenceTd"><span style="color: rgb(255,0,0);">Zero</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">RTO Required</th>
+                                        <td colspan="1" class="confluenceTd"><span style="color: rgb(255,0,0);">15 minutes<br/></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">RPO Required</th>
+                                        <td colspan="1" class="confluenceTd"><span
+                                                style="color: rgb(255,0,0);">zero</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">Hosting Tier</th>
+                                        <td colspan="1" class="confluenceTd"><p>Platinum</p></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Service Criticality</th>
+                                        <td class="confluenceTd"><p>Yes</p></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="confluenceTh">Data Sensitivity</th>
+                                        <td class="confluenceTd"><p>High</p></td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">TIME Fitness</th>
+                                        <td colspan="1" class="confluenceTd">4</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">TIME Value</th>
+                                        <td colspan="1" class="confluenceTd">5</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh">TIME Cost</th>
+                                        <td colspan="1" class="confluenceTd">2</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel conf-macro output-block" data-hasbody="true" data-macro-name="panel"
+                     style="border-color: #e5e5e5;border-style: solid;border-width: 1px;">
+                    <div class="panelHeader"
+                         style="border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #e5e5e5;background-color: #f89c2e;color: #f5f5f5;">
+                        <b>Additional Information</b></div>
+                    <div class="panelContent">
+                        <div class="confluence-information-macro confluence-information-macro-information conf-macro output-block"
+                             data-hasbody="true" data-macro-name="info"><span
+                                class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"> </span>
+                            <div class="confluence-information-macro-body"><p>Use this space to list additional metadata
+                                specific to this page.</p></div>
+                        </div>
+                        <div class="plugin-tabmeta-details conf-macro output-block" data-hasbody="true"
+                             data-macro-name="details"><p><span style="color: rgb(112,112,112);">  </span></p>
+                            <div class="table-wrap">
+                                <table class="wrapped confluenceTable">
+                                    <tbody>
+                                    <tr>
+                                        <th colspan="1" class="confluenceTh"></th>
+                                        <td colspan="1" class="confluenceTd"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p><p><span
+        style="border-radius: 2.0px;text-indent: 20.0px;width: auto;padding: 0.0px 4.0px 0.0px 0.0px;text-align: center;color: rgb(255,255,255);z-index: 8675309;display: none;cursor: pointer;">Save</span>
+</p>

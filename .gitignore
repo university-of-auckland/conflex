@@ -155,11 +155,9 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Environment files.
-.env
+# Config files.
+*.yaml
 
 # Documentation files.
-_build/*
-_static/*
-_templates/*
-docs/*
+docs/build/*
+docs/source/*

@@ -1,0 +1,104 @@
+confluence:
+  host: https://wiki.auckland.ac.nz
+  username:
+  password:
+
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  database: capsule
+  username:
+  password:
+  wiki_table_prefix: wiki
+
+logging:
+  level: INFO
+
+wiki:
+  spaces:
+    APPLCTN:
+      pages:
+        labels:
+          application:
+            panels:
+              - Overview
+              - Roadmap
+              - Infrastructure
+            page_properties:
+              - inv_item_info
+              - itil_stakeholders
+              - nfr
+            url:
+              - tinyui
+              - webui
+            pages:
+              labels:
+                support_model:
+                  page_properties:
+                    - support_model
+                    - support_tiers
+                inv_architecture_overview:
+                  page_properties:
+                    - inv_architecture_info
+
+    REFARCH:
+      pages:
+        titles:
+          Reference Architecture:
+            pages:
+              titles:
+                Information Architecture:
+                  pages:
+                    titles:
+                      Information Entities:
+                        pages:
+                          labels:
+                            entity_description:
+                              page_properties:
+                                - entity_description
+                                - entity_caudit
+                Technology Architecture:
+                  pages:
+                    labels:
+                      service-area-metadata:
+                        headings:
+                          $ref: '#/schemas/REFARCH/service-area/headings'
+                        pages:
+                          labels:
+                            domain-metadata:
+                              headings:
+                                $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+                              pages:
+                                labels:
+                                  brick-metadata:
+                                    headings:
+                                      $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+                                    pages:
+                                      labels:
+                                        element-metadata:
+                                          headings:
+                                            $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+schemas:
+  REFARCH:
+    service-area:
+      headings:
+        - Definition
+        - Principles
+        - Standards
+        - Guidelines
+        - Security
+        - Monitoring
+        - Resilience
+        - Recovery
+        - Future
+    domain-brick-element:
+      headings:
+        - Overview
+        - Principles
+        - Standards
+        - Guidelines
+        - Security
+        - Monitoring
+        - Resilience
+        - Recovery
+        - Future

@@ -1,15 +1,27 @@
-from os.path import join, dirname
+import logging
 
-import os
-from dotenv import load_dotenv
+import yaml
+from flatdict import FlatDict
 
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+stream = open('config.yaml', 'r')
+config = yaml.load(stream)
 
-if os.environ.get("CONFLUENCE_API_SERVER"):
-    confluence_api_url = os.environ.get("CONFLUENCE_API_SERVER")
-else:
-    confluence_api_url = os.environ.get("CONFLUENCE_API_URL")
+# Change the value of the $ref tags in the dictionary.
+config = FlatDict(config)
+ref = []
 
-confluence_api_user = os.environ.get("CONFLUENCE_API_USER")
-confluence_api_pass = os.environ.get("CONFLUENCE_API_PASS")
+for key in config:
+    if '$ref' in key:
+        config[key.replace(':$ref', '')] = config[config[key].replace('#/', '').replace('/', ':')]
+config = config.as_dict()
+# print(config)
+stream.close()
+
+# Setup logging,
+level = logging.getLevelName(config['logging']['level'])
+
+logging.basicConfig(level=level)
+
+# Setup backoff logging for when we get URL errors.
+logging.getLogger('backoff').addHandler(logging.StreamHandler())
+logging.getLogger('backoff').setLevel(level)
