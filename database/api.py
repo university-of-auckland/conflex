@@ -6,6 +6,7 @@ from settings import *
 logger = logging.getLogger(__name__)
 
 
+# noinspection SqlResolve
 class DatabaseAPI(object):
     __connection = None
     host = config['mysql']['host']
@@ -145,16 +146,15 @@ class DatabaseAPI(object):
 
     @classmethod
     def check_data_exists(cls, table, parent, k):
-        """Summary line.
-
-        Extended description of function.
+        """Checks to see if the data exists in the table.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            table (str): The table to check for the data.
+            parent (int): The parent component to find.
+            k (str): The key component to find.
 
         Returns:
-            bool: If Data was inserted or not.
+            dict: The data if it exists in the table.
 
         """
 
@@ -165,16 +165,12 @@ class DatabaseAPI(object):
 
     @classmethod
     def delete(cls, table, parent, k=None):
-        """Summary line.
-
-        Extended description of function.
+        """Deletes data from a table.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
-
-        Returns:
-            bool: If Data was inserted or not.
+            table (str): The table to delete the data from.
+            parent (int): The parent component to delete
+            k (str): The key component to delete (if provided).
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
@@ -185,19 +181,12 @@ class DatabaseAPI(object):
                 sql = "DELETE FROM `" + table + "` WHERE `parent`=%s"
                 cursor.execute(sql, parent)
 
-
     @classmethod
     def get_spaces(cls):
-        """Summary line.
-
-        Extended description of function.
-
-        Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+        """Retrieves all the wiki spaces.
 
         Returns:
-            bool: If Data was inserted or not.
+            list: The list of spaces.
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
@@ -208,16 +197,15 @@ class DatabaseAPI(object):
 
     @classmethod
     def select(cls, table, parent, k=None):
-        """Summary line.
-
-        Extended description of function.
+        """Retrieves information from the database given a parent-key combination.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            table (str): The table to find the data in
+            parent (int): The parent component to find.
+            k (str): The key component to find (if provided).
 
         Returns:
-            bool: If Data was inserted or not.
+            list: The list of information.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
             if k:

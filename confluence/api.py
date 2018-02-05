@@ -125,7 +125,7 @@ class ConfluenceAPI(object):
         """
 
         # TODO: WRITE METHOD
-        return content
+        return {content: label}
 
     @classmethod
     def __extract_page_properties(cls, content):
@@ -355,7 +355,7 @@ class ConfluenceAPI(object):
 
         Args:
             parent_id (int): Id of the parent page to get the children of.
-        # child_filter (str): cql filter to apply to retrieve only child pages that match the filter.
+            # child_filter (str): cql filter to apply to retrieve only child pages that match the filter.
 
         Returns:
             list: A list of all the child ids of the parent page.
@@ -374,8 +374,6 @@ class ConfluenceAPI(object):
             for result in results:
                 children_id[int(result['id'])] = {'name': result['title'], 'last_updated': dateutil.parser.parse(result['version']['when'])}
         return children_id
-
-
 
     @classmethod
     def __handle_html_information(cls, content, content_name):
