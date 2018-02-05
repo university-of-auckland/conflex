@@ -70,78 +70,6 @@ class ConfluenceAPI(object):
         return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
 
     @classmethod
-    def get_homepage_id_of_space(cls, space):
-        """Summary line.
-
-        Extended description of function.
-
-        Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
-
-        Returns:
-            bool: Description of return value
-
-        """
-        response = ConfluenceAPI.__make_rest_request('space', space, {})
-        logger.debug('get_homepage_id_of_space: %s has id of %d' %
-                     (space, int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))))
-        return int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))
-
-    @classmethod
-    def get_last_update_time_of_content(cls, content_id):
-        """Summary line.
-
-        Extended description of function.
-
-        Args:
-            arg1 (int): Description of arg1
-
-        Returns:
-            datetime.datetime: Description of return value
-
-        """
-        response = ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'version'})
-        return dateutil.parser.parse(response['version']['when'])
-
-    @classmethod
-    def get_page_labels(cls, content_id):
-        labels = []
-        for label in ConfluenceAPI.__make_rest_request('content', str(content_id) + '/label', {})['results']:
-            labels.append(label['name'])
-        return labels
-
-    @classmethod
-    def get_page_content(cls, content_id):
-        return ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'body.view'})['body']['view']['value']
-
-    @classmethod
-    def get_panel(cls, content, panel):
-        return ConfluenceAPI.__extract_panel_information(content, panel)
-
-    @classmethod
-    def get_heading(cls, content, heading):
-        return ConfluenceAPI.__extract_heading_information(content, heading)
-
-    @classmethod
-    def get_page(cls, content, page_title):
-        return  ConfluenceAPI.__extract_page_information(content, page_title)
-
-    @classmethod
-    def get_page_properties(cls, content_id, space_key, labels):
-        cql = 'label in ('
-        for label in labels[:-1]:
-            cql += "'" + label + "',"
-        cql += "'" + labels[-1] + "') "
-        cql += 'AND id = ' + str(content_id)
-        return ConfluenceAPI.__extract_page_properties(ConfluenceAPI.__make_master_detail_request({'cql': cql, 'spaceKey': space_key}))
-
-    @classmethod
-    def get_page_urls(cls, content_id, url_type):
-        result = ConfluenceAPI.__make_rest_request('content', str(content_id), {})['_links']
-        return result['base'] + result[url_type]
-
-    @classmethod
     def __extract_heading_information(cls, content, heading):
         """Extracts all information beneath a heading.
 
@@ -161,7 +89,8 @@ class ConfluenceAPI(object):
         try:
             heading_container = str(html.find(string=heading).parent.next_sibling)
         except:
-            logger.warning('__extract_heading_information: The following heading does not exists for the content provided: %s' % heading)
+            logger.warning(
+                '__extract_heading_information: The following heading does not exists for the content provided: %s' % heading)
         return ConfluenceAPI.__handle_html_information(heading_container, heading)
 
     @classmethod
@@ -244,6 +173,28 @@ class ConfluenceAPI(object):
 
     @classmethod
     def __extract_panel_information(cls, content, panel):
+        """Extracts panel information given some content.
+
+        Args:
+            content (str): The content to abstract the panel information from.
+            panel (str): The panel identifier.
+
+        Returns:
+            dict: The extracted panel information
+
+        """
+        logger.debug('extract_panel_information: Panel to extract information from: %s' % panel)
+        html = BeautifulSoup(content, 'html.parser')
+        panel_container = ''
+        try:
+            panel_container = str(html.find('b', string=panel).parent.next_sibling)
+        except:
+            logger.warning(
+                '__extract_panel_information: The following panel does not exists for the content provided: %s' % panel)
+        return ConfluenceAPI.__handle_html_information(panel_container, panel)
+
+    @classmethod
+    def get_homepage_id_of_space(cls, space):
         """Summary line.
 
         Extended description of function.
@@ -256,20 +207,151 @@ class ConfluenceAPI(object):
             bool: Description of return value
 
         """
-        logger.debug('extract_panel_information: Panel to extract information from: %s' % panel)
-        html = BeautifulSoup(content, 'html.parser')
-        panel_container = ''
-        try:
-            panel_container = str(html.find('b', string=panel).parent.next_sibling)
-        except:
-            logger.warning('__extract_panel_information: The following panel does not exists for the content provided: %s' % panel)
-        return ConfluenceAPI.__handle_html_information(panel_container, panel)
+        response = ConfluenceAPI.__make_rest_request('space', space, {})
+        logger.debug('get_homepage_id_of_space: %s has id of %d' %
+                     (space, int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))))
+        return int(response['_expandable']['homepage'].replace('/rest/api/content/', ''))
 
     @classmethod
-    def get_child_page_ids(cls, parent_id):
+    def get_last_update_time_of_content(cls, content_id):
         """Summary line.
 
         Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+
+        Returns:
+            datetime.datetime: Description of return value
+
+        """
+        response = ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'version'})
+        return dateutil.parser.parse(response['version']['when'])
+
+    @classmethod
+    def get_page_labels(cls, content_id):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        labels = []
+        for label in ConfluenceAPI.__make_rest_request('content', str(content_id) + '/label', {})['results']:
+            labels.append(label['name'])
+        return labels
+
+    @classmethod
+    def get_page_content(cls, content_id):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        return ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'body.view'})['body']['view']['value']
+
+    @classmethod
+    def get_panel(cls, content, panel):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        return ConfluenceAPI.__extract_panel_information(content, panel)
+
+    @classmethod
+    def get_heading(cls, content, heading):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        return ConfluenceAPI.__extract_heading_information(content, heading)
+
+    @classmethod
+    def get_page(cls, content, page_title):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        return ConfluenceAPI.__extract_page_information(content, page_title)
+
+    @classmethod
+    def get_page_properties(cls, content_id, space_key, labels):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        cql = 'label in ('
+        for label in labels[:-1]:
+            cql += "'" + label + "',"
+        cql += "'" + labels[-1] + "') "
+        cql += 'AND id = ' + str(content_id)
+        return ConfluenceAPI.__extract_page_properties(ConfluenceAPI.__make_master_detail_request({'cql': cql, 'spaceKey': space_key}))
+
+    @classmethod
+    def get_page_urls(cls, content_id, url_type):
+        """Summary line.
+
+        Extended description of function.
+
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
+
+        Returns:
+            bool: Description of return value
+
+        """
+        result = ConfluenceAPI.__make_rest_request('content', str(content_id), {})['_links']
+        return result['base'] + result[url_type]
+
+    @classmethod
+    def get_child_page_ids(cls, parent_id):
+        """Gets the child page id's given a parent page id.
 
         Args:
             parent_id (int): Id of the parent page to get the children of.
@@ -277,6 +359,7 @@ class ConfluenceAPI(object):
 
         Returns:
             list: A list of all the child ids of the parent page.
+
         """
         page = 0
         size = 25
@@ -289,8 +372,10 @@ class ConfluenceAPI(object):
             size = response['size']
             page += response['size']
             for result in results:
-                children_id[int(result['id'])] = {'name': result['title'], 'last_updated':dateutil.parser.parse(result['version']['when'])}
+                children_id[int(result['id'])] = {'name': result['title'], 'last_updated': dateutil.parser.parse(result['version']['when'])}
         return children_id
+
+
 
     @classmethod
     def __handle_html_information(cls, content, content_name):
@@ -304,6 +389,7 @@ class ConfluenceAPI(object):
 
         Returns:
             dict: A usable dictionary that contains the content only (no HTML).
+
         """
         return {content_name: ConfluenceAPI.__recursive_html_handler(content)}
 
@@ -318,6 +404,7 @@ class ConfluenceAPI(object):
 
         Returns:
             list: A list dictionary that contains the content only (no HTML).
+
         """
         # Remove all newline characters and remove all spaces between two tags.
         content = re.sub('>+\s+<', '><', content.replace('\n', ''))

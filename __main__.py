@@ -7,19 +7,17 @@ from settings import *
 from confluence.api import ConfluenceAPI
 
 
-# noinspection PyTypeChecker
+# noinspection PyTypeChecker,PyShadowingNames
 def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False):
-    """Summary line.
-
-    Extended description of function.
+    """Recursively inserts page information into the database after making requests to the Confluence API.
 
     Args:
-        arg1 (int): Description of arg1
-        arg2 (str): Description of arg2
-
-    Returns:
-        bool: Description of return value
-
+        pages (dict): A dictionary of pages to crawl through, have a look at the example config for more information.
+        space_id (int): The top level space_id that the information relates to.
+        parent_page_id (int): The current pages parent page id.
+        table_prefix (str): The current database table name prefix.
+        recheck_pages_meet_criteria (bool): Ensures that all current pages meet the criteria set out in the config file.
+            If this is False, it will assume that all pages in the database meet the criteria and will only take delta changes for these.
     """
     # if the child page has not been updated since we last stored the information, then no need to check labels/title!
     for page_type in pages:
@@ -118,7 +116,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     logger = logging.getLogger(__name__)
 
-    logger.debug('Application starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    logger.info('Application starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     DatabaseAPI.connect()
     DatabaseAPI.create_spaces_table()
@@ -131,7 +129,7 @@ if __name__ == '__main__':
 
     DatabaseAPI.disconnect()
 
-    logger.debug('Application finished updating at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    logger.info('Application finished updating at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # Reading the html
     # html_doc = open('html.html', 'r')

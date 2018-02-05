@@ -35,7 +35,6 @@ directory named `config.yaml`.
 ```
 confluence:
   host: https://wiki.auckland.ac.nz
-  port: 443
   username:
   password:
 
@@ -43,13 +42,13 @@ mysql:
   host: 127.0.0.1
   port: 3306
   database: capsule
-  username: 
+  username:
   password:
   wiki_table_prefix: wiki
 
 logging:
-  level: DEBUG
-  
+  level: INFO
+
 wiki:
   spaces:
     APPLCTN:
@@ -76,40 +75,44 @@ wiki:
                 inv_architecture_overview:
                   page_properties:
                     - inv_architecture_info
+
     REFARCH:
       pages:
         titles:
-          Information Architecture:
+          Reference Architecture:
             pages:
               titles:
-                Information Entities:
+                Information Architecture:
                   pages:
-                    labels:
-                      info_entity:
-                        page_properties:
-                          - entity_description
-                          - entity_caudit
-          Technology Architecture:
-            pages:
-              labels:
-                service-area-metadata:
-                  headings:
-                    $ref: '#/schemas/REFARCH/service-area/headings'
-                  pages:
-                    labels:
-                      domain-metadata:
-                        headings:
-                          $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+                    titles:
+                      Information Entities:
                         pages:
                           labels:
-                            brick-metadata:
+                            entity_description:
+                              page_properties:
+                                - entity_description
+                                - entity_caudit
+                Technology Architecture:
+                  pages:
+                    labels:
+                      service-area-metadata:
+                        headings:
+                          $ref: '#/schemas/REFARCH/service-area/headings'
+                        pages:
+                          labels:
+                            domain-metadata:
                               headings:
                                 $ref: '#/schemas/REFARCH/domain-brick-element/headings'
                               pages:
                                 labels:
-                                  element-metadata:
+                                  brick-metadata:
                                     headings:
                                       $ref: '#/schemas/REFARCH/domain-brick-element/headings'
+                                    pages:
+                                      labels:
+                                        element-metadata:
+                                          headings:
+                                            $ref: '#/schemas/REFARCH/domain-brick-element/headings'
 schemas:
   REFARCH:
     service-area:
@@ -134,6 +137,7 @@ schemas:
         - Resilience
         - Recovery
         - Future
+
 ```
 ### Logging Configuration
 

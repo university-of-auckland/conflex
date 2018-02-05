@@ -15,7 +15,7 @@ os.chdir('../')
 from database.api import DatabaseAPI
 
 
-# noinspection PyUnresolvedReferences,PyProtectedMember
+# noinspection PyUnresolvedReferences,PyProtectedMember,PyShadowingNames
 def insert_or_update(table, app, k, v, id_column_name, key_column_name, value_column_name, update=False):
     database = DatabaseAPI
     with database._DatabaseAPI__connection.cursor() as cursor:
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=level)
     logger = logging.getLogger(__name__)
 
-    logger.debug('Application Inventory CleanUp starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    logger.info('Application Inventory CleanUp starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     DatabaseAPI.connect()
     spaces = DatabaseAPI.get_spaces()
@@ -66,6 +66,7 @@ if __name__ == '__main__':
         app_id = application['key']
         app_name = application['value']
 
+        logger.info('Application Inventory updating application: %s' % app_name)
         app_info = DatabaseAPI.select('wiki_appli__info', app_id)
         for info in app_info:
             app[info['key']] = info['value']
@@ -117,4 +118,4 @@ if __name__ == '__main__':
 
     DatabaseAPI.disconnect()
 
-    logger.debug('Application Inventory CleanUp finished at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    logger.info('Application Inventory CleanUp finished at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

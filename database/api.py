@@ -34,16 +34,10 @@ class DatabaseAPI(object):
 
     @classmethod
     def create_spaces_table(cls):
-        """Summary line.
+        """Creates the wiki_spaces table within the database.
 
-        Extended description of function.
-
-        Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
-
-        Returns:
-            bool: Description of return value
+        This method does not take in any parameters as it is only meant to create the base wiki space. Technically
+        speaking, it should use the wiki_table_prefix that the user specifies in the configuration file.
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
@@ -88,16 +82,11 @@ class DatabaseAPI(object):
 
     @classmethod
     def create_table(cls, table_name, varchar_key=False):
-        """Summary line.
+        """Creates a table with a specified name and can allow for a VARCHAR key..
 
-            Extended description of function.
-
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
-
-            Returns:
-                bool: Description of return value
+        Args:
+            table_name (str): A name for the table.
+            varchar_key (bool): Will default to an INT(11) `key` column or a VARCHAR(512) if this is True.
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
@@ -116,16 +105,19 @@ class DatabaseAPI(object):
 
     @classmethod
     def insert_or_update(cls, table, parent, k, value, last_updated, update=False):
-        """Summary line.
+        """Inserts/updates data in a table.
 
-            Extended description of function.
+        Args:
+            table (str): The table to insert/update the data into.
+            parent (int): The id of the parent that we are inserting/updating.
+            k (str): An integer representing a page key or the key name for the value.
+            value (str): The value to update.
+            last_updated (datetime.datetime): The last update time of the row to insert/update.
+            update (bool): Whether we are to insert duplicate rows or update duplicate parent-key rows.
 
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
+        Returns:
+            bool: If Data was inserted or not.
 
-            Returns:
-                bool: If Data was inserted or not.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
             try:
@@ -155,14 +147,15 @@ class DatabaseAPI(object):
     def check_data_exists(cls, table, parent, k):
         """Summary line.
 
-            Extended description of function.
+        Extended description of function.
 
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
 
-            Returns:
-                bool: If Data was inserted or not.
+        Returns:
+            bool: If Data was inserted or not.
+
         """
 
         with DatabaseAPI.__connection.cursor() as cursor:
@@ -174,14 +167,15 @@ class DatabaseAPI(object):
     def delete(cls, table, parent, k=None):
         """Summary line.
 
-            Extended description of function.
+        Extended description of function.
 
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
 
-            Returns:
-                bool: If Data was inserted or not.
+        Returns:
+            bool: If Data was inserted or not.
+
         """
         with DatabaseAPI.__connection.cursor() as cursor:
             if k:
@@ -196,14 +190,15 @@ class DatabaseAPI(object):
     def get_spaces(cls):
         """Summary line.
 
-            Extended description of function.
+        Extended description of function.
 
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
 
-            Returns:
-                bool: If Data was inserted or not.
+        Returns:
+            bool: If Data was inserted or not.
+
         """
         with DatabaseAPI.__connection.cursor() as cursor:
             sql = "SELECT * FROM `wiki_spaces`"
@@ -215,14 +210,14 @@ class DatabaseAPI(object):
     def select(cls, table, parent, k=None):
         """Summary line.
 
-            Extended description of function.
+        Extended description of function.
 
-            Args:
-                arg1 (int): Description of arg1
-                arg2 (str): Description of arg2
+        Args:
+            arg1 (int): Description of arg1
+            arg2 (str): Description of arg2
 
-            Returns:
-                bool: If Data was inserted or not.
+        Returns:
+            bool: If Data was inserted or not.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
             if k:
