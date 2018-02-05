@@ -13,6 +13,24 @@ using virtualenv. Please install the required libraries through pip using: `pip 
 To run the application simply pass the containing folder to the python interpreter and the `__main__.py` will be 
 invoked. i.e. `python /path/to/capsule`.
 
+## Modes of Operation
+There are basically two modes of operation for the capsule application.
+
+### Full Delta Change Mode
+In this mode, all pages on the wiki are rechecked to ensure that they meet the criteria set out in the config file.
+
+### Half Delta Change Mode
+
+
+## Usage Notes
+The following are important usage notes for the capsule application:
+
+- Pages that are to be retrieved from the wiki should be child pages of the space Home. This is due to the fact that pages
+are undiscoverable if they exist in a space but are not a child of the space Home.
+- Linking in the configuration file must be correctly written as these are parsed in the Confluence API return `_links`
+section and will be undiscoverable otherwise.
+- Heading/Title matching only supports full text matches i.e. no regex.
+
 ### Command Line Arguments
 
 The application supports the following command line arguments:

@@ -195,16 +195,13 @@ class ConfluenceAPI(object):
 
     @classmethod
     def get_homepage_id_of_space(cls, space):
-        """Summary line.
-
-        Extended description of function.
+        """Gets the homepage id of a space.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            space (int): id of the space.
 
         Returns:
-            bool: Description of return value
+            int: The space homepage id.
 
         """
         response = ConfluenceAPI.__make_rest_request('space', space, {})
@@ -214,15 +211,13 @@ class ConfluenceAPI(object):
 
     @classmethod
     def get_last_update_time_of_content(cls, content_id):
-        """Summary line.
-
-        Extended description of function.
+        """Gets the last update time provided some content_id.
 
         Args:
-            arg1 (int): Description of arg1
+            content_id (int): The id of the content to check the last update time for.
 
         Returns:
-            datetime.datetime: Description of return value
+            datetime.datetime: The last update time.
 
         """
         response = ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'version'})
@@ -230,16 +225,13 @@ class ConfluenceAPI(object):
 
     @classmethod
     def get_page_labels(cls, content_id):
-        """Summary line.
-
-        Extended description of function.
+        """Gets a pages labels.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content_id(int): The id of the page to get labels of.
 
         Returns:
-            bool: Description of return value
+            labels: The labels of the page.
 
         """
         labels = []
@@ -249,80 +241,72 @@ class ConfluenceAPI(object):
 
     @classmethod
     def get_page_content(cls, content_id):
-        """Summary line.
+        """Gets the page content.
 
-        Extended description of function.
+        This method acts as an alias for the make_rest_request but returns only the body of the page.
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content_id(int): The id of the page to the content of.
 
         Returns:
-            bool: Description of return value
+            str: The body of the page.
 
         """
         return ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'body.view'})['body']['view']['value']
 
     @classmethod
     def get_panel(cls, content, panel):
-        """Summary line.
-
-        Extended description of function.
+        """Gets a panels information
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content (str): The content to search in.
+            panel (str): Name of the panel to retrieve information for.
 
         Returns:
-            bool: Description of return value
+            dict: The information from the panel.
 
         """
         return ConfluenceAPI.__extract_panel_information(content, panel)
 
     @classmethod
     def get_heading(cls, content, heading):
-        """Summary line.
-
-        Extended description of function.
+        """Gets a heading information
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content (str): The content to search in.
+            heading (str): Name of the heading to retrieve information for.
 
         Returns:
-            bool: Description of return value
+            dict: The information from the heading.
 
         """
         return ConfluenceAPI.__extract_heading_information(content, heading)
 
     @classmethod
     def get_page(cls, content, page_title):
-        """Summary line.
-
-        Extended description of function.
+        """Gets a whole pages information
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content (str): The content to search in.
+            page_title (str): The name of the page.
 
         Returns:
-            bool: Description of return value
+            dict: The information from the page.
 
         """
         return ConfluenceAPI.__extract_page_information(content, page_title)
 
     @classmethod
     def get_page_properties(cls, content_id, space_key, labels):
-        """Summary line.
-
-        Extended description of function.
+        """Gets page properties information
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content_id (int): The id of the content page to retrieve the page properties from.
+            space_key (str): The name of the space this page exists in.
+            labels (list): A list of labels that the page should meet.
 
         Returns:
-            bool: Description of return value
+            dict: The page properties.
 
         """
         cql = 'label in ('
@@ -334,16 +318,14 @@ class ConfluenceAPI(object):
 
     @classmethod
     def get_page_urls(cls, content_id, url_type):
-        """Summary line.
-
-        Extended description of function.
+        """Gets page urls
 
         Args:
-            arg1 (int): Description of arg1
-            arg2 (str): Description of arg2
+            content_id (int): The id of the content page to retrieve the urls for.
+            url_type (str): The url type that the user has requested.
 
         Returns:
-            bool: Description of return value
+            str: The page url.
 
         """
         result = ConfluenceAPI.__make_rest_request('content', str(content_id), {})['_links']
