@@ -27,7 +27,7 @@ the local database. This means that new pages added to the wiki will not be sync
 criteria set out in the config file will not be removed.
 
 ### Recommended Mode of Operation
-It is recommended to run the application overnight for a Full Delta Sync as this mode of operation takes a much longer time
+It is recommended to run the application overnight for a Full Delta Sync (15 minutes) as this mode of operation takes a much longer time
 than the Half Delta Sync. Running the below configuration file takes an average of 5 minutes on a Half Delta Sync, so this
 can be run more often.
 
