@@ -60,30 +60,49 @@ if __name__ == '__main__':
             APPLCTN_id = space['space_id']
     applications = DatabaseAPI.select('wiki_appli', APPLCTN_id)
 
+    ignore_values = ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A']
+    append_values = ['Overview', 'Roadmap']
+
     # Rebuild the application into the information we want it to contain.
     for application in applications:
-        app = {}
+        app_temp = {}
         app_id = application['key']
         app_name = application['value']
 
         logger.info('Application Inventory updating application: %s' % app_name)
         app_info = DatabaseAPI.select('wiki_appli__info', app_id)
         for info in app_info:
-            app[info['key']] = info['value']
+            if info['key'] in append_values:
+                if info['key'] in app_temp:
+                    app_temp[info['key']] = app_temp[info['key']] + ' ' + info['value']
+                    continue
+            app_temp[info['key']] = info['value']
 
         support_page = DatabaseAPI.select('wiki_appli_suppo', app_id)
         if len(support_page) > 0:
             # noinspection PyUnresolvedReferences
             app_support = DatabaseAPI.select('wiki_appli_suppo__info', support_page[0]['key'])
             for support in app_support:
-                app[support['key']] = support['value']
+                app_temp[support['key']] = support['value']
 
         arch_overview_page = DatabaseAPI.select('wiki_appli_invar', app_id)
         if len(arch_overview_page) > 0:
             # noinspection PyUnresolvedReferences
             app_arch_overview = DatabaseAPI.select('wiki_appli_invar__info', arch_overview_page[0]['key'])
             for arch_overview in app_arch_overview:
-                app[arch_overview['key']] = arch_overview['value']
+                app_temp[arch_overview['key']] = arch_overview['value']
+
+        # Cut off the excess Overview information.
+        if 'Overview' in app_temp:
+            temp = app_temp['Overview'].split('The application is accessible from these locations')
+            app_temp['Overview'] = temp[0]
+
+        # Remove Empty Account Manager, Tech Contact
+        app = {}
+        for tag, value in app_temp.items():
+            if value in ignore_values:
+                continue
+            app[tag] = value
 
         # We now have a single dictionary that contains all the information we need to sort.
         # First insert everything into the full table.
