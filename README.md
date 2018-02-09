@@ -15,6 +15,8 @@ invoked. i.e. `python /path/to/capsule`.
 
 ## Modes of Operation
 There are two modes of operation for the capsule application.
+(Other than the below modes, a change to the configuration file will cause a full recheck to occur, this can take some
+time).
 
 ### Full Delta Sync
 In this mode, all pages on the wiki are rechecked to ensure that they meet the criteria set out in the config file.

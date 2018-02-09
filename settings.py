@@ -1,8 +1,10 @@
 import logging
 
+import os
 import yaml
 from flatdict import FlatDict
 
+config_modified_time = os.path.getmtime('config.yaml')
 stream = open('config.yaml', 'r')
 config = yaml.load(stream)
 
