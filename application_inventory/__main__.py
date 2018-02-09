@@ -60,7 +60,7 @@ if __name__ == '__main__':
             APPLCTN_id = space['space_id']
     applications = DatabaseAPI.select('wiki_appli', APPLCTN_id)
 
-    ignore_values = ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A']
+    ignore_values = ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A', 'None', '?', '? hours', '?hours', 'tbc', 'TBC', 'n/a']
     append_values = ['Overview', 'Roadmap']
 
     # Rebuild the application into the information we want it to contain.

@@ -117,7 +117,7 @@ class DatabaseAPI(object):
                 # Object found, perform an update.
                 if info['value'] != v:
                     sql = "UPDATE `capsule_application` SET `value`=%s WHERE `key`=%s"
-                    cursor.execute(sql, (v, key))
+                    cursor.execute(sql, (v, k))
                     logger.debug("update_spaces: Updating capsule_application %s: %s" % (k, v))
             else:
                 sql = "INSERT INTO `capsule_application` (`key`, `value`) VALUES (%s, %s)"
@@ -166,6 +166,10 @@ class DatabaseAPI(object):
             bool: If Data was inserted or not.
 
         """
+        # Perform a quick data cleanup first by not inserting information that is not useful.
+        if value in ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A', 'None', '?', '? hours', '?hours', 'tbc', 'TBC', 'n/a', 'None', None]:
+            return False
+
         with DatabaseAPI.__connection.cursor() as cursor:
             try:
                 sql = "SELECT * FROM " + table + " WHERE `parent`=%s AND `key`=%s"
