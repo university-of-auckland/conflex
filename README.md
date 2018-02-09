@@ -100,9 +100,13 @@ wiki:
                   page_properties:
                     - support_model
                     - support_tiers
+                  url:
+                    - webui
                 inv_architecture_overview:
                   page_properties:
                     - inv_architecture_info
+                  url:
+                    - webui
 
     REFARCH:
       pages:
