@@ -255,18 +255,32 @@ class ConfluenceAPI(object):
         return ConfluenceAPI.__make_rest_request('content', str(content_id), {'expand': 'body.view'})['body']['view']['value']
 
     @classmethod
-    def get_panel(cls, content, panel):
+    def get_panel(cls, content, panel, space_id):
         """Gets a panels information
+
+        This method also performs cleanup on the Overview panel from the APPLCTN space.
 
         Args:
             content (str): The content to search in.
             panel (str): Name of the panel to retrieve information for.
+            space_id (int): id of the space the information is coming from.
 
         Returns:
             dict: The information from the panel.
 
         """
-        return ConfluenceAPI.__extract_panel_information(content, panel)
+        panel_info = ConfluenceAPI.__extract_panel_information(content, panel)
+        if panel == 'Overview' and space_id == 65013279:
+            overview = {'Overview': ['']}
+            for info in panel_info['Overview']:
+                if type(info) is str:
+                    overview['Overview'][0] = overview['Overview'][0] + info
+                else:
+                    overview['Overview'].append(info)
+            temp = overview['Overview'][0].split('The application is accessible from these locations')
+            overview['Overview'][0] = temp[0]
+            return overview
+        return panel_info
 
     @classmethod
     def get_heading(cls, content, heading):

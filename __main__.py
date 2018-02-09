@@ -8,7 +8,7 @@ from confluence.api import ConfluenceAPI
 
 
 # noinspection PyTypeChecker,PyShadowingNames
-def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False):
+def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False, config_modified=False):
     """Recursively inserts page information into the database after making requests to the Confluence API.
 
     Args:
@@ -18,6 +18,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
         table_prefix (str): The current database table name prefix.
         recheck_pages_meet_criteria (bool): Ensures that all current pages meet the criteria set out in the config file.
             If this is False, it will assume that all pages in the database meet the criteria and will only take delta changes for these.
+        config_modified (bool): Whether the config has been modified since last launch.
     """
     # if the child page has not been updated since we last stored the information, then no need to check labels/title!
     for page_type in pages:
@@ -37,7 +38,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                 # if we are not forced to recheck the page meets the criteria then use the pages in the database table.
                 # else, check to see if the page meets either criteria.
                 page_meets_criteria = False
-                if not recheck_pages_meet_criteria:
+                if not recheck_pages_meet_criteria and not config_modified:
                     if DatabaseAPI.check_data_exists(table, parent_page_id, child_page_id):
                         # If the page already exists in the database ignore checking the page meets the criteria, unless forced to.
                         page_meets_criteria = True
@@ -55,20 +56,20 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
 
                     # If the current page information was updated since the last run, delete all children information and re-fill it.
                     page_content = ''
-                    if page_updated:
+                    if page_updated or config_modified:
                         logger.info('Updating information in space %s for page: %s' % (str(space_id), child_pages[child_page_id]['name']))
                         DatabaseAPI.delete(info_table, child_page_id)
                         page_content = ConfluenceAPI.get_page_content(child_page_id)
 
                     for page_info_type in pages[page_type][page_identifier]:
                         if page_info_type == 'pages':
-                            child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, recheck_pages_meet_criteria)
+                            child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, recheck_pages_meet_criteria, config_modified)
                         else:
-                            if page_updated:
+                            if page_updated or config_modified:
                                 try:
                                     if page_info_type == 'panels':
                                         for panel_identifier in pages[page_type][page_identifier][page_info_type]:
-                                            panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier))
+                                            panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier, space_id))
                                             for k, v in panel.items():
                                                 # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
                                                 k = re.sub(':(\d+)', '', k)
@@ -120,12 +121,22 @@ if __name__ == '__main__':
 
     DatabaseAPI.connect()
     DatabaseAPI.create_spaces_table()
+    DatabaseAPI.create_application_table()
+
+    # Store Last config modified time in database.
+    config_data = DatabaseAPI.update_capsule_application('last_config_change', str(config_modified_time))
+    config_modified = False
+    if config_data:
+        if float(config_data['value']) != config_modified_time:
+            # The configuration has been modified since last time.
+            logger.info('Configuration file has been updated!')
+            config_modified = True
 
     # Getting configuration
     for space, value in config['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.recheck_pages_meet_criteria)
+        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.recheck_pages_meet_criteria, config_modified)
 
     DatabaseAPI.disconnect()
 

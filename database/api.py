@@ -51,10 +51,24 @@ class DatabaseAPI(object):
                 DatabaseAPI.__connection.commit()
 
     @classmethod
+    def create_application_table(cls):
+        """Creates the capsule_application table within the database.
+
+        """
+        with DatabaseAPI.__connection.cursor() as cursor:
+            sql = "SHOW TABLES LIKE 'capsule_application'"
+            cursor.execute(sql)
+            if cursor.fetchone() is None:
+                sql = "CREATE TABLE IF NOT EXISTS `capsule_application` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `key` VARCHAR(60) NOT NULL UNIQUE, `value` VARCHAR(256) NOT NULL)"
+                cursor.execute(sql)
+                logger.debug("create_spaces_table: Created table: `capsule_application`")
+                DatabaseAPI.__connection.commit()
+
+    @classmethod
     def update_spaces(cls, space_id, space_name, last_updated):
         """Basic space update/insert.
 
-        This method will update/insert the spaces into the spaces database. It will update the database value only if
+        This method will update/insert the spaces into the spaces table. It will update the table value only if
         the last_updated times are different.
 
         Args:
@@ -80,6 +94,38 @@ class DatabaseAPI(object):
                 logger.debug("update_spaces: Inserting wiki space %d: %s" % (space_id, space_name))
 
             DatabaseAPI.__connection.commit()
+
+    @classmethod
+    def update_capsule_application(cls, k, v):
+        """Basic application update/insert.
+
+        This method will update/insert the key value pairs into the capsule application table.
+
+        Args:
+            k (str): The key of the capsule_application row to update/insert.
+            v (str): A Value to update/insert
+
+        Returns:
+            str: The previous data that was in the key.
+        """
+        with DatabaseAPI.__connection.cursor() as cursor:
+            sql = "SELECT * FROM `capsule_application` WHERE `key`=%s"
+            cursor.execute(sql, k)
+
+            info = cursor.fetchone()
+            if info is not None:
+                # Object found, perform an update.
+                if info['value'] != v:
+                    sql = "UPDATE `capsule_application` SET `value`=%s WHERE `key`=%s"
+                    cursor.execute(sql, (v, k))
+                    logger.debug("update_spaces: Updating capsule_application %s: %s" % (k, v))
+            else:
+                sql = "INSERT INTO `capsule_application` (`key`, `value`) VALUES (%s, %s)"
+                cursor.execute(sql, (k, v))
+                logger.debug("update_spaces: Inserting capsule_application %s: %s" % (k, v))
+
+            DatabaseAPI.__connection.commit()
+            return info
 
     @classmethod
     def create_table(cls, table_name, varchar_key=False):
@@ -120,6 +166,10 @@ class DatabaseAPI(object):
             bool: If Data was inserted or not.
 
         """
+        # Perform a quick data cleanup first by not inserting information that is not useful.
+        if value in ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A', 'None', '?', '? hours', '?hours', 'tbc', 'TBC', 'n/a', 'None', None]:
+            return False
+
         with DatabaseAPI.__connection.cursor() as cursor:
             try:
                 sql = "SELECT * FROM " + table + " WHERE `parent`=%s AND `key`=%s"
