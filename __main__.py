@@ -66,44 +66,44 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                             child_page_recursive(pages[page_type][page_identifier][page_info_type], space_id, child_page_id, table, recheck_pages_meet_criteria, config_modified)
                         else:
                             if page_updated or config_modified:
-                                # try:
-                                if page_info_type == 'panels':
-                                    for panel_identifier in pages[page_type][page_identifier][page_info_type]:
-                                        panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier, space_id))
-                                        for k, v in panel.items():
+                                try:
+                                    if page_info_type == 'panels':
+                                        for panel_identifier in pages[page_type][page_identifier][page_info_type]:
+                                            panel = FlatDict(ConfluenceAPI.get_panel(page_content, panel_identifier, space_id))
+                                            for k, v in panel.items():
+                                                # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                                k = re.sub(':(\d+)', '', k)
+                                                k = re.sub(':(\d+):', ':', k)
+                                                DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
+                                    elif page_info_type == 'page_properties':
+                                        # Get all page properties and put the values into the database.
+                                        page_properties = ConfluenceAPI.get_page_properties(child_page_id, space_id, pages[page_type][page_identifier][page_info_type])
+                                        for page_property in page_properties:
+                                            for val in page_properties[page_property]:
+                                                DatabaseAPI.insert_or_update(info_table, child_page_id, page_property, val, child_pages[child_page_id]['last_updated'])
+                                    elif page_info_type == 'headings':
+                                        for heading_identifier in pages[page_type][page_identifier][page_info_type]:
+                                            heading = FlatDict(ConfluenceAPI.get_heading(page_content, heading_identifier))
+                                            for k, v in heading.items():
+                                                # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                                k = re.sub(':(\d+)', '', k)
+                                                k = re.sub(':(\d+):', ':', k)
+                                                DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
+                                    elif page_info_type == 'page':
+                                        page_information = FlatDict(ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name']))
+                                        for k, v in page_information.items():
                                             # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
                                             k = re.sub(':(\d+)', '', k)
                                             k = re.sub(':(\d+):', ':', k)
                                             DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
-                                elif page_info_type == 'page_properties':
-                                    # Get all page properties and put the values into the database.
-                                    page_properties = ConfluenceAPI.get_page_properties(child_page_id, space_id, pages[page_type][page_identifier][page_info_type])
-                                    for page_property in page_properties:
-                                        for val in page_properties[page_property]:
-                                            DatabaseAPI.insert_or_update(info_table, child_page_id, page_property, val, child_pages[child_page_id]['last_updated'])
-                                elif page_info_type == 'headings':
-                                    for heading_identifier in pages[page_type][page_identifier][page_info_type]:
-                                        heading = FlatDict(ConfluenceAPI.get_heading(page_content, heading_identifier))
-                                        for k, v in heading.items():
-                                            # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
-                                            k = re.sub(':(\d+)', '', k)
-                                            k = re.sub(':(\d+):', ':', k)
-                                            DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
-                                elif page_info_type == 'page':
-                                    page_information = FlatDict(ConfluenceAPI.get_page(page_content, child_pages[child_page_id]['name']))
-                                    for k, v in page_information.items():
-                                        # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
-                                        k = re.sub(':(\d+)', '', k)
-                                        k = re.sub(':(\d+):', ':', k)
-                                        DatabaseAPI.insert_or_update(info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
-                                elif page_info_type == 'url':
-                                    for url_type in pages[page_type][page_identifier][page_info_type]:
-                                        url = ConfluenceAPI.get_page_urls(child_page_id, url_type)
-                                        DatabaseAPI.insert_or_update(info_table, child_page_id, url_type, url, child_pages[child_page_id]['last_updated'])
-                                else:
-                                    logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
-                                # except:
-                                #     logger.error('child_page_recursive: Error inserting data for page with id: %s, name: %s' % (str(child_page_id), child_pages[child_page_id]['name']))
+                                    elif page_info_type == 'url':
+                                        for url_type in pages[page_type][page_identifier][page_info_type]:
+                                            url = ConfluenceAPI.get_page_urls(child_page_id, url_type)
+                                            DatabaseAPI.insert_or_update(info_table, child_page_id, url_type, url, child_pages[child_page_id]['last_updated'])
+                                    else:
+                                        logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
+                                except:
+                                    logger.error('child_page_recursive: Error inserting data for page with id: %s, name: %s' % (str(child_page_id), child_pages[child_page_id]['name']))
                 else:
                     # Cleanup the ignore, info and default table by removing any information associated with page.
                     DatabaseAPI.delete(table, parent_page_id, child_page_id)
