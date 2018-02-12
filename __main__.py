@@ -108,6 +108,7 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                     # Cleanup the ignore, info and default table by removing any information associated with page.
                     DatabaseAPI.delete(table, parent_page_id, child_page_id)
                     DatabaseAPI.delete(info_table, child_page_id)
+                    # TODO: Remove child pages of the page. This does not really affect the application but would cleanup old information.
 
 
 if __name__ == '__main__':
