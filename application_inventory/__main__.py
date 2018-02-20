@@ -42,7 +42,8 @@ def insert_or_update(table, app, k, v, id_column_name, key_column_name, value_co
 
 
 if __name__ == '__main__':
-    stream = open('application_inventory/app_config.yaml', 'r')
+    config_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app_config.yaml'))
+    stream = open(config_file, 'r')
     config = yaml.load(stream)
 
     # Setup logging,

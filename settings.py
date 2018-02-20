@@ -4,8 +4,10 @@ import os
 import yaml
 from flatdict import FlatDict
 
-config_modified_time = os.path.getmtime('config.yaml')
-stream = open('config.yaml', 'r')
+config_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'config.yaml'))
+
+config_modified_time = os.path.getmtime(config_file)
+stream = open(config_file, 'r')
 config = yaml.load(stream)
 
 # Change the value of the $ref tags in the dictionary.
