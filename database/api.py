@@ -176,7 +176,7 @@ class DatabaseAPI(object):
                 cursor.execute(sql, (parent, k))
                 result = cursor.fetchone()
                 if result is not None and update:
-                    if result['last_updated'] != last_updated.replace(tzinfo=None):
+                    if result['last_updated'] != last_updated.replace(microsecond=0, tzinfo=None):
                         sql = "UPDATE `" + table + "` SET `parent`=%s, `key`=%s, `value`=%s, `last_updated`=%s WHERE `id`=%s"
                         cursor.execute(sql, (parent, k, value, last_updated, result['id']))
                         logger.debug("insert_or_update: Updating `%s`: parent: %s, key: %s" % (table, str(parent), str(k)))
