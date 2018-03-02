@@ -233,3 +233,22 @@ To reference a definition, use the $ref keyword:
 This works in a similar way to how Swagger implements the `$ref` tag. Please see their 
 [documentation](https://swagger.io/docs/specification/using-ref/) for more details. Currently capsule is only able to
 reference definitions within the current configuration document.
+
+## TODO:
+
+1. Fix view joining information.
+2. Add Janes additional fields to configuration file.
+3. Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).
+4. Make settings.py a configparser and return the config file to the function that called it.
+5. Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery
+6. Write bigquery script to push specific views to bigquery. Script should both be callable as a single script and as an extension of capsule application. The config file will look like: 
+    ```
+    bigquery:
+      user: 
+      pass: 
+      tables:
+       - wiki_app_info_full
+    ``
+7. Add —version/-v to command line options.
+8. Update application inventory script to reflect these changes.
+9. Fix database prefix
