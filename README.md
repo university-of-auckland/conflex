@@ -236,8 +236,8 @@ reference definitions within the current configuration document.
 
 ## TODO:
 
-1. Fix view joining information.
-2. Add Janes additional fields to configuration file.
+1. ~~Fix view joining information.~~
+2. ~~Add Janes additional fields to configuration file.~~
 3. Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).
 4. Make settings.py a configparser and return the config file to the function that called it.
 5. Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery
