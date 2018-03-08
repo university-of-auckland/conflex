@@ -1,9 +1,14 @@
 import argparse
 import datetime
+import logging
 import re
 
+import os
+
+from flatdict import FlatDict
+
+from config_parser import parse
 from database.api import DatabaseAPI
-from settings import *
 from confluence.api import ConfluenceAPI
 
 
@@ -115,20 +120,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
     parser.add_argument('--recheck-pages-meet-criteria', action='store_true', help='force the database to recheck that all pages meet the criteria in the config file.')
 
+    config = parse(os.path.abspath(os.path.join(os.path.dirname(__file__), 'config.yaml')))
+
     args = parser.parse_args()
     logger = logging.getLogger(__name__)
 
     logger.info('Application starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
-    DatabaseAPI.connect()
+    DatabaseAPI.connect(config)
     DatabaseAPI.create_spaces_table()
     DatabaseAPI.create_application_table()
 
+    ConfluenceAPI.setup(config)
+
     # Store Last config modified time in database.
-    config_data = DatabaseAPI.update_capsule_application('last_config_change', str(config_modified_time))
+    config_data = DatabaseAPI.update_capsule_application('last_config_change', str(config['config_modified_time']))
     config_modified = False
     if config_data:
-        if float(config_data['value']) != config_modified_time:
+        if float(config_data['value']) != config['config_modified_time']:
             # The configuration has been modified since last time.
             logger.info('Configuration file has been updated!')
             config_modified = True

@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 import unicodedata
@@ -8,8 +9,6 @@ import dateutil.parser
 
 # noinspection PyProtectedMember
 from bs4 import BeautifulSoup, NavigableString
-
-from settings import *
 from urllib import request, parse, error
 
 logger = logging.getLogger(__name__)
@@ -20,13 +19,16 @@ class ConfluenceAPI(object):
 
     This class acts as an API bridge between python and the confluence API.
     """
-
-    # Private attributes of the API class.
-    host = config['confluence']['host']
-    __username = config['confluence']['username']
-    __password = config['confluence']['password']
-
     empty_contents = ['', ',', '.', ' ']
+    host = None
+    __username = None
+    __password = None
+
+    @classmethod
+    def setup(cls, config):
+        cls.host = config['confluence']['host']
+        cls.__username = config['confluence']['username']
+        cls.__password = config['confluence']['password']
 
     @classmethod
     @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, error.HTTPError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)

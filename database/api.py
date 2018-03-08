@@ -1,7 +1,7 @@
 import datetime
-import pymysql.cursors
+import logging
 
-from settings import *
+import pymysql.cursors
 
 logger = logging.getLogger(__name__)
 
@@ -9,24 +9,19 @@ logger = logging.getLogger(__name__)
 # noinspection SqlResolve
 class DatabaseAPI(object):
     __connection = None
-    host = config['mysql']['host']
-    port = config['mysql']['port']
-    database = config['mysql']['database']
-    __username = config['mysql']['username']
-    __password = config['mysql']['password']
 
     @classmethod
-    def connect(cls):
+    def connect(cls, config):
         """Connect to the database."""
-        DatabaseAPI.__connection = pymysql.connect(host=DatabaseAPI.host,
-                                                   port=DatabaseAPI.port,
-                                                   db=DatabaseAPI.database,
-                                                   user=DatabaseAPI.__username,
-                                                   password=DatabaseAPI.__password,
+        DatabaseAPI.__connection = pymysql.connect(host=config['mysql']['host'],
+                                                   port=config['mysql']['port'],
+                                                   db=config['mysql']['database'],
+                                                   user=config['mysql']['username'],
+                                                   password=config['mysql']['password'],
                                                    charset='utf8mb4',
                                                    cursorclass=pymysql.cursors.DictCursor)
-        logger.debug('connect_to_database: Connected to MySQL database: %s' % str(DatabaseAPI.host) + ':' + str(
-            DatabaseAPI.port) + '/' + DatabaseAPI.database)
+        logger.debug('connect_to_database: Connected to MySQL database: %s' % str(config['mysql']['host']) + ':' + str(
+            config['mysql']['port']) + '/' + config['mysql']['database'])
 
     @classmethod
     def disconnect(cls):
