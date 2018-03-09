@@ -1,16 +1,11 @@
 # This file deals with moving the information from the capsule application database into the previously used tables.
 # This means that views do not need to be rewritten and does not disrupt current applications accessing the database.
-# This is a very 'hacky' way of doing this and it would be preferable not to do this but doing otherwise would result in
-# jumping through numerous hoops.
-
+# This is a very 'hacky' way of doing this.
+import argparse
 import datetime
 import logging
-
 import os
-import yaml
-
-# Change working directory to parent so DatabaseAPI works.
-os.chdir('../')
+import config_parser
 
 from database.api import DatabaseAPI
 
@@ -41,19 +36,8 @@ def insert_or_update(table, app, k, v, id_column_name, key_column_name, value_co
             return False
 
 
-if __name__ == '__main__':
-    config_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app_config.yaml'))
-    stream = open(config_file, 'r')
-    config = yaml.load(stream)
-
-    # Setup logging,
-    level = logging.getLevelName(config['logging']['level'])
-    logging.basicConfig(level=level)
-    logger = logging.getLogger(__name__)
-
-    logger.info('Application Inventory CleanUp starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
-    DatabaseAPI.connect()
+# noinspection PyPep8Naming
+def run(config):
     spaces = DatabaseAPI.get_spaces()
     APPLCTN_id = 0
     for space in spaces:
@@ -61,7 +45,8 @@ if __name__ == '__main__':
             APPLCTN_id = space['space_id']
     applications = DatabaseAPI.select('wiki_appli', APPLCTN_id)
 
-    ignore_values = ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A', 'None', '?', '? hours', '?hours', 'tbc', 'TBC', 'n/a']
+    ignore_values = ['Name:Email:Phone:', 'Name:N/AEmail:N/APhone:N/A', 'N/A', 'None', '?', '? hours', '?hours', 'tbc',
+                     'TBC', 'n/a']
     append_values = ['Overview', 'Roadmap']
 
     # Rebuild the application into the information we want it to contain.
@@ -117,15 +102,18 @@ if __name__ == '__main__':
             if label == 'app_tiny_url':
                 for identifier in config['application']['labels'][label]:
                     if identifier in app:
-                        insert_or_update(table_name, app_name, app['tinyui'], app['webui'], 'tiny_url', 'tiny_url', 'url', True)
+                        insert_or_update(table_name, app_name, app['tinyui'], app['webui'], 'tiny_url', 'tiny_url',
+                                         'url', True)
             elif label == 'nfr':
                 for identifier in config['application']['labels'][label]:
                     if identifier in app:
-                        insert_or_update(table_name, app_name, identifier, app[identifier], 'id', 'metric', 'value', True)
+                        insert_or_update(table_name, app_name, identifier, app[identifier], 'id', 'metric', 'value',
+                                         True)
             elif label == 'stakeholder':
                 for identifier in config['application']['labels'][label]:
                     if identifier in app:
-                        insert_or_update(table_name, app_name, identifier, app[identifier], 'id', 'role', 'person', True)
+                        insert_or_update(table_name, app_name, identifier, app[identifier], 'id', 'role', 'person',
+                                         True)
             elif label == 'support':
                 for identifier in config['application']['labels'][label]:
                     if identifier in app:
@@ -136,6 +124,26 @@ if __name__ == '__main__':
                     if identifier in app:
                         insert_or_update(table_name, app_name, identifier, app[identifier], 'id', 'key', 'value', True)
 
-    DatabaseAPI.disconnect()
 
+if __name__ == '__main__':
+    # Argument parsing.
+    parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
+    parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
+    args = parser.parse_args()
+
+    conf = config_parser.parse(args.config or os.path.abspath(os.path.join(os.path.dirname(__file__), 'config.yaml')))
+
+    # Change working directory to parent so DatabaseAPI works.
+    os.chdir('../')
+
+    # Setup logging,
+    logger = logging.getLogger(__name__)
+    logger.info('Application Inventory CleanUp starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+    DatabaseAPI.connect(conf)
+
+    # Run the application inventory tool.
+    run(conf)
+
+    DatabaseAPI.disconnect()
     logger.info('Application Inventory CleanUp finished at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

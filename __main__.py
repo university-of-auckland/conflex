@@ -1,13 +1,14 @@
+VERSION = '1.1.0'
+
 import argparse
 import datetime
 import logging
 import re
-
 import os
+import config_parser
+import application_inventory
 
 from flatdict import FlatDict
-
-from config_parser import parse
 from database.api import DatabaseAPI
 from confluence.api import ConfluenceAPI
 
@@ -116,21 +117,37 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                     # TODO: Remove child pages of the page. This does not really affect the application but would cleanup old information.
 
 
+def run(conf, mode, conf_modified):
+    for space, value in conf['wiki']['spaces'].items():
+        space_id = ConfluenceAPI.get_homepage_id_of_space(space)
+        DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
+        child_page_recursive(value['pages'], space_id, space_id, conf['mysql']['wiki_table_prefix'], mode, conf_modified)
+
+
 if __name__ == '__main__':
+    # Argument parsing.
     parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
-    parser.add_argument('--recheck-pages-meet-criteria', action='store_true', help='force the database to recheck that all pages meet the criteria in the config file.')
-
-    config = parse(os.path.abspath(os.path.join(os.path.dirname(__file__), 'config.yaml')))
-
+    parser.add_argument('--application-inventory', action='store_true', help='run the application inventory existing database update script.')
+    parser.add_argument('--bigquery', action='store_true', help='run the Google Big Query update application.')
+    parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
+    parser.add_argument('--datastore', action='store_true', help='run the Google DataStore update application.')
+    parser.add_argument('--full-sync', action='store_true', help='runs the application in full sync mode. i.e. pages are checked to ensure they meet the criteria in the config file.')
+    parser.add_argument('--half-sync', action='store_true', help='runs the application in half sync mode. i.e. no new pages will be added to the database.')
+    parser.add_argument('--version', action='version', version='Capsule Version: ' + VERSION)
     args = parser.parse_args()
+
+    # Get configuration file.
+    config = config_parser.parse(args.config or os.path.abspath(os.path.join(os.path.dirname(__file__), 'config.yaml')))
+
+    # Setup logging.
     logger = logging.getLogger(__name__)
 
-    logger.info('Application starting at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
+    # Connect to database and setup tables.
     DatabaseAPI.connect(config)
     DatabaseAPI.create_spaces_table()
     DatabaseAPI.create_application_table()
 
+    # Setup the confluence API.
     ConfluenceAPI.setup(config)
 
     # Store Last config modified time in database.
@@ -142,24 +159,19 @@ if __name__ == '__main__':
             logger.info('Configuration file has been updated!')
             config_modified = True
 
-    # Getting configuration
-    for space, value in config['wiki']['spaces'].items():
-        space_id = ConfluenceAPI.get_homepage_id_of_space(space)
-        DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id, space_id, config['mysql']['wiki_table_prefix'], args.recheck_pages_meet_criteria, config_modified)
+    # Run the application inventory application if requested.
+    if args.application_inventory:
+        application_inventory.__main__.run(config)
 
+    # Run the main application in the appropriate mode.
+    if args.full_sync:
+        logger.info('Application starting at: %s, running in full sync mode.' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        run(config, True, config_modified)
+    else:
+        logger.info('Application starting at: %s, running in half sync mode.' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        run(config, False, config_modified)
+
+    # Disconnect from the database.
     DatabaseAPI.disconnect()
 
     logger.info('Application finished updating at: %s' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
-    # Reading the html
-    # html_doc = open('html.html', 'r')
-    # soup = BeautifulSoup(html_doc, 'html.parser')
-    # print(soup.find('b', string='Overview').parent.parent.get_text().replace('Overview', ''))
-
-    # Reading the xml
-    # xml_doc = open('test.xml', 'r')
-    # soup = BeautifulSoup(xml_doc, 'html.parser')
-    # # print(soup)
-    # print(soup.find('ac:structured-macro'))
-    # message = ConfluenceAPI.make_request('content', '65013279', {'expand': 'page'})

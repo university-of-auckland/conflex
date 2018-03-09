@@ -238,9 +238,9 @@ reference definitions within the current configuration document.
 
 1. ~~Fix view joining information.~~
 2. ~~Add Janes additional fields to configuration file.~~
-3. Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).
+3. ~~Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).~~
 4. ~~Make settings.py a configparser and return the config file to the function that called it.~~
-5. Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery.
+5. ~~Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery.~~
 6. Write bigquery/datastore script to push specific views to bigquery/datastore. Script should both be callable as a single script and as an extension of capsule application. The config file will look like: 
     ```
     bigquery/datastore:
@@ -249,10 +249,11 @@ reference definitions within the current configuration document.
       tables:
        - wiki_app_info_full
     ``
-7. Add —version/-v to command line options.
-8. Update application inventory script to reflect these changes.
+7. ~~Add —version/-v to command line options.~~
+8. ~~Update application inventory script to reflect these changes.~~
 9. Fix database prefix.
-10. Test the application configuration for spaces that don't exist.
-11. Change how information gets delete from the database. These should not be committed until an update is completed and should be completed at the same time.
+10. ~~Test the application configuration for spaces that don't exist.~~
+11. Change how information gets deleted from the database. These should not be committed until an update is completed and should be completed at the same time.
 12. Investigate null applications (e.g. Gallagher Command Center).
 13. Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.
+14. Update README with new command line arguments.
