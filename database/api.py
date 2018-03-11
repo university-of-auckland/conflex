@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 # noinspection SqlResolve
 class DatabaseAPI(object):
+    __prefix = None
     __connection = None
 
     @classmethod
@@ -20,6 +21,7 @@ class DatabaseAPI(object):
                                                    password=config['mysql']['password'],
                                                    charset='utf8mb4',
                                                    cursorclass=pymysql.cursors.DictCursor)
+        cls.__prefix = config['mysql']['table_prefix']
         logger.debug('connect_to_database: Connected to MySQL database: %s' % str(config['mysql']['host']) + ':' + str(
             config['mysql']['port']) + '/' + config['mysql']['database'])
 
@@ -30,33 +32,29 @@ class DatabaseAPI(object):
 
     @classmethod
     def create_spaces_table(cls):
-        """Creates the wiki_spaces table within the database.
-
-        This method does not take in any parameters as it is only meant to create the base wiki space. Technically
-        speaking, it should use the wiki_table_prefix that the user specifies in the configuration file.
-
+        """Creates the PREFIX_spaces table within the database.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SHOW TABLES LIKE 'wiki_spaces'"
+            sql = "SHOW TABLES LIKE '" + cls.__prefix + "_spaces'"
             cursor.execute(sql)
             if cursor.fetchone() is None:
-                sql = "CREATE TABLE IF NOT EXISTS `wiki_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `space_id` INT(11) NOT NULL UNIQUE, `name` VARCHAR(256) NOT NULL, `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP())"
+                sql = "CREATE TABLE IF NOT EXISTS `" + cls.__prefix + "_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `space_id` INT(11) NOT NULL UNIQUE, `name` VARCHAR(256) NOT NULL, `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP())"
                 cursor.execute(sql)
-                logger.debug("create_spaces_table: Created table: `wiki_spaces`")
+                logger.debug("create_spaces_table: Created table: `" + cls.__prefix + "'_spaces`")
                 DatabaseAPI.__connection.commit()
 
     @classmethod
     def create_application_table(cls):
-        """Creates the capsule_application table within the database.
+        """Creates the PREFIX_capsule table within the database.
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SHOW TABLES LIKE 'capsule_application'"
+            sql = "SHOW TABLES LIKE '" + cls.__prefix + "_capsule'"
             cursor.execute(sql)
             if cursor.fetchone() is None:
-                sql = "CREATE TABLE IF NOT EXISTS `capsule_application` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `key` VARCHAR(60) NOT NULL UNIQUE, `value` VARCHAR(256) NOT NULL)"
+                sql = "CREATE TABLE IF NOT EXISTS `" + cls.__prefix + "_capsule` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `key` VARCHAR(60) NOT NULL UNIQUE, `value` VARCHAR(256) NOT NULL)"
                 cursor.execute(sql)
-                logger.debug("create_spaces_table: Created table: `capsule_application`")
+                logger.debug("create_spaces_table: Created table: `" + cls.__prefix + "_capsule`")
                 DatabaseAPI.__connection.commit()
 
     @classmethod
@@ -73,20 +71,20 @@ class DatabaseAPI(object):
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SELECT * FROM `wiki_spaces` WHERE `space_id`=%s"
+            sql = "SELECT * FROM `" + cls.__prefix + "_spaces` WHERE `space_id`=%s"
             cursor.execute(sql, space_id)
 
             space = cursor.fetchone()
             if space is not None:
                 # Object found, perform an update if last_update out of date.
                 if space['last_updated'] != last_updated.replace(tzinfo=None):
-                    sql = "UPDATE `wiki_spaces` SET `name`=%s, `last_updated`=%s WHERE `space_id`=%s"
+                    sql = "UPDATE `" + cls.__prefix + "_spaces` SET `name`=%s, `last_updated`=%s WHERE `space_id`=%s"
                     cursor.execute(sql, (space_name, last_updated.strftime('%Y-%m-%d %H:%M:%S'), space_id))
-                    logger.debug("update_spaces: Updating wiki space %d: %s" % (space_id, space_name))
+                    logger.debug("update_spaces: Updating " + cls.__prefix + "_space %d: %s" % (space_id, space_name))
             else:
-                sql = "INSERT INTO `wiki_spaces` (`space_id`, `name`, `last_updated`) VALUES (%s, %s, %s)"
+                sql = "INSERT INTO `" + cls.__prefix + "_spaces` (`space_id`, `name`, `last_updated`) VALUES (%s, %s, %s)"
                 cursor.execute(sql, (space_id, space_name, last_updated.strftime('%Y-%m-%d %H:%M:%S')))
-                logger.debug("update_spaces: Inserting wiki space %d: %s" % (space_id, space_name))
+                logger.debug("update_spaces: Inserting " + cls.__prefix + "_space %d: %s" % (space_id, space_name))
 
             DatabaseAPI.__connection.commit()
 
@@ -94,7 +92,7 @@ class DatabaseAPI(object):
     def update_capsule_application(cls, k, v):
         """Basic application update/insert.
 
-        This method will update/insert the key value pairs into the capsule application table.
+        This method will update/insert the key value pairs into the PREFIX_capsule table.
 
         Args:
             k (str): The key of the capsule_application row to update/insert.
@@ -104,20 +102,20 @@ class DatabaseAPI(object):
             str: The previous data that was in the key.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SELECT * FROM `capsule_application` WHERE `key`=%s"
+            sql = "SELECT * FROM `" + cls.__prefix + "_capsule` WHERE `key`=%s"
             cursor.execute(sql, k)
 
             info = cursor.fetchone()
             if info is not None:
                 # Object found, perform an update.
                 if info['value'] != v:
-                    sql = "UPDATE `capsule_application` SET `value`=%s WHERE `key`=%s"
+                    sql = "UPDATE `" + cls.__prefix + "_capsule` SET `value`=%s WHERE `key`=%s"
                     cursor.execute(sql, (v, k))
-                    logger.debug("update_spaces: Updating capsule_application %s: %s" % (k, v))
+                    logger.debug("update_capsule_application: Updating " + cls.__prefix + "_capsule %s: %s" % (k, v))
             else:
-                sql = "INSERT INTO `capsule_application` (`key`, `value`) VALUES (%s, %s)"
+                sql = "INSERT INTO `" + cls.__prefix + "_capsule` (`key`, `value`) VALUES (%s, %s)"
                 cursor.execute(sql, (k, v))
-                logger.debug("update_spaces: Inserting capsule_application %s: %s" % (k, v))
+                logger.debug("update_capsule_application: Inserting " + cls.__prefix + "_capsule %s: %s" % (k, v))
 
             DatabaseAPI.__connection.commit()
             return info

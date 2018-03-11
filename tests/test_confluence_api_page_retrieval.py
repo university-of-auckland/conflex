@@ -2,12 +2,19 @@ import unittest
 
 import datetime
 
+import os
 from dateutil.tz import tzoffset
 
+import config_parser
 from confluence.api import ConfluenceAPI
 
 
 class TestConfluenceAPIPageRetrieval(unittest.TestCase):
+
+    def Setup(self):
+        config = config_parser.parse(os.path.abspath(os.path.join(os.path.dirname(__file__), '../config.yaml')))
+        self.confluence = ConfluenceAPI
+        self.confluence.setup(config)
 
     def test_application_retrieve_all_children(self):
         # Gets the children of the REFARCH space.

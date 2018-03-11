@@ -1,4 +1,4 @@
-VERSION = '1.1.0'
+VERSION = '1.2.0'
 
 import argparse
 import datetime
@@ -121,7 +121,7 @@ def run(conf, mode, conf_modified):
     for space, value in conf['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id, space_id, conf['mysql']['wiki_table_prefix'], mode, conf_modified)
+        child_page_recursive(value['pages'], space_id, space_id, conf['mysql']['table_prefix'], mode, conf_modified)
 
 
 if __name__ == '__main__':

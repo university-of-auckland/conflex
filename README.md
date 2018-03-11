@@ -20,7 +20,7 @@ time).
 
 ### Full Delta Sync
 In this mode, all pages on the wiki are rechecked to ensure that they meet the criteria set out in the config file.
-To enable this mode, set the `--recheck-pages-meet-criteria` flag when running the main application.
+To enable this mode, set the `--full-sync` flag when running the main application.
 (See Command Line Arguments section for more details).
 
 ### Half Delta Sync
@@ -48,7 +48,13 @@ The application supports the following command line arguments:
 
 | Argument                 | Description |
 | ------------------------ | ----------- |
-| --recheck-pages-meet-criteria | This argument forces the database to refresh all pages and re-check that all current pages meet the labels/titles provided. | 
+| --application-inventory | run the application inventory existing database update script. |
+| --bigquery | run the Google Big Query update application. |
+| --config | the location of the configuration file to run the application with. If none is provided, one in the folder where the script is run will be used. |
+| --datastore | run the Google DataStore update application. |
+| --full-sync | runs the application in full sync mode. i.e. pages are checked to ensure they meet the criteria in the config file. |
+| --half-sync | runs the application in half sync mode. i.e. no new pages will be added to the database. (This is the default application behaviour. |
+| --version | return the current application version. |
 
 ## Generating Documentation
 The application supports documentation through Sphinx. To generate the Documentation run `make html`. Currently the
@@ -72,7 +78,7 @@ mysql:
   database: capsule
   username:
   password:
-  wiki_table_prefix: wiki
+  table_prefix: wiki
 
 logging:
   level: INFO
@@ -251,9 +257,9 @@ reference definitions within the current configuration document.
     ``
 7. ~~Add —version/-v to command line options.~~
 8. ~~Update application inventory script to reflect these changes.~~
-9. Fix database prefix.
+9. ~~Fix database prefix.~~
 10. ~~Test the application configuration for spaces that don't exist.~~
 11. Change how information gets deleted from the database. These should not be committed until an update is completed and should be completed at the same time.
-12. Investigate null applications (e.g. Gallagher Command Center).
-13. Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.
-14. Update README with new command line arguments.
+12. ~~Investigate null applications (e.g. Gallagher Command Center).~~ Caused by the wiki API, not the capsule application.
+13. ~~Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.~~
+14. ~~Update README with new command line arguments.~~

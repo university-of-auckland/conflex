@@ -1,4 +1,6 @@
 import unittest
+import config_parser
+import os
 
 from confluence.api import ConfluenceAPI
 
@@ -6,7 +8,9 @@ from confluence.api import ConfluenceAPI
 # noinspection PyUnresolvedReferences
 class TestConfluenceAPIExtractor(unittest.TestCase):
     def setUp(self):
+        config = config_parser.parse(os.path.abspath(os.path.join(os.path.dirname(__file__), '../config.yaml')))
         self.confluence = ConfluenceAPI
+        self.confluence.setup(config)
 
     def test_heading_extraction(self):
         page = \
@@ -53,7 +57,7 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                                               'Shibboleth, Shibboleth IdP3.'],
                                              'External Users Allowed': ['Yes'],
                                              'Implementation Year': ['2010'],
-                                             'Last Upgrade Year': ['2016'],
+                                             'Last Upgrade Year': ['2018'],
                                              'Life Cycle Phase': ['MATURITY'],
                                              'Platform': ['Java'],
                                              'Software Licensing Model': ['Open Source'],
@@ -69,8 +73,8 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
         self.assertEqual(content, {'Business Owner': ['jpye004'],
                                    'CAUDIT Capability L0': ['Information Management'],
                                    'CAUDIT Capability L1': ['Identity & Access Management'],
-                                   'Common Names': ['Single Sign On, Web SSO, SSO, OneLogin, Shibboleth, Shibboleth '
-                                                    'IdP3.'],
+                                   'Common Names': ['Single Sign On, Web SSO, SSO, OneLogin, Shibboleth, '
+                                                    'Shibboleth IdP3.'],
                                    'Configuring Shibboleth SPs': ['SSO Enablement Procedures',
                                                                   'Apache integration with Shibboleth for Single '
                                                                   'Sign On',
@@ -79,14 +83,14 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                                                   'Windows Server with Virtual Hosts to EPR '
                                                                   'Shibboleth'],
                                    'Data Sensitivity': ['High'],
-                                   'Delivery Team': ['Identity & Access Management'],
+                                   'Delivery Team': ['Identity Management'],
                                    'External Users Allowed': ['Yes'],
                                    'Hosting Tier': ['Platinum'],
                                    'Hours of Support': ['24x7'],
                                    'Hours of Use': ['24x7'],
                                    'Implementation Year': ['2010'],
                                    'Knowledge': ['https://wiki.shibboleth.net/confluence/display/IDP30'],
-                                   'Last Upgrade Year': ['2016'],
+                                   'Last Upgrade Year': ['2018'],
                                    'Life Cycle Phase': ['MATURITY'],
                                    'Maintenance Windows': ['6 am Friday mornings (if required)'],
                                    'Organisation Owner': ['Digital Strategy & Architecture'],
@@ -103,11 +107,11 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
                                    'RTO Required': ['15 minutes'],
                                    'Reference Architecture': ['Element_Shibboleth'],
                                    'Service Criticality': ['Yes'],
-                                   'Service Manager': ['tbis163'],
+                                   'Service Manager': ['awal091'],
                                    'Service Owner': ['tals001'],
                                    'Software Licensing Model': ['Open Source'],
                                    'Source repository': ['https://stash.auckland.ac.nz/projects/ITSSHI'],
-                                   'Subject Matter Experts': ['rwat090', 'awal091', 'wwan174'],
+                                   'Subject Matter Experts': ['rwat090', 'wwan174', 'tell022'],
                                    'Support Site': ['http://shibboleth.net/community/'],
                                    'TIME Cost': ['2'],
                                    'TIME Fitness': ['4'],
@@ -155,28 +159,24 @@ class TestConfluenceAPIExtractor(unittest.TestCase):
 
     def test_panel_extraction_Infrastructure_table(self):
         page = \
-        self.confluence._ConfluenceAPI__make_rest_request('content', '111481721', {'expand': 'body.view'})['body'][
-            'view']['value']
+            self.confluence._ConfluenceAPI__make_rest_request('content', '111481721', {'expand': 'body.view'})['body'][
+                'view']['value']
         content = self.confluence._ConfluenceAPI__extract_panel_information(page, 'Infrastructure')
 
-        self.assertEqual(content, {'Infrastructure': [{'Servers': ['App',
-                                                                   'optfssprd01.uoa.auckland.ac.nz',
-                                                                   'Database']},
-                                                      {'Database': [{'': ['Type',
-                                                                          'Host',
-                                                                          'Schema',
-                                                                          'Account',
-                                                                          'Password'],
-                                                                     'Development': ['FoxPro File System',
-                                                                                     'Local Host',
-                                                                                     'Local Host',
-                                                                                     'VCADMIN',
-                                                                                     'Ask'],
-                                                                     'Production': ['FoxPro File System',
-                                                                                    '\\\\optfssprd01.uoa.auckland.ac.nz\\Accounts '
-                                                                                    'Manager - Clinic',
-                                                                                    'VCADMIN',
-                                                                                    'Ask']}]}]})
+        self.assertEqual(content, {'Infrastructure': [{'Servers': [{'App': ['optfssprd01.uoa.auckland.ac.nz']}]},
+                    {'Database': [{'Development': {'Account': ['VCADMIN'],
+                                                   'Host': ['Local Host'],
+                                                   'Password': ['Ask'],
+                                                   'Schema': ['Local Host'],
+                                                   'Type': ['FoxPro File '
+                                                            'System']},
+                                   'Production': {'Account': ['VCADMIN'],
+                                                  'Password': ['Ask'],
+                                                  'Schema': ['\\\\optfssprd01.uoa.auckland.ac.nz\\Accounts '
+                                                             'Manager - '
+                                                             'Clinic'],
+                                                  'Type': ['FoxPro File '
+                                                           'System']}}]}]})
 
 
 if __name__ == '__main__':

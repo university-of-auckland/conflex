@@ -1,4 +1,6 @@
 import unittest
+import config_parser
+import os
 
 from confluence.api import ConfluenceAPI
 
@@ -7,7 +9,9 @@ from confluence.api import ConfluenceAPI
 class TestConfluenceAPIWebPageCrawlingLists(unittest.TestCase):
 
     def setUp(self):
+        config = config_parser.parse(os.path.abspath(os.path.join(os.path.dirname(__file__), '../config.yaml')))
         self.confluence = ConfluenceAPI
+        self.confluence.setup(config)
 
     def test_basic_list(self):
         html_doc = open('tests/data/lists/basic.html', 'r')
@@ -52,7 +56,9 @@ class TestConfluenceAPIWebPageCrawlingLists(unittest.TestCase):
 class TestConfluenceAPIWebPageCrawlingTables(unittest.TestCase):
 
     def setUp(self):
+        config = config_parser.parse(os.path.abspath(os.path.join(os.path.dirname(__file__), '../config.yaml')))
         self.confluence = ConfluenceAPI
+        self.confluence.setup(config)
 
     def test_basic_table_data_only(self):
         html_doc = open('tests/data/tables/data_only.html', 'r')

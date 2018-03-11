@@ -9,7 +9,7 @@ mysql:
   database: capsule
   username:
   password:
-  wiki_table_prefix: wiki
+  table_prefix: wiki
 
 logging:
   level: INFO
