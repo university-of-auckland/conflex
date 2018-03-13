@@ -7,6 +7,7 @@ import re
 import os
 import config_parser
 import application_inventory
+from google import datastore
 
 from flatdict import FlatDict
 from database.api import DatabaseAPI
@@ -163,11 +164,16 @@ if __name__ == '__main__':
     if args.application_inventory:
         application_inventory.__main__.run(config)
 
+    # Run the datastore sync application.
+    if args.datastore:
+        datastore.run(config)
+
     # Run the main application in the appropriate mode.
     if args.full_sync:
         logger.info('Application starting at: %s, running in full sync mode.' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         run(config, True, config_modified)
-    else:
+
+    if args.half_sync:
         logger.info('Application starting at: %s, running in half sync mode.' % datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         run(config, False, config_modified)
 

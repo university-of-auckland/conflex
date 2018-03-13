@@ -5,3 +5,4 @@ beautifulsoup4==4.6
 python-dateutil==2.6.1
 PyMySQL==0.8.0
 backoff==1.4.3
+google-cloud-datastore==1.6.0

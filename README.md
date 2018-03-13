@@ -263,3 +263,4 @@ reference definitions within the current configuration document.
 12. ~~Investigate null applications (e.g. Gallagher Command Center).~~ Caused by the wiki API, not the capsule application.
 13. ~~Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.~~
 14. ~~Update README with new command line arguments.~~
+15. Make the application thread safe.
