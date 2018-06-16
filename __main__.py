@@ -111,9 +111,6 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                                         logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
                                 except:
                                     logger.error('child_page_recursive: Error inserting data for page with id: %s, name: %s' % (str(child_page_id), child_pages[child_page_id]['name']))
-                # TODO: MOVE TO A NEW METHOD THAT CHECKS IF A PAGE STILL EXISTS ON THE WIKI AND IF NOT, DELETES IT.
-                # TODO: THIS METHOD SHOULD CHECK THE INTEGRITY OF THE PAGE RELATIONSHIPS CHECKING TO SEE IF THE PARENT
-                # TODO: STILL EXISTS IN THE DATABASE AND IF NOT, REMOVES IT.
                 else:
                     # Cleanup the ignore, info and default table by removing any information associated with page.
                     # Child pages get cleaned up by the cleanup method.
@@ -121,11 +118,51 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                     DatabaseAPI.delete(info_table, child_page_id)
 
 
+def recursive_db_cleanup(pages, space_id, table_prefix, mode):
+    """Recursively remove page information from the database by checking if the current page still exists in the database.
+
+    Args:
+        pages (dict): A dictionary of pages to crawl through, have a look at the example config for more information.
+        space_id (int): The top level space_id that the information relates to.
+        table_prefix (str): The current database table name prefix.
+        mode (bool): Only perform cleanup during a full sync.
+    """
+    if mode:
+        for page_type in pages:
+            for page_identifier in pages[page_type]:
+                # Determine the table name that we are looking in.
+                table = table_prefix.replace(' ', '') + '_' + page_identifier.replace('_', '').replace(' ', '')[:5].lower()
+                info_table = table + '__info'
+                child_pages = DatabaseAPI.select(table)
+
+                # For each of the child pages check to see if they still exist, if they do not then delete the page.
+                for child_page in child_pages:
+                    # See if the parent page exists in the database if not then we can immediately delete this child
+                    # page.
+                    parent_exists = True
+                    if space_id != child_page['parent']:
+                        parent_exists = len(DatabaseAPI.select(table_prefix.replace(' ', ''), None, child_page['parent'])) != 0
+                    exists = ConfluenceAPI.check_page_exists(child_page['key'])
+
+                    # The page does not exist on the wiki or the parent does not exist so delete it from the database
+                    # along with the info.
+                    if not parent_exists or not exists:
+                        logger.info("recursive_db_cleanup: Deleting page with id: %s, Name: %s" % (str(child_page['key']), child_page['value']))
+                        DatabaseAPI.delete(table, child_page['parent'], child_page['key'])
+                        DatabaseAPI.delete(info_table, child_page['key'])
+
+                # Go down the next level and remove these pages.
+                for page_info_type in pages[page_type][page_identifier]:
+                    if page_info_type == 'pages':
+                        recursive_db_cleanup(pages[page_type][page_identifier][page_info_type], space_id, table, mode)
+
+
 def run(conf, mode, conf_modified):
     for space, value in conf['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
         child_page_recursive(value['pages'], space_id, space_id, conf['mysql']['table_prefix'], mode, conf_modified)
+        recursive_db_cleanup(value['pages'], space_id, conf['mysql']['table_prefix'], mode)
 
 
 if __name__ == '__main__':

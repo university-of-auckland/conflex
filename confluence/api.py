@@ -31,7 +31,7 @@ class ConfluenceAPI(object):
         cls.__password = config['confluence']['password']
 
     @classmethod
-    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, error.HTTPError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
+    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
     def __make_rest_request(cls, api_endpoint, content_id, url_params):
         """Low level request abstraction method.
 
@@ -49,10 +49,16 @@ class ConfluenceAPI(object):
         params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
         url = cls.host + '/rest/api/' + api_endpoint + '/' + content_id + '?%s' % params
         logger.debug('make_rest_request: URL requested : %s' % url)
-        return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
+        try:
+            return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
+        except error.HTTPError as e:
+            return e
+        except:
+            logger.error("__make_rest_request: Error making request with id: %s" % content_id)
+            return
 
     @classmethod
-    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, error.HTTPError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
+    @backoff.on_exception(backoff.expo, (error.URLError, error.ContentTooShortError, ConnectionResetError, ConnectionRefusedError, ConnectionAbortedError, ConnectionError), max_tries=8)
     def __make_master_detail_request(cls, url_params):
         """Low level request abstraction method.
 
@@ -69,7 +75,12 @@ class ConfluenceAPI(object):
         params = parse.urlencode({**url_params, 'os_username': cls.__username, 'os_password': cls.__password})
         url = cls.host + '/rest/masterdetail/1.0/detailssummary/lines' + '?%s' % params
         logger.debug('make_master_detail_request: URL requested: %s' % url)
-        return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
+        try:
+            return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
+        except error.HTTPError as e:
+            return e
+        except:
+            logger.error("__make_master_detail_request: Error retrieving master details.")
 
     @classmethod
     def __extract_heading_information(cls, content, heading):
@@ -331,6 +342,18 @@ class ConfluenceAPI(object):
         cql += "'" + labels[-1] + "') "
         cql += 'AND id = ' + str(content_id)
         return ConfluenceAPI.__extract_page_properties(ConfluenceAPI.__make_master_detail_request({'cql': cql, 'spaceKey': space_key}))
+
+    @classmethod
+    def check_page_exists(cls, page_id):
+        result = ConfluenceAPI.__make_rest_request('content', str(page_id), {})
+        if type(result) is not error.HTTPError:
+            return True
+        else:
+            if result.code == 404:
+                return False
+            else:
+                logger.info("check_page_exists: Unknown error for page with id: %s" % str(page_id))
+                return True
 
     @classmethod
     def get_page_urls(cls, content_id, url_type):

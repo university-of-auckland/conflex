@@ -223,6 +223,7 @@ class DatabaseAPI(object):
             else:
                 sql = "DELETE FROM `" + table + "` WHERE `parent`=%s"
                 cursor.execute(sql, parent)
+            DatabaseAPI.__connection.commit()
 
     @classmethod
     def get_spaces(cls):
@@ -239,7 +240,7 @@ class DatabaseAPI(object):
             return cursor.fetchall()
 
     @classmethod
-    def select(cls, table, parent, k=None):
+    def select(cls, table, parent=None, k=None):
         """Retrieves information from the database given a parent-key combination.
 
         Args:
@@ -251,11 +252,17 @@ class DatabaseAPI(object):
             list: The list of information.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            if k:
+            if k and parent:
                 sql = "SELECT * FROM `" + table + "` WHERE `parent`=%s AND `key`=%s"
                 cursor.execute(sql, (parent, k))
-            else:
+            elif not k and parent:
                 sql = "SELECT * FROM `" + table + "` WHERE `parent`=%s"
                 cursor.execute(sql, parent)
+            elif k and not parent:
+                sql = "SELECT * FROM `" + table + "` WHERE `key`=%s"
+                cursor.execute(sql, k)
+            else:
+                sql = "SELECT * FROM `" + table + "`"
+                cursor.execute(sql)
 
             return cursor.fetchall()
