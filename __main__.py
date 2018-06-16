@@ -111,11 +111,14 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                                         logger.warning('child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
                                 except:
                                     logger.error('child_page_recursive: Error inserting data for page with id: %s, name: %s' % (str(child_page_id), child_pages[child_page_id]['name']))
+                # TODO: MOVE TO A NEW METHOD THAT CHECKS IF A PAGE STILL EXISTS ON THE WIKI AND IF NOT, DELETES IT.
+                # TODO: THIS METHOD SHOULD CHECK THE INTEGRITY OF THE PAGE RELATIONSHIPS CHECKING TO SEE IF THE PARENT
+                # TODO: STILL EXISTS IN THE DATABASE AND IF NOT, REMOVES IT.
                 else:
                     # Cleanup the ignore, info and default table by removing any information associated with page.
+                    # Child pages get cleaned up by the cleanup method.
                     DatabaseAPI.delete(table, parent_page_id, child_page_id)
                     DatabaseAPI.delete(info_table, child_page_id)
-                    # TODO: Remove child pages of the page. This does not really affect the application but would cleanup old information.
 
 
 def run(conf, mode, conf_modified):
