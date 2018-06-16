@@ -7,7 +7,7 @@ import re
 import os
 import config_parser
 import application_inventory
-from google import datastore
+# from google import datastore
 
 from flatdict import FlatDict
 from database.api import DatabaseAPI
@@ -205,8 +205,8 @@ if __name__ == '__main__':
         application_inventory.__main__.run(config)
 
     # Run the datastore sync application.
-    if args.datastore:
-        datastore.run(config)
+    # if args.datastore:
+    #     datastore.run(config)
 
     # Run the main application in the appropriate mode.
     if args.full_sync:
