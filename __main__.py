@@ -162,7 +162,7 @@ def dump_application_inventory(mode):
     if mode:
         logger.info("dump_application_inventory: Creating CSV dump file.")
         dump = pd.DataFrame(DatabaseAPI.select('wiki_app_info_full'))
-        dump.to_csv("application_inventory/dump/" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ".csv", index=None)
+        dump.to_csv(os.path.dirname(os.path.realpath(__file__)) + "/application_inventory/dump/" + datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S') + ".csv", index=None)
 
 
 def run(conf, mode, conf_modified):
