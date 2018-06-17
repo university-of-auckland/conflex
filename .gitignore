@@ -161,3 +161,6 @@ fabric.properties
 # Documentation files.
 docs/build/*
 docs/source/*
+
+# Dump files
+application_inventory/dump/*.csv

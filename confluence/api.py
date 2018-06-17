@@ -165,10 +165,26 @@ class ConfluenceAPI(object):
             page_properties = dict(zip(keys, values))
             page_properties.pop('', None)
 
+            # Split columns with name (upi) into two separate properties.
+            page_properties_modified = page_properties.copy()
+            for k, v in page_properties.items():
+                names = []
+                upis = []
+                for val in v:
+                    if type(val) is str:
+                        if "(" in val:
+                            user = re.findall("(.*) \((.*)\)", val)
+                            if len(user) > 0:
+                                names.append(user[0][0])
+                                upis.append(user[0][1])
+                if len(names) > 0:
+                    page_properties_modified[k] = upis
+                    page_properties_modified[k + "_NAMES"] = names
+
             # Remove empty key value pairs from dictionary.
             keys = []
             values = []
-            for k, v in page_properties.items():
+            for k, v in page_properties_modified.items():
                 vals = []
                 for val in v:
                     if type(val) is str:
@@ -179,8 +195,8 @@ class ConfluenceAPI(object):
                 if len(vals) > 0:
                     values.append(vals)
                     keys.append(k)
-            page_properties = dict(zip(keys, values))
-            return page_properties
+            page_properties_modified = dict(zip(keys, values))
+            return page_properties_modified
         else:
             return {}
 
@@ -528,9 +544,9 @@ class ConfluenceAPI(object):
                 if tag.find('a', class_='user-mention') or 'data-username' in tag.attrs:
                     if tag.find('a', class_='user-mention'):
                         for user in tag.find_all('a', class_='user-mention'):
-                            content_list.append(user.attrs['data-username'])
+                            content_list.append(user.string + " (" + user.attrs['data-username'] + ")")
                     else:
-                        content_list.append(tag.attrs['data-username'])
+                        content_list.append(tag.string + " (" + tag.attrs['data-username'] + ")")
                 else:
                     if information_to_insert not in ConfluenceAPI.empty_contents:
                         content_list.append(information_to_insert)

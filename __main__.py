@@ -1,4 +1,4 @@
-VERSION = '1.2.0'
+VERSION = '1.3.0'
 
 import argparse
 import datetime
@@ -7,6 +7,7 @@ import re
 import os
 import config_parser
 import application_inventory
+import pandas as pd
 # from google import datastore
 
 from flatdict import FlatDict
@@ -157,21 +158,29 @@ def recursive_db_cleanup(pages, space_id, table_prefix, mode):
                         recursive_db_cleanup(pages[page_type][page_identifier][page_info_type], space_id, table, mode)
 
 
+def dump_application_inventory(mode):
+    if mode:
+        logger.info("dump_application_inventory: Creating CSV dump file.")
+        dump = pd.DataFrame(DatabaseAPI.select('wiki_app_info_full'))
+        dump.to_csv("application_inventory/dump/" + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ".csv", index=None)
+
+
 def run(conf, mode, conf_modified):
     for space, value in conf['wiki']['spaces'].items():
         space_id = ConfluenceAPI.get_homepage_id_of_space(space)
         DatabaseAPI.update_spaces(space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
         child_page_recursive(value['pages'], space_id, space_id, conf['mysql']['table_prefix'], mode, conf_modified)
         recursive_db_cleanup(value['pages'], space_id, conf['mysql']['table_prefix'], mode)
+        dump_application_inventory(mode)
 
 
 if __name__ == '__main__':
     # Argument parsing.
     parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
     parser.add_argument('--application-inventory', action='store_true', help='run the application inventory existing database update script.')
-    parser.add_argument('--bigquery', action='store_true', help='run the Google Big Query update application.')
+    # parser.add_argument('--bigquery', action='store_true', help='run the Google Big Query update application.')
     parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
-    parser.add_argument('--datastore', action='store_true', help='run the Google DataStore update application.')
+    # parser.add_argument('--datastore', action='store_true', help='run the Google DataStore update application.')
     parser.add_argument('--full-sync', action='store_true', help='runs the application in full sync mode. i.e. pages are checked to ensure they meet the criteria in the config file.')
     parser.add_argument('--half-sync', action='store_true', help='runs the application in half sync mode. i.e. no new pages will be added to the database.')
     parser.add_argument('--version', action='version', version='Capsule Version: ' + VERSION)
