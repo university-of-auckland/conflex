@@ -178,8 +178,8 @@ class ConfluenceAPI(object):
                                 names.append(user[0][0])
                                 upis.append(user[0][1])
                 if len(names) > 0:
-                    page_properties_modified[k] = upis
-                    page_properties_modified[k + "_NAMES"] = names
+                    page_properties_modified[k] = names
+                    page_properties_modified[k + "_UPIS"] = upis
 
             # Remove empty key value pairs from dictionary.
             keys = []
