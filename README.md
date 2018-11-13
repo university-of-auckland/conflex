@@ -1,20 +1,17 @@
-# Wiki To Capsule Integration Application
+# Connex
 
-This application is designed to replace the current Wiki-to-Capsule Integration application that is written in 
-Java/Groovy and run through Scriptella.
-
-For more information about the Application, please see the following 
-[wiki page](https://wiki.auckland.ac.nz/display/APPLCTN/Capsule+Future+State+Application+Design)
+Connex is an application that is designed to crawl any Confluence Wiki and translate the information into structured data in a database
+that can be easily queried.
 
 ## Running The Application
 This application is written using python v3.6. It is advisable but not necessary to run the application 
 using virtualenv. Please install the required libraries through pip using: `pip install -r requirements.txt`
 
 To run the application simply pass the containing folder to the python interpreter and the `__main__.py` will be 
-invoked. i.e. `python /path/to/capsule`.
+invoked. i.e. `python /path/to/connex`.
 
 ## Modes of Operation
-There are two modes of operation for the capsule application.
+There are two modes of operation for the connex application.
 (Other than the below modes, a change to the configuration file will cause a full recheck to occur, this can take some
 time).
 
@@ -34,7 +31,7 @@ than the Half Delta Sync. Running the below configuration file takes an average 
 can be run more often.
 
 ## Usage Notes
-The following are important usage notes for the capsule application:
+The following are important usage notes for the connex application:
 
 - Pages that are to be retrieved from the wiki should be child pages of the space Home. This is due to the fact that pages
 are undiscoverable if they exist in a space but are not a child of the space Home.
@@ -61,7 +58,7 @@ The application supports documentation through Sphinx. To generate the Documenta
 only way to do this is through the `Makefile`.
 
 ## Configuration
-The configuration file is written in YAML. Currently the capsule application only supports a file in the application
+The configuration file is written in YAML. Currently the connex application only supports a file in the application
 directory named `config.yaml`.
 
 ### Example Configuration
@@ -75,7 +72,7 @@ confluence:
 mysql:
   host: 127.0.0.1
   port: 3306
-  database: capsule
+  database: connex
   username:
   password:
   table_prefix: wiki
@@ -189,7 +186,7 @@ The application supports the following levels of logging:
 
 ### Wiki Configuration
 
-The example configuration above contains a configuration definition for `wiki`. This configures the capsule application
+The example configuration above contains a configuration definition for `wiki`. This configures the connex application
 so that it knows where and what information the application is to retrieve. The  `wiki` configuration adheres to the
 following design guideline.
 
@@ -237,17 +234,16 @@ To reference a definition, use the $ref keyword:
 `$ref: 'reference to definition'`
 
 This works in a similar way to how Swagger implements the `$ref` tag. Please see their 
-[documentation](https://swagger.io/docs/specification/using-ref/) for more details. Currently capsule is only able to
+[documentation](https://swagger.io/docs/specification/using-ref/) for more details. Currently connex is only able to
 reference definitions within the current configuration document.
 
 ## TODO:
 
 1. ~~Fix view joining information.~~
-2. ~~Add Janes additional fields to configuration file.~~
 3. ~~Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).~~
 4. ~~Make settings.py a configparser and return the config file to the function that called it.~~
 5. ~~Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery.~~
-6. Write bigquery/datastore script to push specific views to bigquery/datastore. Script should both be callable as a single script and as an extension of capsule application. The config file will look like: 
+6. Write bigquery/datastore script to push specific views to bigquery/datastore. Script should both be callable as a single script and as an extension of connex application. The config file will look like: 
     ```
     bigquery/datastore:
       user: 
@@ -260,7 +256,6 @@ reference definitions within the current configuration document.
 9. ~~Fix database prefix.~~
 10. ~~Test the application configuration for spaces that don't exist.~~
 11. Change how information gets deleted from the database. These should not be committed until an update is completed and should be completed at the same time.
-12. ~~Investigate null applications (e.g. Gallagher Command Center).~~ Caused by the wiki API, not the capsule application.
 13. ~~Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.~~
 14. ~~Update README with new command line arguments.~~
 15. Make the application thread safe.

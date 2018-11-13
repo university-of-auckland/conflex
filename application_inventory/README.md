@@ -1,6 +1,6 @@
 # Application Inventory Tool
 
-The script in this folder basically takes information from the main Capsule application and puts it into the previously
+The script in this folder basically takes information from the main Connex application and puts it into the previously
 used database tables. This allows the application to be backwards compatible whilst enabling new information to be 
 retrieved from the wiki by simply changing a couple of lines in a configuration file.
 
@@ -15,7 +15,7 @@ The configuration file that this tool uses must be named `app_config.yaml`.
 mysql:
   host: 127.0.0.1
   port: 3306
-  database: capsule
+  database: connex
   username:
   password:
   wiki_table_prefix: wiki

@@ -6,7 +6,7 @@ confluence:
 mysql:
   host: 127.0.0.1
   port: 3306
-  database: capsule
+  database: connex
   username:
   password:
   table_prefix: wiki

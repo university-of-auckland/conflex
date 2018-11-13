@@ -1,4 +1,4 @@
-# This file deals with moving the information from the capsule application database into the previously used tables.
+# This file deals with moving the information from the connex application database into the previously used tables.
 # This means that views do not need to be rewritten and does not disrupt current applications accessing the database.
 # This is a very 'hacky' way of doing this.
 import argparse
@@ -127,7 +127,7 @@ def run(config):
 
 if __name__ == '__main__':
     # Argument parsing.
-    parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
+    parser = argparse.ArgumentParser(description='Connex Wiki Integration Application.')
     parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
     args = parser.parse_args()
 

@@ -5,7 +5,7 @@
 SPHINXOPTS    = 
 SPHINXBUILD   = sphinx-build
 SPHINXAPIDOC  = sphinx-apidoc
-SPHINXPROJ    = Capsule
+SPHINXPROJ    = Connex
 SOURCEDIR     = .
 BUILDDIR      = docs/build
 DOCSOUTDIR    = docs/source
@@ -20,7 +20,7 @@ help:
 .PHONY: man
 man:
 	@$(SPHINXBUILD) -c ./ -b man "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	sudo cp "$(BUILDDIR)/capsule.1" /usr/local/share/man/man1/
+	sudo cp "$(BUILDDIR)/connex.1" /usr/local/share/man/man1/
 
 # Clean up documentation
 .PHONY: clean

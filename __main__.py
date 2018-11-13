@@ -176,14 +176,14 @@ def run(conf, mode, conf_modified):
 
 if __name__ == '__main__':
     # Argument parsing.
-    parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
+    parser = argparse.ArgumentParser(description='Connex')
     parser.add_argument('--application-inventory', action='store_true', help='run the application inventory existing database update script.')
     # parser.add_argument('--bigquery', action='store_true', help='run the Google Big Query update application.')
     parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
     # parser.add_argument('--datastore', action='store_true', help='run the Google DataStore update application.')
     parser.add_argument('--full-sync', action='store_true', help='runs the application in full sync mode. i.e. pages are checked to ensure they meet the criteria in the config file.')
     parser.add_argument('--half-sync', action='store_true', help='runs the application in half sync mode. i.e. no new pages will be added to the database.')
-    parser.add_argument('--version', action='version', version='Capsule Version: ' + VERSION)
+    parser.add_argument('--version', action='version', version='Connex Version: ' + VERSION)
     args = parser.parse_args()
 
     # Get configuration file.
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     ConfluenceAPI.setup(config)
 
     # Store Last config modified time in database.
-    config_data = DatabaseAPI.update_capsule_application('last_config_change', str(config['config_modified_time']))
+    config_data = DatabaseAPI.update_connex_application('last_config_change', str(config['config_modified_time']))
     config_modified = False
     if config_data:
         if float(config_data['value']) != config['config_modified_time']:

@@ -18,7 +18,7 @@ def run(config):
 
 if __name__ == '__main__':
     # Argument parsing.
-    parser = argparse.ArgumentParser(description='Capsule Wiki Integration Application.')
+    parser = argparse.ArgumentParser(description='Connex Wiki Integration Application.')
     parser.add_argument('--config', action='store', help='the location of the configuration file to run the application with.')
     args = parser.parse_args()
 
