@@ -164,3 +164,6 @@ docs/source/*
 
 # Dump files
 application_inventory/dump/*.csv
+
+# vscode files
+.vscode/**
