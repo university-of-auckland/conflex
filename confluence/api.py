@@ -168,19 +168,20 @@ class ConfluenceAPI(object):
 
             # Get all possible details and overwrite the values of previous details if there is more
             # information in the page properties currently being processed.
-            for i in content['detailLines']:
+            for detailLine in content['detailLines']:
                 details = []
-                for v in content['detailLines'][i]['details']:
-                    details.append(ConfluenceAPI.__recursive_html_handler(v))
+                for detail in detailLine['details']:
+                    details.append(
+                        ConfluenceAPI.__recursive_html_handler(detail))
 
                 if (len(values) < len(details)):
                     values = details.copy()
                 else:
-                    for j in details:
+                    for i, value in enumerate(details):
                         # Copy across the value from the details if more information is present
                         # otherwise ignore this copy.
-                        if values[j] == "":
-                            values[j] = details[j]
+                        if len(values[i]) == 0 or values[0] == '':
+                            values[i] = value
 
             page_properties = dict(zip(keys, values))
             page_properties.pop('', None)
