@@ -196,7 +196,7 @@ def run(conf, mode, conf_modified):
                              conf['mysql']['table_prefix'], mode, conf_modified)
         recursive_db_cleanup(value['pages'], space_id,
                              conf['mysql']['table_prefix'], mode)
-        dump_application_inventory(mode)
+        # dump_application_inventory(mode)
 
 
 if __name__ == '__main__':
