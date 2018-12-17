@@ -3,6 +3,12 @@
 Conflex is an application that is designed to crawl any Confluence Wiki and translate the information into structured data in a database
 that can be easily queried.
 
+---
+
+**Important Note: Active development for [Conflex v2.0 (Sledge)](https://github.com/university-of-auckland/conflex/milestone/1) is occurring in the [development](https://github.com/university-of-auckland/conflex/tree/develop) branch. This is due to the application moving to Typescript, which will enable faster development and better support for the confluence DOM.**
+
+---
+
 ## Running The Application
 This application is written using python v3.6. It is advisable but not necessary to run the application 
 using virtualenv. Please install the required libraries through pip using: `pip install -r requirements.txt`
@@ -236,26 +242,3 @@ To reference a definition, use the $ref keyword:
 This works in a similar way to how Swagger implements the `$ref` tag. Please see their 
 [documentation](https://swagger.io/docs/specification/using-ref/) for more details. Currently conflex is only able to
 reference definitions within the current configuration document.
-
-## TODO:
-
-1. ~~Fix view joining information.~~
-3. ~~Change how the application works by allowing a config file to be passed as a parameter (use one in directory if not present).~~
-4. ~~Make settings.py a configparser and return the config file to the function that called it.~~
-5. ~~Change how parameters work i.e. they should be called —half-sync —full-sync —bigquery.~~
-6. Write bigquery/datastore script to push specific views to bigquery/datastore. Script should both be callable as a single script and as an extension of conflex application. The config file will look like: 
-    ```
-    bigquery/datastore:
-      user: 
-      pass: 
-      tables:
-       - wiki_app_info_full
-    ``
-7. ~~Add —version/-v to command line options.~~
-8. ~~Update application inventory script to reflect these changes.~~
-9. ~~Fix database prefix.~~
-10. ~~Test the application configuration for spaces that don't exist.~~
-11. Change how information gets deleted from the database. These should not be committed until an update is completed and should be completed at the same time.
-13. ~~Update tests to get the config file from the main directory and correctly setup the Confluence and Database APIs.~~
-14. ~~Update README with new command line arguments.~~
-15. Make the application thread safe.
