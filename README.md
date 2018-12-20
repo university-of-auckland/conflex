@@ -1,4 +1,4 @@
-# Conflex
+# Conflex - Confluence Extractor
 
 Conflex is an application that is designed to crawl any Confluence Wiki and translate the information into structured data in a database
 that can be easily queried.
