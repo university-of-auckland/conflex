@@ -9,10 +9,7 @@ import re
 import logging
 import datetime
 import argparse
-VERSION = '1.3.1'
-
-# from google import datastore
-
+VERSION = '1.3.2'
 
 # noinspection PyTypeChecker,PyShadowingNames
 def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False, config_modified=False):
@@ -196,12 +193,12 @@ def run(conf, mode, conf_modified):
                              conf['mysql']['table_prefix'], mode, conf_modified)
         recursive_db_cleanup(value['pages'], space_id,
                              conf['mysql']['table_prefix'], mode)
-        dump_application_inventory(mode)
+        # dump_application_inventory(mode)
 
 
 if __name__ == '__main__':
     # Argument parsing.
-    parser = argparse.ArgumentParser(description='Connex')
+    parser = argparse.ArgumentParser(description='Conflex')
     parser.add_argument('--application-inventory', action='store_true',
                         help='run the application inventory existing database update script.')
     # parser.add_argument('--bigquery', action='store_true', help='run the Google Big Query update application.')
@@ -213,7 +210,7 @@ if __name__ == '__main__':
     parser.add_argument('--half-sync', action='store_true',
                         help='runs the application in half sync mode. i.e. no new pages will be added to the database.')
     parser.add_argument('--version', action='version',
-                        version='Connex Version: ' + VERSION)
+                        version='Conflex Version: ' + VERSION)
     args = parser.parse_args()
 
     # Get configuration file.
