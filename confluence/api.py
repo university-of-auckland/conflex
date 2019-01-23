@@ -193,7 +193,7 @@ class ConfluenceAPI(object):
                 upis = []
                 for val in v:
                     if type(val) is str:
-                        if "(" in val:
+                        if re.match(".+ \([a-z]{4}\d{3}\)", val):
                             user = re.findall("(.*) \((.*)\)", val)
                             if len(user) > 0:
                                 names.append(user[0][0])
