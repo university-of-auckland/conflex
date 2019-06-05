@@ -186,14 +186,17 @@ def dump_application_inventory(mode):
 
 def run(conf, mode, conf_modified):
     for space, value in conf['wiki']['spaces'].items():
-        space_id = ConfluenceAPI.get_homepage_id_of_space(space)
-        DatabaseAPI.update_spaces(
-            space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
-        child_page_recursive(value['pages'], space_id, space_id,
-                             conf['mysql']['table_prefix'], mode, conf_modified)
-        recursive_db_cleanup(value['pages'], space_id,
-                             conf['mysql']['table_prefix'], mode)
-        # dump_application_inventory(mode)
+        try:
+            space_id = ConfluenceAPI.get_homepage_id_of_space(space)
+            DatabaseAPI.update_spaces(
+                space_id, space, ConfluenceAPI.get_last_update_time_of_content(space_id))
+            child_page_recursive(value['pages'], space_id, space_id,
+                                 conf['mysql']['table_prefix'], mode, conf_modified)
+            recursive_db_cleanup(value['pages'], space_id,
+                                 conf['mysql']['table_prefix'], mode)
+            # dump_application_inventory(mode)
+        except:
+            logger.error('run: Error retrieving information for space: %s' % space)
 
 
 if __name__ == '__main__':
