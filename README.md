@@ -3,12 +3,6 @@
 Conflex is an application that is designed to crawl any Confluence Wiki and translate the information into structured data in a database
 that can be easily queried.
 
----
-
-**Important Note: Active development for [Conflex v2.0 (Sledge)](https://github.com/university-of-auckland/conflex/milestone/1) is occurring in the [development](https://github.com/university-of-auckland/conflex/tree/develop) branch. This is due to the application moving to Typescript, which will enable faster development and better support for the confluence DOM.**
-
----
-
 ## Running The Application
 This application is written using python v3.6. It is advisable but not necessary to run the application 
 using virtualenv. Please install the required libraries through pip using: `pip install -r requirements.txt`
