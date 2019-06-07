@@ -52,6 +52,7 @@ class ConfluenceAPI(object):
         try:
             return json.loads(unicodedata.normalize("NFKD", request.urlopen(url).read().decode('utf-8')))
         except error.HTTPError as e:
+            logger.error(e)
             return e
         except:
             logger.error(
