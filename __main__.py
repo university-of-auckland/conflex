@@ -9,7 +9,7 @@ import re
 import logging
 import datetime
 import argparse
-VERSION = '1.3.3'
+VERSION = '1.3.22'
 
 # noinspection PyTypeChecker,PyShadowingNames
 def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False, config_modified=False):
