@@ -2,17 +2,19 @@ from confluence.api import ConfluenceAPI
 from database.api import DatabaseAPI
 from flatdict import FlatDict
 import pandas as pd
-import application_inventory
 import config_parser
 import os
 import re
 import logging
 import datetime
 import argparse
-VERSION = '1.3.22'
+
+VERSION = '1.3.4'
+
 
 # noinspection PyTypeChecker,PyShadowingNames
-def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False, config_modified=False):
+def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_pages_meet_criteria=False,
+                         config_modified=False):
     """Recursively inserts page information into the database after making requests to the Confluence API.
 
     Args:
@@ -36,7 +38,12 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
             info_table = table + '__info'
             DatabaseAPI.create_table(info_table, True)
 
-            child_pages = ConfluenceAPI.get_child_page_ids(parent_page_id)
+            try:
+                child_pages = ConfluenceAPI.get_child_page_ids(parent_page_id)
+            except:
+                logger.warning(
+                    'child_page_recursive: Unable to get child pages for: %s' % str(parent_page_id))
+                continue
             for child_page_id in child_pages:
 
                 # Decision tree to see if the current page meets the criteria provided in the config file.
@@ -45,22 +52,31 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                 page_meets_criteria = False
                 if not recheck_pages_meet_criteria and not config_modified:
                     if DatabaseAPI.check_data_exists(table, parent_page_id, child_page_id):
-                        # If the page already exists in the database ignore checking the page meets the criteria, unless forced to.
+                        # If the page already exists in the database ignore
+                        # checking the page meets the criteria, unless forced to.
                         page_meets_criteria = True
                 else:
                     if page_type == 'titles':
                         if child_pages[child_page_id]['name'] == page_identifier:
                             page_meets_criteria = True
                     elif page_type == 'labels':
-                        if page_identifier in ConfluenceAPI.get_page_labels(child_page_id):
-                            # Check that the page meets the criteria given, i.e. it is labelled as something/title is something and needs to be updated.
-                            page_meets_criteria = True
+                        try:
+                            if page_identifier in ConfluenceAPI.get_page_labels(child_page_id):
+                                # Check that the page meets the criteria given,
+                                # i.e. it is labelled as something/title is something and needs to be updated.
+                                page_meets_criteria = True
+                        except:
+                            logger.warning(
+                                'child_page_recursive: Unable to retrieve labels for: %s' % str(child_page_id))
+                            continue
 
                 if page_meets_criteria:
                     page_updated = DatabaseAPI.insert_or_update(
-                        table, parent_page_id, child_page_id, child_pages[child_page_id]['name'], child_pages[child_page_id]['last_updated'], True)
+                        table, parent_page_id, child_page_id, child_pages[child_page_id]['name'],
+                        child_pages[child_page_id]['last_updated'], True)
 
-                    # If the current page information was updated since the last run, delete all children information and re-fill it.
+                    # If the current page information was updated since the last run,
+                    # delete all children information and re-fill it.
                     page_content = ''
                     if page_updated or config_modified:
                         logger.info('Updating information in space %s for page: %s' % (
@@ -81,11 +97,13 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                                             panel = FlatDict(ConfluenceAPI.get_panel(
                                                 page_content, panel_identifier, space_id))
                                             for k, v in panel.items():
-                                                # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                                # For each key remove list numbers.
+                                                # i.e. FlatDict will put in :0, :1: for each list element.
                                                 k = re.sub(':(\d+)', '', k)
                                                 k = re.sub(':(\d+):', ':', k)
                                                 DatabaseAPI.insert_or_update(
-                                                    info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
+                                                    info_table, child_page_id, k, v,
+                                                    child_pages[child_page_id]['last_updated'])
                                     elif page_info_type == 'page_properties':
                                         # Get all page properties and put the values into the database.
                                         page_properties = ConfluenceAPI.get_page_properties(
@@ -93,38 +111,45 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                                         for page_property in page_properties:
                                             for val in page_properties[page_property]:
                                                 DatabaseAPI.insert_or_update(
-                                                    info_table, child_page_id, page_property, val, child_pages[child_page_id]['last_updated'])
+                                                    info_table, child_page_id, page_property, val,
+                                                    child_pages[child_page_id]['last_updated'])
                                     elif page_info_type == 'headings':
                                         for heading_identifier in pages[page_type][page_identifier][page_info_type]:
                                             heading = FlatDict(ConfluenceAPI.get_heading(
                                                 page_content, heading_identifier))
                                             for k, v in heading.items():
-                                                # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                                # For each key remove list numbers.
+                                                # i.e. FlatDict will put in :0, :1: for each list element.
                                                 k = re.sub(':(\d+)', '', k)
                                                 k = re.sub(':(\d+):', ':', k)
                                                 DatabaseAPI.insert_or_update(
-                                                    info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
+                                                    info_table, child_page_id, k, v,
+                                                    child_pages[child_page_id]['last_updated'])
                                     elif page_info_type == 'page':
                                         page_information = FlatDict(ConfluenceAPI.get_page(
                                             page_content, child_pages[child_page_id]['name']))
                                         for k, v in page_information.items():
-                                            # For each key remove list numbers. i.e. FlatDict will put in :0, :1: for each list element.
+                                            # For each key remove list numbers.
+                                            # i.e. FlatDict will put in :0, :1: for each list element.
                                             k = re.sub(':(\d+)', '', k)
                                             k = re.sub(':(\d+):', ':', k)
                                             DatabaseAPI.insert_or_update(
-                                                info_table, child_page_id, k, v, child_pages[child_page_id]['last_updated'])
+                                                info_table, child_page_id, k, v,
+                                                child_pages[child_page_id]['last_updated'])
                                     elif page_info_type == 'url':
                                         for url_type in pages[page_type][page_identifier][page_info_type]:
                                             url = ConfluenceAPI.get_page_urls(
                                                 child_page_id, url_type)
                                             DatabaseAPI.insert_or_update(
-                                                info_table, child_page_id, url_type, url, child_pages[child_page_id]['last_updated'])
+                                                info_table, child_page_id, url_type, url,
+                                                child_pages[child_page_id]['last_updated'])
                                     else:
                                         logger.warning(
                                             'child_page_recursive: Unknown page information retrieval type: %s' % page_info_type)
                                 except:
-                                    logger.error('child_page_recursive: Error inserting data for page with id: %s, name: %s' % (
-                                        str(child_page_id), child_pages[child_page_id]['name']))
+                                    logger.error(
+                                        'child_page_recursive: Error inserting data for page with id: %s, name: %s' % (
+                                            str(child_page_id), child_pages[child_page_id]['name']))
                 else:
                     # Cleanup the ignore, info and default table by removing any information associated with page.
                     # Child pages get cleaned up by the cleanup method.
@@ -232,7 +257,7 @@ if __name__ == '__main__':
     ConfluenceAPI.setup(config)
 
     # Store Last config modified time in database.
-    config_data = DatabaseAPI.update_connex_application(
+    config_data = DatabaseAPI.update_conflex_application(
         'last_config_change', str(config['config_modified_time']))
     config_modified = False
     if config_data:
@@ -240,10 +265,6 @@ if __name__ == '__main__':
             # The configuration has been modified since last time.
             logger.info('Configuration file has been updated!')
             config_modified = True
-
-    # Run the application inventory application if requested.
-    if args.application_inventory:
-        application_inventory.__main__.run(config)
 
     # Run the datastore sync application.
     # if args.datastore:

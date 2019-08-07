@@ -589,7 +589,7 @@ class ConfluenceAPI(object):
                 if tag.find('a', class_='user-mention') or 'data-username' in tag.attrs:
                     if tag.find('a', class_='user-mention'):
                         for user in tag.find_all('a', class_='user-mention'):
-                            if type(user.string) is not None and hasattr(user.attrs, 'data-username'):
+                            if user.string is not None and 'data-username' in user.attrs:
                                 content_list.append(user.string + " (" + user.attrs['data-username'] + ")")
                     else:
                         content_list.append(

@@ -45,16 +45,16 @@ class DatabaseAPI(object):
 
     @classmethod
     def create_application_table(cls):
-        """Creates the PREFIX_connex table within the database.
+        """Creates the PREFIX_conflex table within the database.
 
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SHOW TABLES LIKE '" + cls.__prefix + "_connex'"
+            sql = "SHOW TABLES LIKE '" + cls.__prefix + "_conflex'"
             cursor.execute(sql)
             if cursor.fetchone() is None:
-                sql = "CREATE TABLE IF NOT EXISTS `" + cls.__prefix + "_connex` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `key` VARCHAR(60) NOT NULL UNIQUE, `value` VARCHAR(256) NOT NULL)"
+                sql = "CREATE TABLE IF NOT EXISTS `" + cls.__prefix + "_conflex` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY , `key` VARCHAR(60) NOT NULL UNIQUE, `value` VARCHAR(256) NOT NULL)"
                 cursor.execute(sql)
-                logger.debug("create_spaces_table: Created table: `" + cls.__prefix + "_connex`")
+                logger.debug("create_spaces_table: Created table: `" + cls.__prefix + "_conflex`")
                 DatabaseAPI.__connection.commit()
 
     @classmethod
@@ -89,33 +89,33 @@ class DatabaseAPI(object):
             DatabaseAPI.__connection.commit()
 
     @classmethod
-    def update_connex_application(cls, k, v):
+    def update_conflex_application(cls, k, v):
         """Basic application update/insert.
 
-        This method will update/insert the key value pairs into the PREFIX_connex table.
+        This method will update/insert the key value pairs into the PREFIX_conflex table.
 
         Args:
-            k (str): The key of the connex_application row to update/insert.
+            k (str): The key of the conflex_application row to update/insert.
             v (str): A Value to update/insert
 
         Returns:
             str: The previous data that was in the key.
         """
         with DatabaseAPI.__connection.cursor() as cursor:
-            sql = "SELECT * FROM `" + cls.__prefix + "_connex` WHERE `key`=%s"
+            sql = "SELECT * FROM `" + cls.__prefix + "_conflex` WHERE `key`=%s"
             cursor.execute(sql, k)
 
             info = cursor.fetchone()
             if info is not None:
                 # Object found, perform an update.
                 if info['value'] != v:
-                    sql = "UPDATE `" + cls.__prefix + "_connex` SET `value`=%s WHERE `key`=%s"
+                    sql = "UPDATE `" + cls.__prefix + "_conflex` SET `value`=%s WHERE `key`=%s"
                     cursor.execute(sql, (v, k))
-                    logger.debug("update_connex_application: Updating " + cls.__prefix + "_connex %s: %s" % (k, v))
+                    logger.debug("update_conflex_application: Updating " + cls.__prefix + "_conflex %s: %s" % (k, v))
             else:
-                sql = "INSERT INTO `" + cls.__prefix + "_connex` (`key`, `value`) VALUES (%s, %s)"
+                sql = "INSERT INTO `" + cls.__prefix + "_conflex` (`key`, `value`) VALUES (%s, %s)"
                 cursor.execute(sql, (k, v))
-                logger.debug("update_connex_application: Inserting " + cls.__prefix + "_connex %s: %s" % (k, v))
+                logger.debug("update_conflex_application: Inserting " + cls.__prefix + "_conflex %s: %s" % (k, v))
 
             DatabaseAPI.__connection.commit()
             return info
