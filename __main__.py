@@ -82,8 +82,13 @@ def child_page_recursive(pages, space_id, parent_page_id, table_prefix, recheck_
                         logger.info('Updating information in space %s for page: %s' % (
                             str(space_id), child_pages[child_page_id]['name']))
                         DatabaseAPI.delete(info_table, child_page_id)
-                        page_content = ConfluenceAPI.get_page_content(
-                            child_page_id)
+                        try:
+                            page_content = ConfluenceAPI.get_page_content(
+                                child_page_id)
+                        except:
+                            logger.warning(
+                                'child_page_recursive: Unable to get page content for: %s' % str(child_page_id))
+                            continue
 
                     for page_info_type in pages[page_type][page_identifier]:
                         if page_info_type == 'pages':
